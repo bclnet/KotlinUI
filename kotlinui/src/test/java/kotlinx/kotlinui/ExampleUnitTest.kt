@@ -1,8 +1,23 @@
 package kotlinx.kotlinui
 
 import org.junit.Test
-
 import org.junit.Assert.*
+
+class SampleView : View {
+    override var body: View = VStack({
+        ViewBuilder.buildBlock(
+            Text("Hello World")
+        ).padding()
+    })
+}
+
+//class SampleView_Previews : PreviewProvider {
+//    static View getPreviews() { returns
+//        JsonPreview(() ->
+//        SampleView()
+//        )
+//    }
+//}
 
 /**
  * Example local unit test, which will execute on the development machine (host).

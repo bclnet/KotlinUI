@@ -1,2 +1,2 @@
-include ':app'
+include ':kotlinui'
 rootProject.name = "KotlinUI"

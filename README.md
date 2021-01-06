@@ -14,16 +14,15 @@ JsonPreview will provide json output with a before, and after representation.
 import kotlinx.kotlinui
 import kotlinx.kotlinuijson
 
-class SampleView: View {
-    var body: View { return
-        new VStack(() -> ViewBuilder.
-            Text("Hello World");
-        )
-        .padding()
-    }
+class SampleView : View {
+    override var body: View = VStack({
+        ViewBuilder.buildBlock(
+            Text("Hello World")
+        ).padding()
+    })
 }
 
-class SampleView_Previews: PreviewProvider {
+class SampleView_Previews : PreviewProvider {
     static View getPreviews() { returns
         JsonPreview(() ->
             SampleView()
