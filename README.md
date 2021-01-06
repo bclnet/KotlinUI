@@ -15,19 +15,18 @@ import kotlinx.kotlinui
 import kotlinx.kotlinuijson
 
 class SampleView : View {
-    override var body: View = VStack({
-        ViewBuilder.buildBlock(
+    override val body: View =
+        VStack {
             Text("Hello World")
-        ).padding()
-    })
+            .padding()
+        }
 }
 
-class SampleView_Previews : PreviewProvider {
-    static View getPreviews() { returns
-        JsonPreview(() ->
+object SampleView_Previews : PreviewProvider {
+    override val previews: View =
+        JsonPreview {
             SampleView()
-        )
-    }
+        }
 }
 ```
 
@@ -36,7 +35,7 @@ class SampleView_Previews : PreviewProvider {
 The extension method `var` will let KotlinUIJson know this is intended to be a variable.
 
 ```kotlin
-VStack(() ->
+VStack {
     Text("Title Here".var(self));
-)
+}
 ```

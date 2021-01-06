@@ -3,9 +3,9 @@ package kotlinx.kotlinui
 import kotlin.system.exitProcess
 
 class HStack<Content : View>(
-    content: () -> Content,
     alignment: VerticalAlignment = VerticalAlignment.center,
-    spacing: Float? = null
+    spacing: Float? = null,
+    content: () -> Content
 ) : View {
     var _tree: _VariadicView_Tree<_HStackLayout, Content> =
         _VariadicView_Tree(_HStackLayout(alignment, spacing), content())

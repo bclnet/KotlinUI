@@ -4,20 +4,19 @@ import org.junit.Test
 import org.junit.Assert.*
 
 class SampleView : View {
-    override var body: View = VStack({
-        ViewBuilder.buildBlock(
+    override val body: View =
+        VStack {
             Text("Hello World")
-        ).padding()
-    })
+        }
+        .padding()
 }
 
-//class SampleView_Previews : PreviewProvider {
-//    static View getPreviews() { returns
-//        JsonPreview(() ->
-//        SampleView()
-//        )
-//    }
-//}
+object SampleView_Previews : PreviewProvider {
+    override val previews: View =
+        JsonPreview {
+            SampleView()
+        }
+}
 
 /**
  * Example local unit test, which will execute on the development machine (host).

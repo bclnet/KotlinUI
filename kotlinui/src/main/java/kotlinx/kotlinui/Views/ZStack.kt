@@ -3,8 +3,8 @@ package kotlinx.kotlinui
 import kotlin.system.exitProcess
 
 class ZStack<Content : View>(
-    content: () -> Content,
-    alignment: Alignment = Alignment.center
+    alignment: Alignment = Alignment.center,
+    content: () -> Content
 ) : View {
     var _tree: _VariadicView_Tree<_ZStackLayout, Content> =
         _VariadicView_Tree(_ZStackLayout(alignment), content())
