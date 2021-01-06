@@ -76,12 +76,11 @@ class Picker<Label : View, SelectionValue, Content : View>(
 //    ) {
 //    }
 
-    override var body: View = HStack({
-        ViewBuilder.buildBlock(
-            label,
+    override val body: View =
+        HStack {
+            label
             this.content
-        )
-    })
+        }
 }
 
 class PickerStyleWriter<Style>(var style: Style) : ViewModifier

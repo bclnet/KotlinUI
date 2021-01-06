@@ -1,4 +1,4 @@
 package kotlinx.kotlinui
 
-interface UIViewRepresentable {
+interface UIViewRepresentable : View {
 }
