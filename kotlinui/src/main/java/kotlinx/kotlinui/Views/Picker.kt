@@ -4,12 +4,12 @@ import kotlin.system.exitProcess
 
 interface PickerStyle
 
-fun <SelectionValue> PickerStyle._makeView(
+internal fun <SelectionValue> PickerStyle._makeView(
     value: _GraphValue<_PickerValue<PickerStyle, SelectionValue>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
 
-fun <SelectionValue> PickerStyle._makeViewList(
+internal fun <SelectionValue> PickerStyle._makeViewList(
     value: _GraphValue<_PickerValue<PickerStyle, SelectionValue>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)
@@ -20,36 +20,36 @@ fun <S : PickerStyle> View.pickerStyle(style: S): View = modifier(PickerStyleWri
 
 object SegmentedPickerStyle : PickerStyle
 
-fun <SelectionValue> SegmentedPickerStyle._makeView(
+internal fun <SelectionValue> SegmentedPickerStyle._makeView(
     value: _GraphValue<_PickerValue<SegmentedPickerStyle, SelectionValue>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
 
-fun <SelectionValue> SegmentedPickerStyle._makeViewList(
+internal fun <SelectionValue> SegmentedPickerStyle._makeViewList(
     value: _GraphValue<_PickerValue<SegmentedPickerStyle, SelectionValue>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)
 
 object DefaultPickerStyle : PickerStyle
 
-fun <SelectionValue> DefaultPickerStyle._makeView(
+internal fun <SelectionValue> DefaultPickerStyle._makeView(
     value: _GraphValue<_PickerValue<DefaultPickerStyle, SelectionValue>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
 
-fun <SelectionValue> DefaultPickerStyle._makeViewList(
+internal fun <SelectionValue> DefaultPickerStyle._makeViewList(
     value: _GraphValue<_PickerValue<DefaultPickerStyle, SelectionValue>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)
 
 object PopUpButtonPickerStyle : PickerStyle
 
-fun <SelectionValue> PopUpButtonPickerStyle._makeView(
+internal fun <SelectionValue> PopUpButtonPickerStyle._makeView(
     value: _GraphValue<_PickerValue<PopUpButtonPickerStyle, SelectionValue>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
 
-fun <SelectionValue> PopUpButtonPickerStyle._makeViewList(
+internal fun <SelectionValue> PopUpButtonPickerStyle._makeViewList(
     value: _GraphValue<_PickerValue<PopUpButtonPickerStyle, SelectionValue>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)

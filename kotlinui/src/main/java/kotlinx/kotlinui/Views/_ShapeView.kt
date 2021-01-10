@@ -10,4 +10,4 @@ class _ShapeView<Content : Shape, Style : ShapeStyle>(
     override var body: View = exitProcess(0)
 }
 
-fun <Content : Shape, Style : ShapeStyle> _ShapeView<Content, Style>._makeView(view: _GraphValue<_ShapeView<Content, Style>>, inputs: _ViewInputs): _ViewOutputs = exitProcess(0)
+internal fun <Content : Shape, Style : ShapeStyle> _ShapeView<Content, Style>._makeView(view: _GraphValue<_ShapeView<Content, Style>>, inputs: _ViewInputs): _ViewOutputs = exitProcess(0)

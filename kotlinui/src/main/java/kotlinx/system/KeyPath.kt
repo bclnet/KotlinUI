@@ -1,4 +1,4 @@
-package kotlinx.kotlinui
+package kotlinx.system
 
 class KeyPath<Values, Value>
 

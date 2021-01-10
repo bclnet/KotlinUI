@@ -1,5 +1,7 @@
 package kotlinx.kotlinui
 
+import kotlinx.system.KeyPath
+import kotlinx.system.WritableKeyPath
 import kotlin.system.exitProcess
 
 internal interface DynamicProperty

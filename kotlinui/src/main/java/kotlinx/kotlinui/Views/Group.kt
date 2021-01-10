@@ -8,7 +8,7 @@ class Group<Content : View>(content: () -> Content) : View {
     override val body: View = exitProcess(0)
 }
 
-fun <Content : View> Group<Content>._makeViewList(
+internal fun <Content : View> Group<Content>._makeViewList(
     view: _GraphValue<Group<Content>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)

@@ -13,7 +13,12 @@ class HStack<Content : View>(
     override var body: View = exitProcess(0)
 }
 
-fun <Content : View> HStack<Content>._makeView(
+internal fun <Content : View> HStack<Content>._makeView(
     view: _GraphValue<HStack<Content>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
+
+class _HStackLayout(
+    var alignment: VerticalAlignment? = VerticalAlignment.center,
+    var spacing: Float? = null
+) : _VariadicView_UnaryViewRoot

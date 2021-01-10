@@ -1,20 +1,21 @@
 package kotlinx.kotlinui
 
+import kotlinx.system.KeyPath
 import kotlin.system.exitProcess
 
-class _Graph
+internal class _Graph
 
-class _GraphInputs
+internal class _GraphInputs
 
-class _ViewInputs
+internal class _ViewInputs
 
-class _ViewListInputs
+internal class _ViewListInputs
 
-class _ViewOutputs
+internal class _ViewOutputs
 
-class _ViewListOutputs
+internal class _ViewListOutputs
 
-class _GraphValue<Value>(var value: Value) {
+internal class _GraphValue<Value>(var value: Value) {
     fun <U> subscript(keyPath: KeyPath<Value, U>): _GraphValue<U> {
         exitProcess(0)
     }

@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import kotlinx.kotlinuijson.JsonPreview
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -18,11 +19,6 @@ object SampleView_Previews : PreviewProvider {
         }
 }
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {

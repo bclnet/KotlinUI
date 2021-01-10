@@ -25,4 +25,4 @@ class State<Value>(value: Value) {
         Binding<Value>({ wrappedValue }, { newValue -> wrappedValue = newValue });
 }
 
-fun <Value, V> State<Value>._makeProperty(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) {}
+internal fun <Value, V> State<Value>._makeProperty(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) {}

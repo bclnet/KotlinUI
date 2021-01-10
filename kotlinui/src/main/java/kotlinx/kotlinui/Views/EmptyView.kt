@@ -6,11 +6,11 @@ class EmptyView : View {
     override var body: View = exitProcess(0)
 }
 
-fun EmptyView._makeView(view: _GraphValue<EmptyView>, inputs: _ViewInputs): _ViewOutputs {
+internal fun EmptyView._makeView(view: _GraphValue<EmptyView>, inputs: _ViewInputs): _ViewOutputs {
     exitProcess(0)
 }
 
-fun EmptyView._makeViewList(
+internal fun EmptyView._makeViewList(
     view: _GraphValue<EmptyView>,
     inputs: _ViewListInputs
 ): _ViewListOutputs {

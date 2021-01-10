@@ -9,7 +9,7 @@ class JsonPreview<Content : View>(content: () -> Content) : View {
     val content: Content = content()
 
     // The json preview's content.
-//     val content2: AnyView
+    var content2: AnyView? = null
 
     // The json preview's data.
 //     var data: ByteArray

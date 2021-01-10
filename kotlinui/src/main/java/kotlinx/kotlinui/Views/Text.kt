@@ -8,6 +8,11 @@ class Text : View {
     class AnyTextStorage<Storage>(var storage: Storage)
     class AnyTextModifier
 
+//    sealed class Storage {
+//        data class verbatim(val verbatim: String) : Storage()
+//        data class anyTextStorage(val anyTextStorage: AnyTextStorage<String>?) : Storage()
+//    }
+
     enum class StorageType { verbatim, anyTextStorage }
     class Storage(var type: StorageType) {
         var verbatim: String? = null
@@ -117,4 +122,4 @@ private fun Text.textWithModifier(modifier: Text.Modifier): Text {
     }
 }
 
-fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = exitProcess(0)
+internal fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = exitProcess(0)

@@ -1,4 +1,4 @@
-package kotlinx.kotlinui
+package kotlinx.system
 
 class Tuple2<T1, T2>(val v1: T1, val v2: T2) {
     override fun hashCode(): Int {

@@ -1,7 +1,10 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
+@Serializable(with = BindingSerializer::class)
 class Binding<Value> private constructor(get: () -> Value) {
     var transaction: Transaction = Transaction()
     var location: AnyLocation<Value> = AnyLocation<Value>(get())
@@ -17,11 +20,14 @@ class Binding<Value> private constructor(get: () -> Value) {
 
     //where Value == V?
 //    constructor(base: Binding<V>) : this() {
-//        exitProcess(0)
+//        error("Not Implemented")
 //    }
     //constructor(base: Binding<Value?>) : this() {
-//    System.exit(0);
+//    error("Not Implemented")
 //}
+
+    companion object {
+    }
 
     var wrappedValue: Value
         get() = location.value
@@ -31,23 +37,30 @@ class Binding<Value> private constructor(get: () -> Value) {
 
     var projectedValue: Binding<Value> = this
 
-    fun transaction(transaction: Transaction): Binding<Value>? {
-        exitProcess(0)
-    }
+    fun transaction(transaction: Transaction): Binding<Value>? = error("Not Implemented")
 
     //public subscript<Subject>(dynamicMember keyPath: WritableKeyPath<Value, Subject>) -> Binding<Subject> {
-    //    System.exit(0);
-    //    return null;
+    //    error("Not Implemented")
     //}
-
 }
 
-fun <Value, V> Binding<Value>.constant(value: V): Binding<V> = exitProcess(0)
+class BindingSerializer<Value>(private val valueSerializer: KSerializer<Value>) : KSerializer<Binding<Value>> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("Binding") {
+        }
 
-//fun <Value, V> Binding<Value>._makeProperty<V>(
-//    buffer: _DynamicPropertyBuffer,
-//    container: _GraphValue<V>,
-//    fieldOffset: Int,
-//    inputs: _GraphInputs
-//) = exitProcess(0)
+    override fun serialize(encoder: Encoder, value: Binding<Value>) =
+        encoder.encodeStructure(descriptor) {
+        }
+
+    @ExperimentalSerializationApi
+    override fun deserialize(decoder: Decoder): Binding<Value> =
+        decoder.decodeStructure(descriptor) {
+            error("Not Implemented")
+        }
+}
+
+fun <Value> Binding.Companion.constant(value: Value): Binding<Value> = error("Not Implemented")
+
+//fun <Value, V> Binding<Value>._makeProperty<V>(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) = error("Not Implemented")
 

@@ -1,7 +1,10 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
+@Serializable(with = TouchBarSerializer::class)
 class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : View {
     var __isOn: Binding<Boolean> = isOn
     var _label: Label = label()
@@ -13,14 +16,36 @@ class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : View {
     //}
     // where Label == Text
 //    constructor(titleKey: LocalizedStringKey?, isOn: Binding<Boolean?>?) {
-//        System.exit(0)
+//        error("Not Implemented")
 //    }
 //    // where Label == Text
 //    constructor(title: String?, isOn: Binding<Boolean?>?) {
-//        System.exit(0)
+//        error("Not Implemented")
 //    }
 
     override var body: View = _label
+}
+
+class ToggleSerializer<Label : View>(private val labelSerializer: KSerializer<Label>) : KSerializer<Toggle<Label>> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("Toggle") {
+            element<Binding<Boolean>>("isOn")
+            element<View>("label")
+        }
+
+    override fun serialize(encoder: Encoder, value: Toggle<Label>) =
+        encoder.encodeStructure(descriptor) {
+            encodeSerializableElement(descriptor, 0, serializer<Binding<Boolean>>(), value.__isOn)
+            encodeSerializableElement(descriptor, 1, labelSerializer, value._label)
+        }
+
+    @ExperimentalSerializationApi
+    override fun deserialize(decoder: Decoder): Toggle<Label> =
+        decoder.decodeStructure(descriptor) {
+            val isOn = decodeSerializableElement(descriptor, 0, serializer<Binding<Boolean>>())
+            val label = decodeSerializableElement(descriptor, 1, labelSerializer)
+            Toggle(isOn) { label }
+        }
 }
 
 interface ToggleStyle {
@@ -29,7 +54,7 @@ interface ToggleStyle {
 
 class ToggleStyleConfiguration {
     class Label : View {
-        override var body: View = exitProcess(0)
+        override var body: View = error("Never")
     }
 
     var label: Label = Label()

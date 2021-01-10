@@ -12,12 +12,12 @@ class ModifiedContent<Content, Modifier : ViewModifier>(
 fun <T : ViewModifier> View.modifier(modifier: T): ModifiedContent<View, T> =
     ModifiedContent<View, T>(this, modifier)
 
-fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeView(
+internal fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeView(
     view: _GraphValue<ModifiedContent<Content, Modifier>>,
     inputs: _ViewInputs
 ): _ViewOutputs = exitProcess(0)
 
-fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeViewList(
+internal fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeViewList(
     view: _GraphValue<ModifiedContent<Content, Modifier>>,
     inputs: _ViewListInputs
 ): _ViewListOutputs = exitProcess(0)
