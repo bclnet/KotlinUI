@@ -1,18 +1,30 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase
 
-class EmptyView : View {
-    override var body: View = exitProcess(0)
+@Serializable(with = EmptyViewSerializer::class)
+class EmptyView : KTypeBase(), View {
+    override val body: View
+        get() = error("Never")
 }
 
-internal fun EmptyView._makeView(view: _GraphValue<EmptyView>, inputs: _ViewInputs): _ViewOutputs {
-    exitProcess(0)
+class EmptyViewSerializer : KSerializer<EmptyView> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("EmptyView") {
+        }
+
+    override fun serialize(encoder: Encoder, value: EmptyView) =
+        encoder.encodeStructure(descriptor) {
+        }
+
+    override fun deserialize(decoder: Decoder): EmptyView =
+        decoder.decodeStructure(descriptor) {
+            EmptyView()
+        }
 }
 
-internal fun EmptyView._makeViewList(
-    view: _GraphValue<EmptyView>,
-    inputs: _ViewListInputs
-): _ViewListOutputs {
-    exitProcess(0)
-}
+internal fun EmptyView._makeView(view: _GraphValue<EmptyView>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+internal fun EmptyView._makeViewList(view: _GraphValue<EmptyView>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

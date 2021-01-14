@@ -1,17 +1,18 @@
 package kotlinx.kotlinui
 
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase1
 
 @Serializable(with = VSplitViewSerializer::class)
 class VSplitView<Content : View>(
     content: () -> Content
-) : View {
+) : KTypeBase1<Content>(), View {
     val content: Content = content()
 
-    override var body: View = error("Not Implemented")
+    override val body: View
+        get() = error("Not Implemented")
 }
 
 class VSplitViewSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<VSplitView<Content>> {

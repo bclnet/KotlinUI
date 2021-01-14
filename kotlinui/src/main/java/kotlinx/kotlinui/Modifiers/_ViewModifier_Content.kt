@@ -1,17 +1,11 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase1
 
-class _ViewModifier_Content<Modifier : ViewModifier> : View {
-    override var body: View = exitProcess(0)
+class _ViewModifier_Content<Modifier : ViewModifier> : KTypeBase1<Modifier>(), View {
+    override val body: View
+        get() = error("Not Implemented")
 }
 
-internal fun <Modifier : ViewModifier> _ViewModifier_Content<Modifier>._makeView(
-    view: _GraphValue<_ViewModifier_Content<Modifier>>,
-    inputs: _ViewInputs
-): _ViewOutputs = exitProcess(0)
-
-internal fun <Modifier : ViewModifier> _ViewModifier_Content<Modifier>._makeViewList(
-    view: _GraphValue<_ViewModifier_Content<Modifier>>,
-    inputs: _ViewListInputs
-): _ViewListOutputs = exitProcess(0)
+internal fun <Modifier : ViewModifier> _ViewModifier_Content<Modifier>._makeView(view: _GraphValue<_ViewModifier_Content<Modifier>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+internal fun <Modifier : ViewModifier> _ViewModifier_Content<Modifier>._makeViewList(view: _GraphValue<_ViewModifier_Content<Modifier>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

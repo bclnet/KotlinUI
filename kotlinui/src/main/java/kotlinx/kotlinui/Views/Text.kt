@@ -1,10 +1,14 @@
 package kotlinx.kotlinui
 
 import android.os.Bundle
+import kotlinx.system.KTypeBase
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 import java.util.Arrays
-import kotlin.system.exitProcess
 
-class Text : View {
+@Serializable(with = TextSerializer::class)
+class Text : KTypeBase, View {
     class AnyTextStorage<Storage>(var storage: Storage)
     class AnyTextModifier
 
@@ -18,9 +22,9 @@ class Text : View {
         var verbatim: String? = null
         var anyTextStorage: AnyTextStorage<String>? = null
 
-        override fun equals(o: Any?): Boolean {
-            if (o !is Storage) return false
-            val s = o as Storage
+        override fun equals(other: Any?): Boolean {
+            if (other !is Storage) return false
+            val s = other as Storage
             return if (type == StorageType.verbatim &&
                 s.type == StorageType.verbatim
             ) verbatim.equals(s.verbatim)
@@ -28,6 +32,13 @@ class Text : View {
                 s.anyTextStorage!!.storage
             )
             else false
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + (verbatim?.hashCode() ?: 0)
+            result = 31 * result + (anyTextStorage?.hashCode() ?: 0)
+            return result
         }
     }
 
@@ -43,9 +54,9 @@ class Text : View {
         // case baseline(CGFloat)
         // case rounded
         // case anyTextModifier(AnyTextModifier)
-        override fun equals(o: Any?): Boolean {
-            if (o !is Modifier) return false
-            val s = o as Modifier
+        override fun equals(other: Any?): Boolean {
+            if (other !is Modifier) return false
+            val s = other as Modifier
             return if (type == ModifierType.color &&
                 s.type == ModifierType.color
             ) color!!.equals(s.color)
@@ -53,6 +64,13 @@ class Text : View {
                 s.font
             )
             else false
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + (color?.hashCode() ?: 0)
+            result = 31 * result + (font?.hashCode() ?: 0)
+            return result
         }
     }
 
@@ -90,14 +108,37 @@ class Text : View {
         _storage.anyTextStorage = AnyTextStorage<String>(key.key)
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is Text) return false
-        val s = o as Text
+    override fun equals(other: Any?): Boolean {
+        if (other !is Text) return false
+        val s = other as Text
         return _storage.equals(s._storage) &&
             _modifiers.equals(s._modifiers)
     }
 
-    override val body: View = exitProcess(0)
+    override fun hashCode(): Int {
+        var result = _storage.hashCode()
+        result = 31 * result + _modifiers.contentHashCode()
+        result = 31 * result + body.hashCode()
+        return result
+    }
+
+    override val body: View
+        get() = error("Never")
+}
+
+class TextSerializer : KSerializer<Text> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("Text") {
+        }
+
+    override fun serialize(encoder: Encoder, value: Text) =
+        encoder.encodeStructure(descriptor) {
+        }
+
+    override fun deserialize(decoder: Decoder): Text =
+        decoder.decodeStructure(descriptor) {
+            Text("")
+        }
 }
 
 fun Text.foregroundColor(color: Color?): Text {
@@ -113,13 +154,13 @@ fun Text.font(font: Font?): Text {
 }
 
 private fun Text.textWithModifier(modifier: Text.Modifier): Text {
-    var modifiers: Array<Text.Modifier> = Arrays.copyOf(_modifiers, _modifiers.size + 1)
+    val modifiers: Array<Text.Modifier> = Arrays.copyOf(_modifiers, _modifiers.size + 1)
     modifiers[modifiers.size - 1] = modifier
     when (_storage.type) {
         Text.StorageType.verbatim -> return Text(_storage.verbatim!!, modifiers)
         Text.StorageType.anyTextStorage -> return Text(_storage.anyTextStorage as Text.AnyTextStorage<String>, modifiers)
-        else -> exitProcess(0)
+        else -> error("${_storage.type}")
     }
 }
 
-internal fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = exitProcess(0)
+internal fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

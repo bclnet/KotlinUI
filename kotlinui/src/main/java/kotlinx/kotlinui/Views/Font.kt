@@ -1,38 +1,55 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
-
 class Font(var provider: AnyFontBox) {
     open class AnyFontBox {
         override fun hashCode(): Int = this.hashCode()
 
-        override fun equals(o: Any?): Boolean {
-            if (o !is AnyFontBox) return false
-            val s = o as AnyFontBox
+        override fun equals(other: Any?): Boolean {
+            if (other !is AnyFontBox) return false
+            val s = other as AnyFontBox
             return this.equals(s)
         }
     }
 
     class SystemProvider(var size: Float, var weight: Weight, var design: Design) : AnyFontBox() {
-        override fun equals(o: Any?): Boolean {
-            if (o !is SystemProvider) return false
-            val s = o as SystemProvider
-            return size == s!!.size && weight.equals(s.weight) && design.equals(s.design)
+        override fun equals(other: Any?): Boolean {
+            if (other !is SystemProvider) return false
+            val s = other as SystemProvider
+            return size == s.size && weight.equals(s.weight) && design.equals(s.design)
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + size.hashCode()
+            result = 31 * result + weight.hashCode()
+            result = 31 * result + design.hashCode()
+            return result
         }
     }
 
     class TextStyleProvider(var style: TextStyle, var design: Design) : AnyFontBox() {
-        override fun equals(o: Any?): Boolean {
-            if (o !is TextStyleProvider) return false
-            val s = o as TextStyleProvider
-            return style.equals(s!!.style) && design.equals(s.design)
+        override fun equals(other: Any?): Boolean {
+            if (other !is TextStyleProvider) return false
+            val s = other as TextStyleProvider
+            return style.equals(s.style) && design.equals(s.design)
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + style.hashCode()
+            result = 31 * result + design.hashCode()
+            return result
         }
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is Font) return false
-        val s = o as Font?
-        return provider!!.equals(s!!.provider)
+    override fun equals(other: Any?): Boolean {
+        if (other !is Font) return false
+        val s = other as Font?
+        return provider.equals(s!!.provider)
+    }
+
+    override fun hashCode(): Int {
+        return provider.hashCode()
     }
 
     class Weight(var value: Float) {
@@ -73,7 +90,7 @@ class Font(var provider: AnyFontBox) {
         }
 
         fun custom(name: String, size: Float): Font {
-            exitProcess(0)
+            error("Not Implemented")
         }
 
         var largeTitle = system(TextStyle.largeTitle)

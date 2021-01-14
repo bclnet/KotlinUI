@@ -1,8 +1,9 @@
 package kotlinx.kotlinui
 
+import kotlinx.system.KTypeBase
 import java.util.EnumSet
 
-class PaddingModifier(var value: EdgeInsets) : ViewModifier {
+class PaddingModifier(var value: EdgeInsets) : KTypeBase(), ViewModifier {
     companion object {
         var defaultPadding = 8f
     }

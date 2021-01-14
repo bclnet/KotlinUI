@@ -20,7 +20,6 @@ class Alignment(var horizontal: HorizontalAlignment, var vertical: VerticalAlign
     }
 }
 
-//: Codable
 object AlignmentSerializer : KSerializer<Alignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Alignment", PrimitiveKind.STRING)
@@ -60,7 +59,6 @@ enum class HorizontalAlignment {
     leading, center, trailing
 }
 
-//: Codable
 object HorizontalAlignmentSerializer : KSerializer<HorizontalAlignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("HorizontalAlignment", PrimitiveKind.STRING)
@@ -88,7 +86,6 @@ enum class VerticalAlignment {
     top, center, bottom, firstTextBaseline, lastTextBaseline
 }
 
-//: Codable
 object VerticalAlignmentSerializer : KSerializer<VerticalAlignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("VerticalAlignment", PrimitiveKind.STRING)

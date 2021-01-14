@@ -4,17 +4,19 @@ import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase1
 
 @Serializable(with = VStackSerializer::class)
 class VStack<Content : View>(
     alignment: HorizontalAlignment = HorizontalAlignment.center,
     spacing: Float? = null,
-    content: () -> Content
-) : View {
+    content: ViewBuilder.() -> Content
+) : KTypeBase1<Content>(), View {
     val _tree: _VariadicView_Tree<_VStackLayout, Content> =
         _VariadicView_Tree(_VStackLayout(alignment, spacing), content())
 
-    override var body: View = error("Not Implemented")
+    override val body: View
+        get() = error("Not Implemented")
 }
 
 class VStackSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<VStack<Content>> {

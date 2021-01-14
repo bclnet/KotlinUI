@@ -3,16 +3,18 @@ package kotlinx.kotlinui
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase1
 
 @Serializable(with = ZStackSerializer::class)
 class ZStack<Content : View>(
     alignment: Alignment = Alignment.center,
     content: () -> Content
-) : View {
+) : KTypeBase1<Content>(), View {
     val _tree: _VariadicView_Tree<_ZStackLayout, Content> =
         _VariadicView_Tree(_ZStackLayout(alignment), content())
 
-    override var body: View = error("Not Implemented")
+    override val body: View
+        get() = error("Not Implemented")
 }
 
 class ZStackSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<ZStack<Content>> {

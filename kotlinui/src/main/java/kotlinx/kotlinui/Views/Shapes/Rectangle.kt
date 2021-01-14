@@ -1,9 +1,10 @@
 package kotlinx.kotlinui
 
 import android.graphics.Rect
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase
 
-class Rectangle : Shape {
-    override fun path(rect: Rect): Path = exitProcess(0)
-    override val body: View = exitProcess(0)
+class Rectangle : KTypeBase(), Shape {
+    override fun path(rect: Rect): Path = error("Never")
+    override val body: View
+        get() = error("Never")
 }

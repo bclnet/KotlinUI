@@ -21,7 +21,6 @@ enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
         var vertical: EnumSet<Edge> = EnumSet.of(Edge.top, Edge.bottom)
         var all: EnumSet<Edge> = EnumSet.allOf(Edge::class.java)
 
-        //: Codable
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Edge.Set", PrimitiveKind.STRING)
 
@@ -39,7 +38,6 @@ enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
         }
     }
 
-    //: Codable
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Edge", PrimitiveKind.STRING)
 
@@ -72,16 +70,24 @@ class EdgeInsets constructor(
 ) : KSerializer<EdgeInsets> {
     constructor(all: Float) : this(all, all, all, all) {}
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is EdgeInsets) return false
-        val s = o as EdgeInsets
+    override fun equals(other: Any?): Boolean {
+        if (other !is EdgeInsets) return false
+        val s = other as EdgeInsets
         return top.equals(s.top) &&
             leading.equals(s.leading) &&
             bottom.equals(s.bottom) &&
             trailing.equals(s.trailing)
     }
 
-    //: Codable
+    override fun hashCode(): Int {
+        var result = top.hashCode()
+        result = 31 * result + leading.hashCode()
+        result = 31 * result + bottom.hashCode()
+        result = 31 * result + trailing.hashCode()
+        result = 31 * result + descriptor.hashCode()
+        return result
+    }
+
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("EdgeInsets") {
             element<Float>("top")

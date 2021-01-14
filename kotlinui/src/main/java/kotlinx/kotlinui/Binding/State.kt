@@ -21,8 +21,8 @@ class State<Value>(value: Value) {
             _location!!.value = newValue
         }
 
-    var projectedValue: Binding<Value> =
-        Binding<Value>({ wrappedValue }, { newValue -> wrappedValue = newValue });
+    val projectedValue: Binding<Value>
+        get() = Binding<Value>({ wrappedValue }, { newValue -> wrappedValue = newValue });
 }
 
 internal fun <Value, V> State<Value>._makeProperty(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) {}

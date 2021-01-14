@@ -3,9 +3,10 @@ package kotlinx.kotlinui
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase1
 
 @Serializable(with = TouchBarSerializer::class)
-class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : View {
+class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : KTypeBase1<Label>(), View {
     var __isOn: Binding<Boolean> = isOn
     var _label: Label = label()
 
@@ -23,7 +24,8 @@ class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : View {
 //        error("Not Implemented")
 //    }
 
-    override var body: View = _label
+    override val body: View
+        get() = _label
 }
 
 class ToggleSerializer<Label : View>(private val labelSerializer: KSerializer<Label>) : KSerializer<Toggle<Label>> {
@@ -64,10 +66,12 @@ class ToggleStyleConfiguration {
             field = newValue
         }
 
-    var __isOn: Binding<Boolean> = Binding({ isOn }, { newValue -> isOn = newValue });
+    val __isOn: Binding<Boolean>
+        get() = Binding({ isOn }, { newValue -> isOn = newValue });
 }
 
-fun <S : ToggleStyle> View.toggleStyle(style: S): View = modifier(ToggleStyleModifier(style))
+fun <S : ToggleStyle> View.toggleStyle(style: S): View =
+    modifier(ToggleStyleModifier(style))
 
 class CheckboxToggleStyle : ToggleStyle {
     override fun makeBody(configuration: ToggleStyleConfiguration): View = configuration.label

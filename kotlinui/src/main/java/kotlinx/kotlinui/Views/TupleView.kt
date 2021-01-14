@@ -1,7 +1,10 @@
 package kotlinx.kotlinui
 
-class TupleView<T>(var value: T) : View {
-    override var body: View = error("Never")
+import kotlinx.system.KTypeBase1
+
+class TupleView<T>(var value: T) : KTypeBase1<T>(), View {
+    override val body: View
+        get() = error("Never")
 }
 
 internal fun <T> TupleView<T>._makeView(view: _GraphValue<TupleView<T>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

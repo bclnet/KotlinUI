@@ -5,10 +5,16 @@ class Size(var width: Int, var height: Int) {
         var zero = Size(0, 0)
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is Size) return false
-        val s = o as Size
+    override fun equals(other: Any?): Boolean {
+        if (other !is Size) return false
+        val s = other as Size
         return width.equals(s.width) &&
             height.equals(s.height)
+    }
+
+    override fun hashCode(): Int {
+        var result = width
+        result = 31 * result + height
+        return result
     }
 }

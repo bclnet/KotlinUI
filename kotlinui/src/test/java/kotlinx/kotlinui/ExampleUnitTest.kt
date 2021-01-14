@@ -5,7 +5,7 @@ import org.junit.Test
 import org.junit.Assert.*
 
 class SampleView : View {
-    override val body: View =
+    override var body: View =
         VStack {
             Text("Hello World")
         }

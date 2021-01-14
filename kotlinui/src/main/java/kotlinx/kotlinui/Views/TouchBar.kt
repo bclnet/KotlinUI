@@ -4,16 +4,18 @@ import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase1
 
 @Serializable(with = TouchBarSerializer::class)
 class TouchBar<Content : View>(
     id: String?,
     content: () -> Content
-) : View {
+) : KTypeBase1<Content>(), View {
     internal val container: TouchBarContainer = TouchBarContainer(id)
     internal val content: Content = content()
 
-    override var body: View = error("Not Implemented")
+    override val body: View
+        get() = error("Not Implemented")
 }
 
 class TouchBarSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<TouchBar<Content>> {

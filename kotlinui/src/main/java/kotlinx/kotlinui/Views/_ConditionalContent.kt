@@ -1,11 +1,11 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase2
 
 class _ConditionalContent<TrueContent : View, FalseContent : View>(
     //var _storage: Storage<TrueContent, FalseContent>
     var _storage: Storage
-) : View {
+) : KTypeBase2<TrueContent, FalseContent>(), View {
 //    enum class StorageType { trueContent, falseContent }
 //    class Storage<TrueContent : View, FalseContent : View>(var value: StorageType) {
 //        var trueContent: TrueContent? = null
@@ -17,15 +17,9 @@ class _ConditionalContent<TrueContent : View, FalseContent : View>(
         data class falseContent<FalseContent : View>(val falseContent: FalseContent) : Storage()
     }
 
-    override var body: View = exitProcess(0)
+    override val body: View
+        get() = error("Never")
 }
 
-internal fun <TrueContent : View, FalseContent : View> _ConditionalContent<TrueContent, FalseContent>._makeView(
-    view: _GraphValue<_ConditionalContent<TrueContent, FalseContent>>,
-    inputs: _ViewInputs
-): _ViewOutputs = exitProcess(0)
-
-internal fun <TrueContent : View, FalseContent : View> _ConditionalContent<TrueContent, FalseContent>._makeViewList(
-    view: _GraphValue<_ConditionalContent<TrueContent, FalseContent>>,
-    inputs: _ViewListInputs
-): _ViewListOutputs = exitProcess(0)
+internal fun <TrueContent : View, FalseContent : View> _ConditionalContent<TrueContent, FalseContent>._makeView(view: _GraphValue<_ConditionalContent<TrueContent, FalseContent>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+internal fun <TrueContent : View, FalseContent : View> _ConditionalContent<TrueContent, FalseContent>._makeViewList(view: _GraphValue<_ConditionalContent<TrueContent, FalseContent>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

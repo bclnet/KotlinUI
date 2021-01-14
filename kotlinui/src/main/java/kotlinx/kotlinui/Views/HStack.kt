@@ -1,22 +1,20 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase1
 
 class HStack<Content : View>(
     alignment: VerticalAlignment = VerticalAlignment.center,
     spacing: Float? = null,
     content: () -> Content
-) : View {
+) : KTypeBase1<Content>(), View {
     var _tree: _VariadicView_Tree<_HStackLayout, Content> =
         _VariadicView_Tree(_HStackLayout(alignment, spacing), content())
 
-    override var body: View = exitProcess(0)
+    override val body: View
+        get() = error("Never")
 }
 
-internal fun <Content : View> HStack<Content>._makeView(
-    view: _GraphValue<HStack<Content>>,
-    inputs: _ViewInputs
-): _ViewOutputs = exitProcess(0)
+internal fun <Content : View> HStack<Content>._makeView(view: _GraphValue<HStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 
 class _HStackLayout(
     var alignment: VerticalAlignment? = VerticalAlignment.center,

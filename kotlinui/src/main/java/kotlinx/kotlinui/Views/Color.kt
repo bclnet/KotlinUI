@@ -1,14 +1,18 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
+import kotlinx.system.KTypeBase
 
-class Color : View {
+@Serializable(with = ColorSerializer::class)
+class Color : KTypeBase, View {
     open class AnyColorBox {
         override fun hashCode(): Int = this.hashCode()
 
-        override fun equals(o: Any?): Boolean {
-            if (o !is AnyColorBox) return false
-            val s = o as AnyColorBox
+        override fun equals(other: Any?): Boolean {
+            if (other !is AnyColorBox) return false
+            val s = other as AnyColorBox
             return this.equals(s)
         }
     }
@@ -79,7 +83,8 @@ class Color : View {
         provider = SystemColorType(systemColor)
     }
 
-    override val body: View = exitProcess(0)
+    override val body: View
+        get() = error("Never")
 
     override fun toString(): String = "$provider"
 
@@ -112,10 +117,25 @@ class Color : View {
                 3 -> doubleArrayOf(p, q, brightness)
                 4 -> doubleArrayOf(t, p, brightness)
                 5 -> doubleArrayOf(brightness, p, q)
-                else -> exitProcess(0)
+                else -> error("${i % 6}")
             }
         }
     }
+}
+
+class ColorSerializer : KSerializer<Color> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("Color") {
+        }
+
+    override fun serialize(encoder: Encoder, value: Color) =
+        encoder.encodeStructure(descriptor) {
+        }
+
+    override fun deserialize(decoder: Decoder): Color =
+        decoder.decodeStructure(descriptor) {
+            error("")
+        }
 }
 
 //fun foregroundColor(color: Color?): View = environment(\.foregroundColor, color)

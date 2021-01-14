@@ -1,32 +1,39 @@
 package kotlinx.kotlinui
 
 import android.os.Bundle
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase
 
 class AnyImageProviderBox
 
-class Image(var _provider: AnyImageProviderBox) : View {
+class Image(var _provider: AnyImageProviderBox) : KTypeBase(), View {
     constructor(name: String, bundle: Bundle? = null) : this(AnyImageProviderBox()) {
-        exitProcess(0)
+        error("Not Implemented")
     }
 
     constructor(name: String, bundle: Bundle? = null, label: Text) : this(AnyImageProviderBox()) {
-        exitProcess(0)
+        error("Not Implemented")
     }
 
 //    constructor(decorative: String, bundle: Bundle? = null) : this(AnyImageProviderBox()) {
-//        exitProcess(0)
+//        error("Not Implemented")
 //    }
 
 //    constructor(systemName: String) : this(AnyImageProviderBox()) {
-//        exitProcess(0)
+//        error("Not Implemented")
 //    }
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is Image) return false
-        val s = o as Image
+    override fun equals(other: Any?): Boolean {
+        if (other !is Image) return false
+        val s = other as Image
         return _provider.equals(s._provider)
     }
 
-    override val body: View = exitProcess(0)
+    override fun hashCode(): Int {
+        var result = _provider.hashCode()
+        result = 31 * result + body.hashCode()
+        return result
+    }
+
+    override val body: View
+        get() = error("Never")
 }

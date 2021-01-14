@@ -1,7 +1,6 @@
 package kotlinx.kotlinui
 
 import kotlinx.system.KeyPath
-import kotlin.system.exitProcess
 
 internal class _Graph
 
@@ -16,13 +15,15 @@ internal class _ViewOutputs
 internal class _ViewListOutputs
 
 internal class _GraphValue<Value>(var value: Value) {
-    fun <U> subscript(keyPath: KeyPath<Value, U>): _GraphValue<U> {
-        exitProcess(0)
+    operator fun <U> get(keyPath: KeyPath<Value, U>): _GraphValue<U> = error("Not Implemented")
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is _GraphValue<*>) return false
+        val s = other as _GraphValue<Value>
+        return value!!.equals(s.value)
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is _GraphValue<*>) return false
-        val s = o as _GraphValue<Value>
-        return value!!.equals(s.value)
+    override fun hashCode(): Int {
+        return value?.hashCode() ?: 0
     }
 }

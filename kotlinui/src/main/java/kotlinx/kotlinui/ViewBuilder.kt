@@ -2,6 +2,10 @@ package kotlinx.kotlinui
 
 import kotlinx.system.*
 
+// https://kotlinlang.org/docs/reference/lambdas.html
+// Function literals with receiver
+// https://kotlinlang.org/docs/reference/type-safe-builders.html
+
 object ViewBuilder {
     fun buildBlock(): EmptyView = EmptyView()
 
@@ -12,14 +16,14 @@ object ViewBuilder {
     fun <TrueContent : View, FalseContent : View> buildEitherTrue(first: TrueContent): _ConditionalContent<TrueContent, FalseContent> {
 //        var storage = _ConditionalContent.Storage<TrueContent, FalseContent>(_ConditionalContent.StorageType.trueContent)
 //        storage.trueContent = first
-        var storage = _ConditionalContent.Storage.trueContent(first)
+        val storage = _ConditionalContent.Storage.trueContent(first)
         return _ConditionalContent(storage)
     }
 
     fun <TrueContent : View, FalseContent : View> buildEitherFalse(second: FalseContent): _ConditionalContent<TrueContent, FalseContent> {
 //        var storage = _ConditionalContent.Storage<TrueContent, FalseContent>(_ConditionalContent.StorageType.falseContent)
 //        storage.falseContent = second
-        var storage = _ConditionalContent.Storage.falseContent(second)
+        val storage = _ConditionalContent.Storage.falseContent(second)
         return _ConditionalContent(storage)
     }
 

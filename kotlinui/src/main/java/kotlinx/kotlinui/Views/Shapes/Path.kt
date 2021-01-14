@@ -3,7 +3,7 @@ package kotlinx.kotlinui
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.util.SizeF
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase
 import android.graphics.Path as CGPath
 
 class FixedRoundedRect(var rect: Rect, var cornerSize: SizeF, var style: RoundedCornerStyle) {
@@ -38,28 +38,42 @@ enum class RoundedCornerStyle {
 }
 
 internal class TrimmedPath {
-    override fun equals(o: Any?): Boolean {
-        if (o !is TrimmedPath) return false
-        val s = o as TrimmedPath
+    override fun equals(other: Any?): Boolean {
+        if (other !is TrimmedPath) return false
+        val s = other as TrimmedPath
         return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
     }
 }
 
 internal class StrokedPath(var path: Path, var style: StrokeStyle) {
-    override fun equals(o: Any?): Boolean {
-        if (o !is StrokedPath) return false
-        val s = o as StrokedPath
+    override fun equals(other: Any?): Boolean {
+        if (other !is StrokedPath) return false
+        val s = other as StrokedPath
         return path.equals(s.path) &&
             style.equals(s.style)
     }
+
+    override fun hashCode(): Int {
+        var result = path.hashCode()
+        result = 31 * result + style.hashCode()
+        return result
+    }
 }
 
-class Path : Shape {
+class Path : KTypeBase, Shape {
     internal class PathBox(var cgPath: CGPath) {
-        override fun equals(o: Any?): Boolean {
-            if (o !is PathBox) return false
-            val s = o as PathBox
+        override fun equals(other: Any?): Boolean {
+            if (other !is PathBox) return false
+            val s = other as PathBox
             return cgPath.equals(s.cgPath)
+        }
+
+        override fun hashCode(): Int {
+            return cgPath.hashCode()
         }
     }
 
@@ -83,7 +97,7 @@ class Path : Shape {
     internal var storage: Storage = Storage(StorageType.empty)
 
     constructor() {
-        exitProcess(0)
+        error("Not Implemented")
     }
 
     constructor(path: CGPath) {
@@ -121,30 +135,34 @@ class Path : Shape {
 //    }
 
     constructor(callback: (Path) -> Unit) {
-        exitProcess(0)
+        error("Not Implemented")
     }
 
     constructor(string: String) {
-        exitProcess(0)
+        error("Not Implemented")
     }
 
-    override fun path(rect: Rect): Path = exitProcess(0)
-    override val body: View = exitProcess(0)
+    override fun path(rect: Rect): Path = error("Never")
+    override val body: View
+        get() = error("Never")
 
-    val cgPath: CGPath = exitProcess(0)
+    val cgPath: CGPath
+        get() = error("Not Implemented")
 
-    val isEmpty: Boolean = exitProcess(0)
+    val isEmpty: Boolean
+        get() = error("Not Implemented")
 
-    val boundingRect: Rect = exitProcess(0)
+    val boundingRect: Rect
+        get() = error("Not Implemented")
 
     operator fun contains(p: Point): Boolean = contains(p, false)
-    fun contains(p: Point, eoFill: Boolean): Boolean = exitProcess(0)
+    fun contains(p: Point, eoFill: Boolean): Boolean = error("Not Implemented")
 
-    fun forEach(body: (Element) -> Unit): Nothing = exitProcess(0)
+    fun forEach(body: (Element) -> Unit): Nothing = error("Not Implemented")
 
-    fun strokedPath(style: StrokeStyle): Path = exitProcess(0)
+    fun strokedPath(style: StrokeStyle): Path = error("Not Implemented")
 
-    fun trimmedPath(from: Float, to: Float): Path = exitProcess(0)
+    fun trimmedPath(from: Float, to: Float): Path = error("Not Implemented")
 
     // MUTATING
     fun move(to: Point) {}
@@ -187,9 +205,9 @@ class Path : Shape {
 
     fun addPath(path: Path, transform: Matrix? = null) {}
 
-    val currentPoint: Point = exitProcess(0)
+    val currentPoint: Point = error("Not Implemented")
 
-    fun applying(transform: Matrix? = null): Path = exitProcess(0)
+    fun applying(transform: Matrix? = null): Path = error("Not Implemented")
 
-    fun offsetBy(dx: Float, dy: Float): Path = exitProcess(0)
+    fun offsetBy(dx: Float, dy: Float): Path = error("Not Implemented")
 }

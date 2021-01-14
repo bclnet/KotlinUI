@@ -1,7 +1,8 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase
 
-class Spacer : View {
-    override var body: View = exitProcess(0)
+class Spacer : KTypeBase(), View {
+    override val body: View
+        get() = error("Never")
 }

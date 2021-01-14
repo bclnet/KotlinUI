@@ -1,25 +1,39 @@
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.*
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 import kotlinx.system.*
-import kotlin.system.exitProcess
 
-//class MyCodingUserInfoKey {
-//    companion object {
-//        val json = CodingUserInfoKey("jsonData")
-//        val jsonContext = CodingUserInfoKey("jsonContext")
-//    }
-//}
-//
-//class JsonUI : Codable {
-//    val body: Any? = null
-//    //var anyView: AnyView? = body as? AnyView
-//}
-//
-////: Codable
-//private sealed class CodingKeys {
-//    class _ui : CodingKey()
-//}
+@Serializable(with = JsonUISerializer::class)
+class JsonUI(view: View) {
+    val body: Any = view
+
+    // MARK: - Register
+    private val registered: Boolean = registerDefault()
+
+    private fun registerDefault(): Boolean {
+        Divider.register()
+        return true
+    }
+}
+
+object JsonUISerializer : KSerializer<JsonUI> {
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("JsonUI") {
+            element<Float>("top")
+        }
+
+    override fun serialize(encoder: Encoder, value: JsonUI) =
+        encoder.encodeStructure(descriptor) {
+        }
+
+    override fun deserialize(decoder: Decoder): JsonUI =
+        decoder.decodeStructure(descriptor) {
+            error("")
+        }
+}
 
 //
 //fun decode(decoder: Decoder) {

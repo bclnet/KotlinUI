@@ -1,15 +1,15 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase1
 
-class Button<Label : View> private constructor(var _action: () -> Unit, var _label: Label) : View {
-
+class Button<Label : View> private constructor(var _action: () -> Unit, var _label: Label) : KTypeBase1<Label>(), View {
     constructor(action: () -> Unit, label: () -> Label) : this(action, label())
 
     //where Label == Text
     //constructor(title: String, action: () -> Unit) : this(action, Text(title))
 
-    override var body: Label = _label
+    override val body: View
+        get() = _label
 }
 
 interface ButtonStyle {
@@ -18,7 +18,7 @@ interface ButtonStyle {
 
 class ButtonStyleConfiguration(var label: Label, var isPressed: Boolean) {
     class Label(var storage: Any) : View {
-        override var body: Never = exitProcess(0)
+        override var body: View = error("Never")
     }
 }
 

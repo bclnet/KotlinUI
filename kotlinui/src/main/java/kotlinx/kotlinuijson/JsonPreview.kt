@@ -1,7 +1,6 @@
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.*
-import kotlin.system.exitProcess
 
 class JsonPreview<Content : View>(content: () -> Content) : View {
 
@@ -57,8 +56,8 @@ class JsonPreview<Content : View>(content: () -> Content) : View {
 //        }
     }
 
-    override val body: View
-        get() = Text("Body")
+    override var body: View
+        = Text("Body")
 //        get() = GeometryReader { geometry ->
 //            VStack {
 //                HStack {

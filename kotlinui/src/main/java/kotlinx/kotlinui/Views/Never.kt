@@ -1,7 +1,8 @@
 package kotlinx.kotlinui
 
-import kotlin.system.exitProcess
+import kotlinx.system.KTypeBase
 
-class Never : View {
-    override var body: View = exitProcess(0)
+class Never : KTypeBase(), View {
+    override val body: View
+        get() = error("Never")
 }
