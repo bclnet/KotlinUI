@@ -19,11 +19,8 @@ internal class _GraphValue<Value>(var value: Value) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is _GraphValue<*>) return false
-        val s = other as _GraphValue<Value>
-        return value!!.equals(s.value)
+        return value!! == other.value
     }
 
-    override fun hashCode(): Int {
-        return value?.hashCode() ?: 0
-    }
+    override fun hashCode(): Int = value?.hashCode() ?: 0
 }

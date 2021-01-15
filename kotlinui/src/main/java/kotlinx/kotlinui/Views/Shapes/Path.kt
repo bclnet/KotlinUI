@@ -8,10 +8,9 @@ import android.graphics.Path as CGPath
 class FixedRoundedRect(var rect: Rect, var cornerSize: SizeF, var style: RoundedCornerStyle) {
     override fun equals(other: Any?): Boolean {
         if (other !is FixedRoundedRect) return false
-        val s = other as FixedRoundedRect
-        return rect.equals(s.rect) &&
-            cornerSize.equals(s.cornerSize) &&
-            style.equals(s.style)
+        return rect == other.rect &&
+            cornerSize == other.cornerSize &&
+            style == other.style
     }
 
     override fun hashCode(): Int {
@@ -46,21 +45,18 @@ enum class RoundedCornerStyle {
 internal class TrimmedPath {
     override fun equals(other: Any?): Boolean {
         if (other !is TrimmedPath) return false
-        val s = other as TrimmedPath
+        val s = other
         return true
     }
 
-    override fun hashCode(): Int {
-        return javaClass.hashCode()
-    }
+    override fun hashCode(): Int = javaClass.hashCode()
 }
 
 internal class StrokedPath(var path: Path, var style: StrokeStyle) {
     override fun equals(other: Any?): Boolean {
         if (other !is StrokedPath) return false
-        val s = other as StrokedPath
-        return path.equals(s.path) &&
-            style.equals(s.style)
+        return path == other.path &&
+            style == other.style
     }
 
     override fun hashCode(): Int {
@@ -74,13 +70,10 @@ class Path : Shape {
     internal class PathBox(var cgPath: CGPath) {
         override fun equals(other: Any?): Boolean {
             if (other !is PathBox) return false
-            val s = other as PathBox
-            return cgPath.equals(s.cgPath)
+            return cgPath == other.cgPath
         }
 
-        override fun hashCode(): Int {
-            return cgPath.hashCode()
-        }
+        override fun hashCode(): Int = cgPath.hashCode()
     }
 
     internal enum class StorageType { empty, rect, ellipse, roundedRect, stroked, trimmed, path }
@@ -211,7 +204,8 @@ class Path : Shape {
 
     fun addPath(path: Path, transform: Matrix? = null) {}
 
-    val currentPoint: Point = error("Not Implemented")
+    val currentPoint: Point
+        get() = error("Not Implemented")
 
     fun applying(transform: Matrix? = null): Path = error("Not Implemented")
 

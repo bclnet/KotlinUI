@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.*
 class VSplitView<Content : View>(
     content: ViewBuilder.() -> Content
 ) : View {
-    val content: Content = content(ViewBuilder())
+    val content: Content = content(ViewBuilder)
 
     override val body: View
         get() = error("Not Implemented")

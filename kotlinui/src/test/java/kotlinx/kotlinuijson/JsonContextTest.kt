@@ -15,7 +15,7 @@ class JsonContextTest {
 
         val context_s1c0 = JsonContext()
         with (context_s1c0) {
-            slots["0"] = JsonContext.Slot(typeOf<String>(), 0)
+            var_("String")
         }
         val json_s1c0 = Json.encodeToString(JsonContextSerializer, context_s1c0)
 
@@ -27,7 +27,7 @@ class JsonContextTest {
 
         val context_s1c1 = JsonContext()
         with (context_s1c1) {
-            slots["0"] = JsonContext.Slot(typeOf<String>(), 0)
+            var_("String")
             contexts["0"] = JsonContext()
         }
         val json_s1c1 = Json.encodeToString(JsonContextSerializer, context_s1c1)

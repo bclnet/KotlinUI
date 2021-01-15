@@ -13,7 +13,7 @@ class VStack<Content : View>(
     content: ViewBuilder.() -> Content
 ) : View {
     val _tree: _VariadicView_Tree<_VStackLayout, Content> =
-        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder()))
+        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder))
 
     override val body: View
         get() = error("Not Implemented")

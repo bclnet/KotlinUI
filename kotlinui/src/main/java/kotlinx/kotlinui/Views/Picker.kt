@@ -29,7 +29,7 @@ class Picker<Label : View, SelectionValue, Content : View>(
     val label: Label,
     content: ViewBuilder.() -> Content
 ) : View {
-    val content: Content = content(ViewBuilder())
+    val content: Content = content(ViewBuilder)
 
     //where Label == Text {
 //    constructor(

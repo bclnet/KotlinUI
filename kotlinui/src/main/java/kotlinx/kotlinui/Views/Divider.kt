@@ -20,7 +20,7 @@ class Divider : View {
     }
 }
 
-class DividerSerializer : KSerializer<Divider> {
+internal object DividerSerializer : KSerializer<Divider> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("Divider") {
         }

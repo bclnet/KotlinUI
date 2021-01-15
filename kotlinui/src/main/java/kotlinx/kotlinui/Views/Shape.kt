@@ -18,9 +18,8 @@ class FillStyle(
 ) {
     override fun equals(other: Any?): Boolean {
         if (other !is FillStyle) return false
-        val s = other as FillStyle
-        return isEOFilled.equals(s.isEOFilled) &&
-            isAntialiased.equals(s.isAntialiased)
+        return isEOFilled == other.isEOFilled &&
+            isAntialiased == other.isAntialiased
     }
 
     override fun hashCode(): Int {

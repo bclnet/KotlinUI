@@ -25,8 +25,7 @@ class Image private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (other !is Image) return false
-        val s = other as Image
-        return _provider.equals(s._provider)
+        return _provider == other._provider
     }
 
     override fun hashCode(): Int {

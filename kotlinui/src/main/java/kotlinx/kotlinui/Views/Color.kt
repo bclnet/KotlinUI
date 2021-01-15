@@ -9,8 +9,7 @@ class Color : View {
     open class AnyColorBox {
         override fun equals(other: Any?): Boolean {
             if (other !is AnyColorBox) return false
-            val s = other as AnyColorBox
-            return this.equals(s)
+            return this == other
         }
 
         override fun hashCode(): Int = this.hashCode()
@@ -54,10 +53,10 @@ class Color : View {
         blue: Double,
         opacity: Double = 1.0
     ) {
-        when (colorSpace) {
-            RGBColorSpace.sRGB -> provider = _Resolved(red, green, blue, opacity)
-            RGBColorSpace.sRGBLinear -> provider = _Resolved(red, green, blue, opacity)
-            RGBColorSpace.displayP3 -> provider = DisplayP3(red, green, blue, opacity)
+        provider = when (colorSpace) {
+            RGBColorSpace.sRGB -> _Resolved(red, green, blue, opacity)
+            RGBColorSpace.sRGBLinear -> _Resolved(red, green, blue, opacity)
+            RGBColorSpace.displayP3 -> DisplayP3(red, green, blue, opacity)
         }
     }
 
@@ -66,10 +65,10 @@ class Color : View {
         white: Double,
         opacity: Double = 1.0
     ) {
-        when (colorSpace) {
-            RGBColorSpace.sRGB -> provider = _Resolved(white, white, white, opacity)
-            RGBColorSpace.sRGBLinear -> provider = _Resolved(white, white, white, opacity)
-            RGBColorSpace.displayP3 -> provider = DisplayP3(white, white, white, opacity)
+        provider = when (colorSpace) {
+            RGBColorSpace.sRGB -> _Resolved(white, white, white, opacity)
+            RGBColorSpace.sRGBLinear -> _Resolved(white, white, white, opacity)
+            RGBColorSpace.displayP3 -> DisplayP3(white, white, white, opacity)
         }
     }
 

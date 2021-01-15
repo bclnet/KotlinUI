@@ -18,11 +18,9 @@ class Text : View {
 
         override fun equals(other: Any?): Boolean {
             if (other !is Storage) return false
-            val s = other as Storage
             return when (this) {
-                is verbatim -> s is verbatim && verbatim.equals(s.verbatim)
-                is anyTextStorage -> s is anyTextStorage && anyTextStorage.equals(s.anyTextStorage)
-                else -> false
+                is verbatim -> other is verbatim && verbatim == other.verbatim
+                is anyTextStorage -> other is anyTextStorage && anyTextStorage == other.anyTextStorage
             }
         }
 
@@ -39,11 +37,9 @@ class Text : View {
 
         override fun equals(other: Any?): Boolean {
             if (other !is Modifier) return false
-            val s = other as Modifier
             return when (this) {
-                is color -> s is color && color!!.equals(s.color!!)
-                is font -> s is font && font!!.equals(s.font!!)
-                else -> false
+                is color -> other is color && color!! == other.color!!
+                is font -> other is font && font!! == other.font!!
             }
         }
 
@@ -87,9 +83,8 @@ class Text : View {
 
     override fun equals(other: Any?): Boolean {
         if (other !is Text) return false
-        val s = other as Text
-        return _storage.equals(s._storage) &&
-            _modifiers.equals(s._modifiers)
+        return _storage == other._storage &&
+            _modifiers == other._modifiers
     }
 
     override fun hashCode(): Int {
@@ -110,7 +105,7 @@ class Text : View {
     }
 }
 
-class TextSerializer : KSerializer<Text> {
+internal class TextSerializer : KSerializer<Text> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("Text") {
         }
@@ -134,11 +129,10 @@ fun Text.font(font: Font?): Text =
 private fun Text.textWithModifier(modifier: Text.Modifier): Text {
     val modifiers: Array<Text.Modifier> = Arrays.copyOf(_modifiers, _modifiers.size + 1)
     modifiers[modifiers.size - 1] = modifier
-    val storage = _storage
-    return when (storage) {
+    return when (val storage = _storage) {
         is Text.Storage.verbatim -> Text(storage.verbatim, modifiers)
         is Text.Storage.anyTextStorage -> Text(storage.anyTextStorage, modifiers)
-        else -> error("${storage}")
+        else -> error("$storage")
     }
 }
 

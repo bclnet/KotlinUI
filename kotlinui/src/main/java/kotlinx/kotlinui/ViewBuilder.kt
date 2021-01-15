@@ -2,11 +2,8 @@ package kotlinx.kotlinui
 
 import kotlinx.system.*
 
-// https://kotlinlang.org/docs/reference/lambdas.html
-// Function literals with receiver
 // https://kotlinlang.org/docs/reference/type-safe-builders.html
-
-class ViewBuilder {
+object ViewBuilder {
     fun get(): EmptyView = EmptyView()
 
     operator fun <Content : View> get(content: Content): Content = content

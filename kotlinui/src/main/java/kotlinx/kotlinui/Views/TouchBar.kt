@@ -12,7 +12,7 @@ class TouchBar<Content : View>(
     content: ViewBuilder.() -> Content
 ) : View {
     internal val container: TouchBarContainer = TouchBarContainer(id)
-    internal val content: Content = content(ViewBuilder())
+    internal val content: Content = content(ViewBuilder)
 
     override val body: View
         get() = error("Not Implemented")

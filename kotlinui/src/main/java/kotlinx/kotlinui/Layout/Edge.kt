@@ -5,22 +5,31 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import java.util.EnumSet
 
-@Serializable(with = Axis::class)
-enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
+@Serializable(with = EdgeSerializer::class)
+enum class Edge(val rawValue: Byte) {
     top(1),
     leading(2),
     bottom(4),
     trailing(8);
 
-    object Set : KSerializer<EnumSet<Edge>> {
+    object Set {
+        @Serializable(with = EdgeSetSerializer::class)
         var top: EnumSet<Edge> = EnumSet.of(Edge.top)
+        @Serializable(with = EdgeSetSerializer::class)
         var leading: EnumSet<Edge> = EnumSet.of(Edge.leading)
+        @Serializable(with = EdgeSetSerializer::class)
         var bottom: EnumSet<Edge> = EnumSet.of(Edge.bottom)
+        @Serializable(with = EdgeSetSerializer::class)
         var trailing: EnumSet<Edge> = EnumSet.of(Edge.trailing)
+        @Serializable(with = EdgeSetSerializer::class)
         var horizontal: EnumSet<Edge> = EnumSet.of(Edge.leading, Edge.trailing)
+        @Serializable(with = EdgeSetSerializer::class)
         var vertical: EnumSet<Edge> = EnumSet.of(Edge.top, Edge.bottom)
+        @Serializable(with = EdgeSetSerializer::class)
         var all: EnumSet<Edge> = EnumSet.allOf(Edge::class.java)
+    }
 
+    internal object EdgeSetSerializer : KSerializer<EnumSet<Edge>> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Edge.Set", PrimitiveKind.STRING)
 
@@ -37,7 +46,9 @@ enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
             }
         }
     }
+}
 
+internal object EdgeSerializer : KSerializer<Edge> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Edge", PrimitiveKind.STRING)
 
@@ -47,7 +58,6 @@ enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
             Edge.leading -> encoder.encodeString("leading")
             Edge.bottom -> encoder.encodeString("bottom")
             Edge.trailing -> encoder.encodeString("trailing")
-            else -> error("$value")
         }
     }
 
@@ -61,14 +71,14 @@ enum class Edge(val rawValue: Byte) : KSerializer<Edge> {
         }
 }
 
-@Serializable(with = EdgeInsets::class)
+@Serializable(with = EdgeInsetsSerializer::class)
 class EdgeInsets constructor(
     var top: Float = 0f,
     var leading: Float = 0f,
     var bottom: Float = 0f,
     var trailing: Float = 0f
-) : KSerializer<EdgeInsets> {
-    constructor(all: Float) : this(all, all, all, all) {}
+) {
+    constructor(all: Float) : this(all, all, all, all)
 
     override fun equals(other: Any?): Boolean {
         if (other !is EdgeInsets) return false
@@ -84,10 +94,11 @@ class EdgeInsets constructor(
         result = 31 * result + leading.hashCode()
         result = 31 * result + bottom.hashCode()
         result = 31 * result + trailing.hashCode()
-        result = 31 * result + descriptor.hashCode()
         return result
     }
+}
 
+internal object EdgeInsetsSerializer : KSerializer<EdgeInsets> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("EdgeInsets") {
             element<Float>("top")
@@ -104,7 +115,17 @@ class EdgeInsets constructor(
             encodeFloatElement(descriptor, 3, value.trailing)
         }
 
-//    override fun deserialize(decoder: Decoder): EdgeInsets =
+    override fun deserialize(decoder: Decoder): EdgeInsets =
+        decoder.decodeStructure(descriptor) {
+            EdgeInsets(
+                decodeFloatElement(descriptor, 0),
+                decodeFloatElement(descriptor, 1),
+                decodeFloatElement(descriptor, 2),
+                decodeFloatElement(descriptor, 3)
+            )
+        }
+
+    //    override fun deserialize(decoder: Decoder): EdgeInsets =
 //        decoder.decodeStructure(descriptor) {
 //            var top = 0f
 //            var leading = 0f
@@ -122,14 +143,4 @@ class EdgeInsets constructor(
 //            }
 //            EdgeInsets(top, leading, bottom, trailing)
 //        }
-
-    override fun deserialize(decoder: Decoder): EdgeInsets =
-        decoder.decodeStructure(descriptor) {
-            EdgeInsets(
-                decodeFloatElement(descriptor, 0),
-                decodeFloatElement(descriptor, 1),
-                decodeFloatElement(descriptor, 2),
-                decodeFloatElement(descriptor, 3)
-            )
-        }
 }

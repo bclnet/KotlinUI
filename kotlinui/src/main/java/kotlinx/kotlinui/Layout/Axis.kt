@@ -4,10 +4,12 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = Axis::class)
-enum class Axis : KSerializer<Axis> {
-    horizontal, vertical;
+@Serializable(with = AxisSerializer::class)
+enum class Axis {
+    horizontal, vertical
+}
 
+internal object AxisSerializer : KSerializer<Axis> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Axis", PrimitiveKind.STRING)
 
@@ -15,7 +17,6 @@ enum class Axis : KSerializer<Axis> {
         when (value) {
             Axis.horizontal -> encoder.encodeString("horizontal")
             Axis.vertical -> encoder.encodeString("vertical")
-            else -> error("$value")
         }
     }
 

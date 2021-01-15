@@ -7,7 +7,7 @@ import java.lang.Exception
 
 class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
     // The json preview's content.
-    val content: Content = content(ViewBuilder())
+    val content: Content = content(ViewBuilder)
 
     // The json preview's content.
     lateinit var content2: AnyView

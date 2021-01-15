@@ -11,7 +11,7 @@ class Toggle<Label : View>(
     label: ViewBuilder.() -> Label
 ) : View {
     var __isOn: Binding<Boolean> = isOn
-    var _label: Label = label(ViewBuilder())
+    var _label: Label = label(ViewBuilder)
 
     // where Label == ToggleStyleConfiguration.Label
     //public Constructor(configuration: ToggleStyleConfiguration) : this() {

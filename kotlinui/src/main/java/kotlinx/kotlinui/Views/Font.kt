@@ -4,8 +4,7 @@ class Font(var provider: AnyFontBox) {
     open class AnyFontBox {
         override fun equals(other: Any?): Boolean {
             if (other !is AnyFontBox) return false
-            val s = other as AnyFontBox
-            return this.equals(s)
+            return this == other
         }
 
         override fun hashCode(): Int = this.hashCode()
@@ -14,8 +13,9 @@ class Font(var provider: AnyFontBox) {
     class SystemProvider(var size: Float, var weight: Weight, var design: Design) : AnyFontBox() {
         override fun equals(other: Any?): Boolean {
             if (other !is SystemProvider) return false
-            val s = other as SystemProvider
-            return size == s.size && weight.equals(s.weight) && design.equals(s.design)
+            return size == other.size &&
+                weight == other.weight &&
+                design == other.design
         }
 
         override fun hashCode(): Int {
@@ -30,8 +30,8 @@ class Font(var provider: AnyFontBox) {
     class TextStyleProvider(var style: TextStyle, var design: Design) : AnyFontBox() {
         override fun equals(other: Any?): Boolean {
             if (other !is TextStyleProvider) return false
-            val s = other as TextStyleProvider
-            return style.equals(s.style) && design.equals(s.design)
+            return style == other.style &&
+                design == other.design
         }
 
         override fun hashCode(): Int {
@@ -44,13 +44,10 @@ class Font(var provider: AnyFontBox) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is Font) return false
-        val s = other as Font
-        return provider.equals(s.provider)
+        return provider == other.provider
     }
 
-    override fun hashCode(): Int {
-        return provider.hashCode()
-    }
+    override fun hashCode(): Int = provider.hashCode()
 
     class Weight(var value: Float) {
         companion object {

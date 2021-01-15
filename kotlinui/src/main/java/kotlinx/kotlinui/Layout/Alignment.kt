@@ -20,7 +20,7 @@ class Alignment(var horizontal: HorizontalAlignment, var vertical: VerticalAlign
     }
 }
 
-object AlignmentSerializer : KSerializer<Alignment> {
+internal object AlignmentSerializer : KSerializer<Alignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Alignment", PrimitiveKind.STRING)
 
@@ -59,7 +59,7 @@ enum class HorizontalAlignment {
     leading, center, trailing
 }
 
-object HorizontalAlignmentSerializer : KSerializer<HorizontalAlignment> {
+internal object HorizontalAlignmentSerializer : KSerializer<HorizontalAlignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("HorizontalAlignment", PrimitiveKind.STRING)
 
@@ -68,7 +68,6 @@ object HorizontalAlignmentSerializer : KSerializer<HorizontalAlignment> {
             HorizontalAlignment.leading -> encoder.encodeString("leading")
             HorizontalAlignment.center -> encoder.encodeString("center")
             HorizontalAlignment.trailing -> encoder.encodeString("trailing")
-            else -> error("$value")
         }
     }
 
@@ -86,7 +85,7 @@ enum class VerticalAlignment {
     top, center, bottom, firstTextBaseline, lastTextBaseline
 }
 
-object VerticalAlignmentSerializer : KSerializer<VerticalAlignment> {
+internal object VerticalAlignmentSerializer : KSerializer<VerticalAlignment> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("VerticalAlignment", PrimitiveKind.STRING)
 
@@ -97,7 +96,6 @@ object VerticalAlignmentSerializer : KSerializer<VerticalAlignment> {
             VerticalAlignment.bottom -> encoder.encodeString("bottom")
             VerticalAlignment.firstTextBaseline -> encoder.encodeString("firstTextBaseline")
             VerticalAlignment.lastTextBaseline -> encoder.encodeString("lastTextBaseline")
-            else -> error("$value")
         }
     }
 

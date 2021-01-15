@@ -10,7 +10,7 @@ class EmptyView : View {
         get() = error("Never")
 }
 
-class EmptyViewSerializer : KSerializer<EmptyView> {
+internal object EmptyViewSerializer : KSerializer<EmptyView> {
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("EmptyView") {
         }

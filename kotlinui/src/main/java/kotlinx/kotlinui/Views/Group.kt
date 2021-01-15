@@ -3,7 +3,7 @@ package kotlinx.kotlinui
 class Group<Content : View>(
     content: ViewBuilder.() -> Content
 ) : View {
-    val _content: Content = content(ViewBuilder())
+    val _content: Content = content(ViewBuilder)
 
     override val body: Never
         get() = error("Never")
