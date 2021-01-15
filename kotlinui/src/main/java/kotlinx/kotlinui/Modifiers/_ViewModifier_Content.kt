@@ -1,8 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
-
-class _ViewModifier_Content<Modifier : ViewModifier> : KTypeBase1<Modifier>(), View {
+class _ViewModifier_Content<Modifier : ViewModifier> : View {
     override val body: View
         get() = error("Not Implemented")
 }

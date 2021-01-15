@@ -2,13 +2,13 @@ package kotlinx.kotlinui
 
 class Font(var provider: AnyFontBox) {
     open class AnyFontBox {
-        override fun hashCode(): Int = this.hashCode()
-
         override fun equals(other: Any?): Boolean {
             if (other !is AnyFontBox) return false
             val s = other as AnyFontBox
             return this.equals(s)
         }
+
+        override fun hashCode(): Int = this.hashCode()
     }
 
     class SystemProvider(var size: Float, var weight: Weight, var design: Design) : AnyFontBox() {
@@ -44,8 +44,8 @@ class Font(var provider: AnyFontBox) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is Font) return false
-        val s = other as Font?
-        return provider.equals(s!!.provider)
+        val s = other as Font
+        return provider.equals(s.provider)
     }
 
     override fun hashCode(): Int {

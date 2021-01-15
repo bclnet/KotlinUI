@@ -1,9 +1,9 @@
 package kotlinx.kotlinui
 
+import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase1
 
 //@Serializable(with = TextFieldSerializer::class)
 class TextField<Label : Text> internal constructor(
@@ -11,7 +11,7 @@ class TextField<Label : Text> internal constructor(
     val label: Label,
     val onEditingChanged: (Boolean) -> Unit,
     val onCommit: () -> Unit,
-) : KTypeBase1<Label>(), View {
+) : View {
     constructor(title: String, text: Label, onEditingChanged: (Boolean) -> Unit, onCommit: () -> Unit)
         : this(Binding.constant(title), text, onEditingChanged, onCommit) {
     }
@@ -20,8 +20,14 @@ class TextField<Label : Text> internal constructor(
         : this(Binding.constant(titleKey.key), text, onEditingChanged, onCommit) {
     }
 
-    override val body: View
+    override val body: Text
         get() = label
+
+    companion object {
+        fun register() {
+            DynaType.register<TextField<Text>>()
+        }
+    }
 }
 
 //class TextFieldSerializer<Label : Text>(private val labelSerializer: KSerializer<Label>) : KSerializer<TextField<Label>> {

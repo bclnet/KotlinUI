@@ -4,7 +4,6 @@ import android.graphics.Rect
 
 interface Shape : Animatable, View {
     fun path(rect: Rect): Path
-    //@JvmDefault override val body: View = exitProcess(0)
 }
 
 interface ShapeStyle

@@ -1,16 +1,14 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
-
 class HStack<Content : View>(
     alignment: VerticalAlignment = VerticalAlignment.center,
     spacing: Float? = null,
-    content: () -> Content
-) : KTypeBase1<Content>(), View {
+    content: ViewBuilder.() -> Content
+) : View {
     var _tree: _VariadicView_Tree<_HStackLayout, Content> =
-        _VariadicView_Tree(_HStackLayout(alignment, spacing), content())
+        _VariadicView_Tree(_HStackLayout(alignment, spacing), content(ViewBuilder()))
 
-    override val body: View
+    override val body: Never
         get() = error("Never")
 }
 

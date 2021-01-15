@@ -1,63 +1,56 @@
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.*
+import kotlinx.serialization.json.*
+import kotlinx.serialization.modules.*
+import java.lang.Exception
 
-class JsonPreview<Content : View>(content: () -> Content) : View {
+class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
+    // The json preview's content.
+    val content: Content = content(ViewBuilder())
 
     // The json preview's content.
-    val content: Content = content()
-
-    // The json preview's content.
-    var content2: AnyView? = null
+    lateinit var content2: AnyView
 
     // The json preview's data.
-//     var data: ByteArray
+    lateinit var data: String
 
     init {
-        // data
-//        val view = self.content
-//        val context = JsonContext[view]
-//        defer {
-//            JsonContext.remove(view)
-//        }
-//        do {
-//            let encoder = JSONEncoder()
-//            encoder.userInfo[.jsonContext] = context
-//            encoder.outputFormatting = .prettyPrinted
-//            data = try encoder.encode(JsonUI(view: view))
-//        } catch DynaTypeError.typeNotCodable(let mode, let named) {
-//            data = "typeNotCodable mode: \(mode) named: \(named)".data(using: .utf8)!
-//            content2 = AnyView(Text("ERROR"))
-//            return
-//        } catch {
-//            data = "\(error)".data(using: .utf8)!
-//            content2 = AnyView(Text("ERROR"))
-//            return
-//        }
-//
-//        // content2
-//        do {
-//            let decoder = JSONDecoder()
-//            decoder.userInfo[.json] = data
-//            let jsonUI = try decoder.decode(JsonUI.self, from: data)
-//            content2 = jsonUI.anyView ?? AnyView(Text("ERROR:notAnyView"))
-//        } catch DynaTypeError.typeNotFound {
-//            content2 = AnyView(Text("ERROR:typeNotFound"))
-//        } catch DynaTypeError.typeParseError {
-//            content2 = AnyView(Text("ERROR:typeParseError"))
-//        } catch DynaTypeError.typeNameError(let actual, let expected) {
-//            content2 = AnyView(Text("ERROR:typeNameError actual: \(actual) expected: \(expected)"))
-//        } catch DynaTypeError.typeNotCodable(let mode, let key) {
-//            content2 = AnyView(Text("ERROR:typeNotCodable mode: \(mode) named: \(key)"))
-//        } catch {
-//            content2 = AnyView(Text("ERROR:\(error)" as String))
-//            //data = "\(error)\n".data(using: .utf8)! + data
-//            return
-//        }
+        val view = this.content
+        val context = JsonContext[view]
+        with(context) {
+            // data
+            try {
+                val json = Json {
+                    serializersModule = SerializersModule { contextual(JsonUISerializer.UserInfoJsonContext(context)) }
+                    prettyPrint = true
+                }
+                data = json.encodeToString(JsonUI.serializer(), JsonUI(view))
+                println(data)
+            } catch (e: Exception) {
+                data = e.localizedMessage!!
+                content2 = AnyView(Text("ERROR"))
+                return@with
+            }
+
+            // content2
+            try {
+                val json = Json {
+                    serializersModule = SerializersModule { contextual(JsonUISerializer.UserInfoJson(data)) }
+                }
+                val jsonUI = json.decodeFromString(JsonUI.serializer(), data)
+                content2 = jsonUI.anyView ?: AnyView(Text("ERROR:notAnyView"))
+            } catch (e: Exception) {
+                data = e.localizedMessage!!
+                content2 = AnyView(Text("ERROR: ${e.localizedMessage}"))
+                return@with
+            }
+        }
+        JsonContext.remove(view)
     }
 
-    override var body: View
-        = Text("Body")
+    override val body: View
+        get() = Text("Body")
 //        get() = GeometryReader { geometry ->
 //            VStack {
 //                HStack {

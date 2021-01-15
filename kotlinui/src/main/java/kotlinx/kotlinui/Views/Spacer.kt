@@ -1,8 +1,14 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase
+import kotlinx.kotlinuijson.DynaType
 
-class Spacer : KTypeBase(), View {
-    override val body: View
+class Spacer : View {
+    override val body: Never
         get() = error("Never")
+
+    companion object {
+        fun register() {
+            DynaType.register<Spacer>()
+        }
+    }
 }

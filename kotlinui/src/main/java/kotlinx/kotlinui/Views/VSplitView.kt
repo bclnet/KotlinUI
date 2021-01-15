@@ -1,18 +1,24 @@
 package kotlinx.kotlinui
 
+import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase1
 
 @Serializable(with = VSplitViewSerializer::class)
 class VSplitView<Content : View>(
-    content: () -> Content
-) : KTypeBase1<Content>(), View {
-    val content: Content = content()
+    content: ViewBuilder.() -> Content
+) : View {
+    val content: Content = content(ViewBuilder())
 
     override val body: View
         get() = error("Not Implemented")
+
+    companion object {
+        fun register() {
+            DynaType.register<VSplitView<AnyView>>()
+        }
+    }
 }
 
 class VSplitViewSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<VSplitView<Content>> {

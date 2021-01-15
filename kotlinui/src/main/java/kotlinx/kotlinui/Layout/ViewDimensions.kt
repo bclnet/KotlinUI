@@ -9,9 +9,9 @@ class ViewDimensions {
 
     operator fun get(guide: VerticalAlignment): Float = 0f
 
-    override fun equals(o: Any?): Boolean {
-        if (o !is ViewDimensions) return false
-        val s = o as ViewDimensions
+    override fun equals(other: Any?): Boolean {
+        if (other !is ViewDimensions) return false
+        val s = other as ViewDimensions
         return width.equals(s.width) &&
             height.equals(s.height)
     }

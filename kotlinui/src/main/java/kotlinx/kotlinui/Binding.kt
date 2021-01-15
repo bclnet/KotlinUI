@@ -5,7 +5,9 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = BindingSerializer::class)
-class Binding<Value> private constructor(get: () -> Value) {
+class Binding<Value> private constructor(
+    get: () -> Value
+) {
     var transaction: Transaction = Transaction()
     var location: AnyLocation<Value> = AnyLocation<Value>(get())
     private var _value: Value = get()

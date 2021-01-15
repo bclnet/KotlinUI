@@ -1,8 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase
-
-class Never : KTypeBase(), View {
-    override val body: View
+class Never : View {
+    override val body: Never
         get() = error("Never")
 }

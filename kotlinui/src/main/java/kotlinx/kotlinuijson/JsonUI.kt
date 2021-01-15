@@ -9,30 +9,49 @@ import kotlinx.system.*
 @Serializable(with = JsonUISerializer::class)
 class JsonUI(view: View) {
     val body: Any = view
+    val anyView: AnyView?
+        get() = body as? AnyView
 
     // MARK: - Register
     private val registered: Boolean = registerDefault()
 
     private fun registerDefault(): Boolean {
         Divider.register()
+        Spacer.register()
+        Stepper.register()
+        Text.register()
+        TextField.register()
+        Toggle.register()
+        TouchBar.register()
+        TupleView.register()
+        VSplitView.register()
+        VStack.register()
+        ZStack.register()
         return true
     }
 }
 
-object JsonUISerializer : KSerializer<JsonUI> {
+internal object JsonUISerializer : KSerializer<JsonUI> {
+    internal class UserInfoJson(val data: String) : KSerializerUserInfo<UserInfoJson>()
+    internal class UserInfoJsonContext(val context: JsonContext) : KSerializerUserInfo<UserInfoJsonContext>()
+
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("JsonUI") {
-            element<Float>("top")
+            element<JsonContext>("_ui")
         }
 
-    override fun serialize(encoder: Encoder, value: JsonUI) =
+    override fun serialize(encoder: Encoder, value: JsonUI) {
+        val context = (encoder.serializersModule.getContextual(UserInfoJsonContext::class) as UserInfoJsonContext).context
         encoder.encodeStructure(descriptor) {
+            encodeSerializableElement(descriptor, 0, JsonContextSerializer, context)
         }
+    }
 
-    override fun deserialize(decoder: Decoder): JsonUI =
+    override fun deserialize(decoder: Decoder): JsonUI {
         decoder.decodeStructure(descriptor) {
             error("")
         }
+    }
 }
 
 //

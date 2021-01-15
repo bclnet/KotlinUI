@@ -1,11 +1,11 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
+class Group<Content : View>(
+    content: ViewBuilder.() -> Content
+) : View {
+    val _content: Content = content(ViewBuilder())
 
-class Group<Content : View>(content: () -> Content) : KTypeBase1<Content>(), View {
-    var _content: Content = content()
-
-    override val body: View
+    override val body: Never
         get() = error("Never")
 }
 

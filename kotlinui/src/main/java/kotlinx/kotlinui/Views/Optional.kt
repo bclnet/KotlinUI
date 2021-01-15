@@ -1,9 +1,7 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
-
-class Optional<Wrapped : View> : KTypeBase1<Wrapped>(), View {
-    override val body: View
+class Optional<Wrapped : View> : View {
+    override val body: Never
         get() = error("Never")
 }
 

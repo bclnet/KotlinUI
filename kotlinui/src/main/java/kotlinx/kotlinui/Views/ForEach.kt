@@ -1,11 +1,9 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase3
-
 class ForEach<Data : List<Any?>, ID, Content : View>(
     var data: Data,
-    var content: (Any?) -> Content
-) : KTypeBase3<Data, ID, Content>(), View {
+    var content: ViewBuilder.(Any?) -> Content
+) : View {
 
     //where ID == Data.Element.ID, Content: View, Data.Element: Identifiable {
 //    constructor(data: Data, content: Func1<Object?, Content>) {
@@ -24,7 +22,7 @@ class ForEach<Data : List<Any?>, ID, Content : View>(
     //    this.content = content;
     //}
 
-    override val body: View
+    override val body: Never
         get() = error("Never")
 }
 

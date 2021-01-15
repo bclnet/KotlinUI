@@ -1,23 +1,14 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase2
-
 class _ConditionalContent<TrueContent : View, FalseContent : View>(
-    //var _storage: Storage<TrueContent, FalseContent>
-    var _storage: Storage
-) : KTypeBase2<TrueContent, FalseContent>(), View {
-//    enum class StorageType { trueContent, falseContent }
-//    class Storage<TrueContent : View, FalseContent : View>(var value: StorageType) {
-//        var trueContent: TrueContent? = null
-//        var falseContent: FalseContent? = null
-//    }
-
+    val _storage: Storage
+) : View {
     sealed class Storage {
         data class trueContent<TrueContent : View>(val trueContent: TrueContent) : Storage()
         data class falseContent<FalseContent : View>(val falseContent: FalseContent) : Storage()
     }
 
-    override val body: View
+    override val body: Never
         get() = error("Never")
 }
 

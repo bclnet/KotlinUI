@@ -1,21 +1,27 @@
 package kotlinx.kotlinui
 
+import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase1
 
 @Serializable(with = TouchBarSerializer::class)
 class TouchBar<Content : View>(
     id: String?,
-    content: () -> Content
-) : KTypeBase1<Content>(), View {
+    content: ViewBuilder.() -> Content
+) : View {
     internal val container: TouchBarContainer = TouchBarContainer(id)
-    internal val content: Content = content()
+    internal val content: Content = content(ViewBuilder())
 
     override val body: View
         get() = error("Not Implemented")
+
+    companion object {
+        fun register() {
+            DynaType.register<TouchBar<AnyView>>()
+        }
+    }
 }
 
 class TouchBarSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<TouchBar<Content>> {

@@ -1,20 +1,21 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlinx.kotlinui
 
 import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase
+import kotlin.reflect.typeOf
 
 @Serializable(with = DividerSerializer::class)
-class Divider : KTypeBase(), View {
-    override val body: View
+class Divider : View {
+    override val body: Never
         get() = error("Never")
 
     companion object {
-        //: Register
         fun register() {
-            DynaType.register(Divider::class)
+            DynaType.register<Divider>()
         }
     }
 }

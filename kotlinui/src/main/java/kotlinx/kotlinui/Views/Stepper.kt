@@ -1,13 +1,13 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
+import kotlinx.kotlinuijson.DynaType
 
 class Stepper<Label : View> private constructor(
     var onIncrement: (() -> Unit)?,
     var onDecrement: (() -> Unit)?,
     var onEditingChanged: (Boolean) -> Unit = {},
     var label: Label
-) : KTypeBase1<Label>(), View {
+) : View {
     constructor(
         onIncrement: (() -> Unit)?,
         onDecrement: (() -> Unit)?,
@@ -25,8 +25,15 @@ class Stepper<Label : View> private constructor(
 //        self.onEditingChanged = onEditingChanged
 //    }
 
-    override val body: View
+    override val body: Label
         get() = label
+
+    companion object {
+        fun register() {
+//            DynaType.register<Stepper<EmptyView>>()
+            DynaType.register<Stepper<AnyView>>()
+        }
+    }
 }
 
 //

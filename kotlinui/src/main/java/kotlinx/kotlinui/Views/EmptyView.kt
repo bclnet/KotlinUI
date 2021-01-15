@@ -3,11 +3,10 @@ package kotlinx.kotlinui
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase
 
 @Serializable(with = EmptyViewSerializer::class)
-class EmptyView : KTypeBase(), View {
-    override val body: View
+class EmptyView : View {
+    override val body: Never
         get() = error("Never")
 }
 

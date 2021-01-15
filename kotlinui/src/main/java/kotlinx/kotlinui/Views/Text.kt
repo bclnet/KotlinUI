@@ -1,96 +1,74 @@
 package kotlinx.kotlinui
 
 import android.os.Bundle
-import kotlinx.system.KTypeBase
+import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import java.util.Arrays
 
 @Serializable(with = TextSerializer::class)
-class Text : KTypeBase, View {
+class Text : View {
     class AnyTextStorage<Storage>(var storage: Storage)
     class AnyTextModifier
 
-//    sealed class Storage {
-//        data class verbatim(val verbatim: String) : Storage()
-//        data class anyTextStorage(val anyTextStorage: AnyTextStorage<String>?) : Storage()
-//    }
-
-    enum class StorageType { verbatim, anyTextStorage }
-    class Storage(var type: StorageType) {
-        var verbatim: String? = null
-        var anyTextStorage: AnyTextStorage<String>? = null
+    sealed class Storage {
+        data class verbatim(val verbatim: String) : Storage()
+        data class anyTextStorage(val anyTextStorage: AnyTextStorage<String>) : Storage()
 
         override fun equals(other: Any?): Boolean {
             if (other !is Storage) return false
             val s = other as Storage
-            return if (type == StorageType.verbatim &&
-                s.type == StorageType.verbatim
-            ) verbatim.equals(s.verbatim)
-            else if (type == StorageType.anyTextStorage && s.type == StorageType.anyTextStorage) anyTextStorage!!.storage.equals(
-                s.anyTextStorage!!.storage
-            )
-            else false
+            return when (this) {
+                is verbatim -> s is verbatim && verbatim.equals(s.verbatim)
+                is anyTextStorage -> s is anyTextStorage && anyTextStorage.equals(s.anyTextStorage)
+                else -> false
+            }
         }
 
-        override fun hashCode(): Int {
-            var result = type.hashCode()
-            result = 31 * result + (verbatim?.hashCode() ?: 0)
-            result = 31 * result + (anyTextStorage?.hashCode() ?: 0)
-            return result
-        }
+        override fun hashCode(): Int =
+            when (this) {
+                is verbatim -> verbatim.hashCode()
+                is anyTextStorage -> anyTextStorage.hashCode()
+            }
     }
 
-    enum class ModifierType { color, font }
-    class Modifier(var type: ModifierType) {
-        var color: Color? = null
-        var font: Font? = null
+    sealed class Modifier {
+        data class color(val color: Color?) : Modifier()
+        data class font(val font: Font?) : Modifier()
 
-        // case italic
-        // case weight(Font.Weight?)
-        // case kerning(CGFloat)
-        // case tracking(CGFloat)
-        // case baseline(CGFloat)
-        // case rounded
-        // case anyTextModifier(AnyTextModifier)
         override fun equals(other: Any?): Boolean {
             if (other !is Modifier) return false
             val s = other as Modifier
-            return if (type == ModifierType.color &&
-                s.type == ModifierType.color
-            ) color!!.equals(s.color)
-            else if (type == ModifierType.font && s.type == ModifierType.font) font!!.equals(
-                s.font
-            )
-            else false
+            return when (this) {
+                is color -> s is color && color!!.equals(s.color!!)
+                is font -> s is font && font!!.equals(s.font!!)
+                else -> false
+            }
         }
 
-        override fun hashCode(): Int {
-            var result = type.hashCode()
-            result = 31 * result + (color?.hashCode() ?: 0)
-            result = 31 * result + (font?.hashCode() ?: 0)
-            return result
-        }
+        override fun hashCode(): Int =
+            when (this) {
+                is color -> color.hashCode()
+                is font -> font.hashCode()
+            }
     }
 
-    var _storage: Storage = Storage(StorageType.verbatim)
-    var _modifiers: Array<Modifier> = arrayOf()
+    lateinit var _storage: Storage
+    lateinit var _modifiers: Array<Modifier>
 
     constructor(verbatim: String) {
-        _storage = Storage(StorageType.verbatim)
-        _storage.verbatim = verbatim
+        _storage = Storage.verbatim(verbatim)
+        _modifiers = arrayOf()
     }
 
     internal constructor(verbatim: String, modifiers: Array<Modifier>) {
-        _storage = Storage(StorageType.verbatim)
-        _storage.verbatim = verbatim
+        _storage = Storage.verbatim(verbatim)
         _modifiers = modifiers
     }
 
     internal constructor(anyTextStorage: AnyTextStorage<String>, modifiers: Array<Modifier>) {
-        _storage = Storage(StorageType.anyTextStorage)
-        _storage.anyTextStorage = anyTextStorage
+        _storage = Storage.anyTextStorage(anyTextStorage)
         _modifiers = modifiers
     }
 
@@ -104,8 +82,7 @@ class Text : KTypeBase, View {
         bundle: Bundle? = null,
         comment: String? = null
     ) {
-        _storage = Storage(StorageType.anyTextStorage)
-        _storage.anyTextStorage = AnyTextStorage<String>(key.key)
+        _storage = Storage.anyTextStorage(AnyTextStorage<String>(key.key))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -122,8 +99,15 @@ class Text : KTypeBase, View {
         return result
     }
 
-    override val body: View
+    override val body: Never
         get() = error("Never")
+
+    companion object {
+        fun register() {
+            DynaType.register<Text>()
+//            DynaType.register<Text.TruncationMode>()
+        }
+    }
 }
 
 class TextSerializer : KSerializer<Text> {
@@ -141,25 +125,20 @@ class TextSerializer : KSerializer<Text> {
         }
 }
 
-fun Text.foregroundColor(color: Color?): Text {
-    val modifier = Text.Modifier(Text.ModifierType.color)
-    modifier.color = color
-    return textWithModifier(modifier)
-}
+fun Text.foregroundColor(color: Color?): Text =
+    textWithModifier(Text.Modifier.color(color))
 
-fun Text.font(font: Font?): Text {
-    val modifier = Text.Modifier(Text.ModifierType.font)
-    modifier.font = font
-    return textWithModifier(modifier)
-}
+fun Text.font(font: Font?): Text =
+    textWithModifier(Text.Modifier.font(font))
 
 private fun Text.textWithModifier(modifier: Text.Modifier): Text {
     val modifiers: Array<Text.Modifier> = Arrays.copyOf(_modifiers, _modifiers.size + 1)
     modifiers[modifiers.size - 1] = modifier
-    when (_storage.type) {
-        Text.StorageType.verbatim -> return Text(_storage.verbatim!!, modifiers)
-        Text.StorageType.anyTextStorage -> return Text(_storage.anyTextStorage as Text.AnyTextStorage<String>, modifiers)
-        else -> error("${_storage.type}")
+    val storage = _storage
+    return when (storage) {
+        is Text.Storage.verbatim -> Text(storage.verbatim, modifiers)
+        is Text.Storage.anyTextStorage -> Text(storage.anyTextStorage, modifiers)
+        else -> error("${storage}")
     }
 }
 

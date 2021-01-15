@@ -1,7 +1,5 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase1
-
 interface PickerStyle
 
 internal fun <SelectionValue> PickerStyle._makeView(value: _GraphValue<_PickerValue<PickerStyle, SelectionValue>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
@@ -27,11 +25,11 @@ internal fun <SelectionValue> PopUpButtonPickerStyle._makeView(value: _GraphValu
 internal fun <SelectionValue> PopUpButtonPickerStyle._makeViewList(value: _GraphValue<_PickerValue<PopUpButtonPickerStyle, SelectionValue>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")
 
 class Picker<Label : View, SelectionValue, Content : View>(
-    var selection: Binding<SelectionValue>,
-    var label: Label,
-    content: () -> Content
-) : KTypeBase1<Content>(), View {
-    var content: Content = content()
+    val selection: Binding<SelectionValue>,
+    val label: Label,
+    content: ViewBuilder.() -> Content
+) : View {
+    val content: Content = content(ViewBuilder())
 
     //where Label == Text {
 //    constructor(
@@ -50,8 +48,10 @@ class Picker<Label : View, SelectionValue, Content : View>(
 
     override val body: View
         get() = HStack {
-            label
-            this.content
+            get(
+                label,
+                this@Picker.content
+            )
         }
 }
 

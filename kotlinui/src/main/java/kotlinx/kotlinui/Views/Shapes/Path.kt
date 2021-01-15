@@ -3,16 +3,22 @@ package kotlinx.kotlinui
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.util.SizeF
-import kotlinx.system.KTypeBase
 import android.graphics.Path as CGPath
 
 class FixedRoundedRect(var rect: Rect, var cornerSize: SizeF, var style: RoundedCornerStyle) {
-    override fun equals(o: Any?): Boolean {
-        if (o !is FixedRoundedRect) return false
-        val s = o as FixedRoundedRect
+    override fun equals(other: Any?): Boolean {
+        if (other !is FixedRoundedRect) return false
+        val s = other as FixedRoundedRect
         return rect.equals(s.rect) &&
             cornerSize.equals(s.cornerSize) &&
             style.equals(s.style)
+    }
+
+    override fun hashCode(): Int {
+        var result = rect.hashCode()
+        result = 31 * result + cornerSize.hashCode()
+        result = 31 * result + style.hashCode()
+        return result
     }
 }
 
@@ -64,7 +70,7 @@ internal class StrokedPath(var path: Path, var style: StrokeStyle) {
     }
 }
 
-class Path : KTypeBase, Shape {
+class Path : Shape {
     internal class PathBox(var cgPath: CGPath) {
         override fun equals(other: Any?): Boolean {
             if (other !is PathBox) return false

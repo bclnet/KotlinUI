@@ -1,20 +1,15 @@
+@file:OptIn(ExperimentalStdlibApi::class)
 package kotlinx.kotlinuijson
 
-import kotlinx.kotlinui.EdgeInsets
-import kotlinx.kotlinui.ZStackSerializer
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
+import kotlinx.serialization.serializer
 import java.util.*
-import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
+@Serializable(with = JsonContextSerializer::class)
 class JsonContext {
     // MARK: - Static
     companion object {
@@ -39,7 +34,7 @@ class JsonContext {
     // MARK: - Slot
     @Serializable(with = SlotSerializer::class)
     class Slot private constructor(val type: DynaType, val value: Any) {
-        constructor(type: KClass<out Any>, value: Any) : this(DynaType.typeFor(type), value) {}
+        constructor(type: KType, value: Any) : this(DynaType.typeFor(type), value) {}
     }
 
     object SlotSerializer : KSerializer<Slot> {
@@ -67,8 +62,8 @@ class JsonContext {
 
     // MARK: - Instance
     //private var state: [AnyHashable:[AnyHashable:Any]] = [AnyHashable:[AnyHashable:Any]]()
-    var slots = HashMap<String, Slot>()
-    private var contexts = HashMap<String, JsonContext>()
+    var slots = hashMapOf<String, Slot>()
+    internal var contexts = hashMapOf<String, JsonContext>()
 
 //    operator fun get(index: Any): HashMap<Any, Any> {
 //        let key = index as!AnyHashable
@@ -95,4 +90,30 @@ class JsonContext {
 //    fun decodeDynaSuper(from: Decoder): Any {
 //        //try decoder.decodeDynaSuper()
 //    }
+}
+
+object JsonContextSerializer : KSerializer<JsonContext> {
+    override val descriptor: SerialDescriptor = mapSerialDescriptor(String.serializer().descriptor, buildClassSerialDescriptor("Any"))
+
+    override fun serialize(encoder: Encoder, value: JsonContext) {
+        val size = if (value.slots.isEmpty()) 0 else 1 + value.contexts.count()
+        if (size <= 0) return
+        val keySerializer = String.serializer()
+        var index = 0
+        val composite = encoder.beginCollection(descriptor, size)
+        if (!value.slots.isEmpty()) {
+            composite.encodeSerializableElement(descriptor, index++, keySerializer, "slots")
+            composite.encodeSerializableElement(descriptor, index++, serializer(), value.slots)
+        }
+        if (!value.contexts.isEmpty())
+            value.contexts.forEach {
+                composite.encodeSerializableElement(descriptor, index++, keySerializer, it.key)
+                composite.encodeSerializableElement(descriptor, index++, JsonContextSerializer, it.value)
+            }
+        composite.endStructure(descriptor)
+    }
+
+    override fun deserialize(decoder: Decoder): JsonContext {
+        error("")
+    }
 }

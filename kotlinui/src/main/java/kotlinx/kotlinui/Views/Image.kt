@@ -1,11 +1,12 @@
 package kotlinx.kotlinui
 
 import android.os.Bundle
-import kotlinx.system.KTypeBase
 
 class AnyImageProviderBox
 
-class Image(var _provider: AnyImageProviderBox) : KTypeBase(), View {
+class Image private constructor(
+    var _provider: AnyImageProviderBox
+) : View {
     constructor(name: String, bundle: Bundle? = null) : this(AnyImageProviderBox()) {
         error("Not Implemented")
     }
@@ -34,6 +35,6 @@ class Image(var _provider: AnyImageProviderBox) : KTypeBase(), View {
         return result
     }
 
-    override val body: View
+    override val body: Never
         get() = error("Never")
 }

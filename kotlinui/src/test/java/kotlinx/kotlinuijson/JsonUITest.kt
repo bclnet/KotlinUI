@@ -14,8 +14,10 @@ class JsonUITest {
     @Test
     fun test_complex() {
         val json = JsonUI(VStack {
-            Text("Verbatim")
-            Text("Verbatim")
+            get(
+                Text("Verbatim"),
+                Text("Verbatim")
+            )
         })
         assertEquals(4, 2 + 2)
     }

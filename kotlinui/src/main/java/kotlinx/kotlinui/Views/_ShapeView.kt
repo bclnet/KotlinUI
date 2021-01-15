@@ -1,13 +1,11 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase2
-
 class _ShapeView<Content : Shape, Style : ShapeStyle>(
-    var shape: Content,
-    var style: Style,
-    var fillStyle: FillStyle = FillStyle()
-) : KTypeBase2<Content, Style>(), View {
-    override val body: View
+    val shape: Content,
+    val style: Style,
+    val fillStyle: FillStyle = FillStyle()
+) : View {
+    override val body: Never
         get() = error("Never")
 }
 

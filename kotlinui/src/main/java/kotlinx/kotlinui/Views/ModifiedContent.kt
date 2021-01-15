@@ -1,12 +1,10 @@
 package kotlinx.kotlinui
 
-import kotlinx.system.KTypeBase2
-
 class ModifiedContent<Content, Modifier : ViewModifier>(
     var content: Content,
     var modifier: Modifier
-) : KTypeBase2<Content, Modifier>(), View {
-    override val body: View
+) : View {
+    override val body: Never
         get() = error("Never")
 }
 

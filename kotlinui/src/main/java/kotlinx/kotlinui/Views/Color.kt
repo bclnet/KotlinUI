@@ -3,18 +3,17 @@ package kotlinx.kotlinui
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase
 
 @Serializable(with = ColorSerializer::class)
-class Color : KTypeBase, View {
+class Color : View {
     open class AnyColorBox {
-        override fun hashCode(): Int = this.hashCode()
-
         override fun equals(other: Any?): Boolean {
             if (other !is AnyColorBox) return false
             val s = other as AnyColorBox
             return this.equals(s)
         }
+
+        override fun hashCode(): Int = this.hashCode()
     }
 
     enum class SystemColor {

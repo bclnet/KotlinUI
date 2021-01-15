@@ -1,14 +1,17 @@
 package kotlinx.kotlinui
 
+import kotlinx.kotlinuijson.DynaType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlinx.system.KTypeBase1
 
 @Serializable(with = TouchBarSerializer::class)
-class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : KTypeBase1<Label>(), View {
+class Toggle<Label : View>(
+    isOn: Binding<Boolean>,
+    label: ViewBuilder.() -> Label
+) : View {
     var __isOn: Binding<Boolean> = isOn
-    var _label: Label = label()
+    var _label: Label = label(ViewBuilder())
 
     // where Label == ToggleStyleConfiguration.Label
     //public Constructor(configuration: ToggleStyleConfiguration) : this() {
@@ -24,8 +27,14 @@ class Toggle<Label : View>(isOn: Binding<Boolean>, label: () -> Label) : KTypeBa
 //        error("Not Implemented")
 //    }
 
-    override val body: View
+    override val body: Label
         get() = _label
+
+    companion object {
+        fun register() {
+            DynaType.register<Toggle<AnyView>>()
+        }
+    }
 }
 
 class ToggleSerializer<Label : View>(private val labelSerializer: KSerializer<Label>) : KSerializer<Toggle<Label>> {
