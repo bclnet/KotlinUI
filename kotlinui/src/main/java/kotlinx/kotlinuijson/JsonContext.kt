@@ -1,16 +1,35 @@
 @file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlinx.kotlinuijson
 
+import kotlinx.kotlinui.EdgeInsetsSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.serializer
+import java.lang.Exception
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.reflect.KType
 
 @Serializable(with = JsonContextSerializer::class)
-class JsonContext {
+class JsonContext(
+    val slots: HashMap<String, Slot> = hashMapOf(),
+    val contexts: HashMap<String, JsonContext> = hashMapOf()
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is JsonContext) return false
+        return slots == other.slots &&
+            contexts == other.contexts
+    }
+
+    override fun hashCode(): Int {
+        var result = slots.hashCode()
+        result = 31 * result + contexts.hashCode()
+        return result
+    }
+
     // MARK: - Static
     companion object {
         var cachedContexts = WeakHashMap<String, JsonContext>()
@@ -33,37 +52,54 @@ class JsonContext {
 
     // MARK: - Slot
     @Serializable(with = SlotSerializer::class)
-    class Slot private constructor(val type: DynaType, val value: Any) {
-        constructor(type: KType, value: Any) : this(DynaType.typeFor(type), value) {}
+    class Slot internal constructor(val type: DynaType, val value: Any) {
+        constructor(type: KType, value: Any) : this(DynaType.typeFor(type), value)
+
+        override fun equals(other: Any?): Boolean {
+            if (other !is Slot) return false
+            return type == other.type &&
+                value == other.value
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + value.hashCode()
+            return result
+        }
     }
 
-    object SlotSerializer : KSerializer<Slot> {
+    internal object SlotSerializer : KSerializer<Slot> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Slot") {
                 element<DynaType>("type")
-                element<Any>("default")
+                element("default", buildClassSerialDescriptor("Any"))
             }
 
-        override fun serialize(encoder: Encoder, value: Slot) =
-            encoder.encodeStructure(descriptor) {
-//                encodeFloatElement(descriptor, 0, value.type)
-//                encodeFloatElement(descriptor, 1, value.value)
+        override fun serialize(encoder: Encoder, value: Slot) {
+            encoder.encodeStructure(EdgeInsetsSerializer.descriptor) {
+                encodeSerializableElement(descriptor, 0, DynaTypeSerializer, value.type)
+                encodeSerializableElement(descriptor, 1, serializer(value.type.underlyingType), value.value)
             }
+        }
 
         override fun deserialize(decoder: Decoder): Slot =
             decoder.decodeStructure(descriptor) {
-                error("")
-//                Slot(
-//                    decodeFloatElement(descriptor, 0),
-//                    decodeFloatElement(descriptor, 1),
-//                )
+                lateinit var type: DynaType
+                lateinit var value: Any
+                while (true) {
+                    when (val index = decodeElementIndex(descriptor)) {
+                        0 -> type = decodeSerializableElement(descriptor, 0, DynaTypeSerializer)
+                        1 -> value = decodeSerializableElement(descriptor, 1, serializer(type.underlyingType))!!
+                        CompositeDecoder.DECODE_DONE -> break
+                        else -> error("Unexpected index: $index")
+                    }
+                }
+                Slot(type, value)
             }
     }
 
     // MARK: - Instance
     //private var state: [AnyHashable:[AnyHashable:Any]] = [AnyHashable:[AnyHashable:Any]]()
-    var slots = hashMapOf<String, Slot>()
-    internal var contexts = hashMapOf<String, JsonContext>()
 
 //    operator fun get(index: Any): HashMap<Any, Any> {
 //        let key = index as!AnyHashable
@@ -75,14 +111,9 @@ class JsonContext {
 //        return state
 //    }
 
-//    fun encodeDynaSuper(value: Any, to: Encoder) {
-////        guard let anyState = value as? _AnyStateWrapper else {
-////            try encoder.encodeDynaSuper(value)
-////                return
-////            }
-////        try encoder.encodeDynaSuper(anyState.content)
-//    }
-//
+    fun encodeSuper(encoder: CompositeEncoder, descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) =
+        encoder.encodeSuper(descriptor, index, value)
+
 //    fun dynaSuperInit(from: Decoder, dynaType: DynaType): Any {
 //        //try decoder.dynaSuperInit(for: dynaType)
 //    }
@@ -92,28 +123,49 @@ class JsonContext {
 //    }
 }
 
-object JsonContextSerializer : KSerializer<JsonContext> {
+@ExperimentalSerializationApi
+internal object JsonContextSerializer : KSerializer<JsonContext> {
     override val descriptor: SerialDescriptor = mapSerialDescriptor(String.serializer().descriptor, buildClassSerialDescriptor("Any"))
 
     override fun serialize(encoder: Encoder, value: JsonContext) {
-        val size = if (value.slots.isEmpty()) 0 else 1 + value.contexts.count()
-        if (size <= 0) return
-        val keySerializer = String.serializer()
+        val size = (if (value.slots.isEmpty()) 0 else 1) + value.contexts.size
+        if (size <= 0) {
+            encoder.encodeStructure(descriptor) {}
+            return
+        }
+        val slotSerializer = serializer<HashMap<String, JsonContext.Slot>>()
         var index = 0
         val composite = encoder.beginCollection(descriptor, size)
         if (!value.slots.isEmpty()) {
-            composite.encodeSerializableElement(descriptor, index++, keySerializer, "slots")
-            composite.encodeSerializableElement(descriptor, index++, serializer(), value.slots)
+            composite.encodeStringElement(descriptor, index++, "slots")
+            composite.encodeSerializableElement(descriptor, index++, slotSerializer, value.slots)
         }
         if (!value.contexts.isEmpty())
             value.contexts.forEach {
-                composite.encodeSerializableElement(descriptor, index++, keySerializer, it.key)
+                composite.encodeStringElement(descriptor, index++, it.key)
                 composite.encodeSerializableElement(descriptor, index++, JsonContextSerializer, it.value)
             }
         composite.endStructure(descriptor)
     }
 
     override fun deserialize(decoder: Decoder): JsonContext {
-        error("")
+        val slotSerializer = serializer<HashMap<String, JsonContext.Slot>>()
+        var slots: HashMap<String, JsonContext.Slot>? = null
+        val contexts = hashMapOf<String, JsonContext>()
+        val composite = decoder.beginStructure(descriptor)
+        while (true) {
+            val index = composite.decodeElementIndex(descriptor)
+            if (index == CompositeDecoder.DECODE_DONE) break
+            val key = composite.decodeStringElement(descriptor, index)
+            val vIndex = composite.decodeElementIndex(descriptor).also {
+                require(it == index + 1) { "Value must follow key in a map, index for key: $index, returned index for value: $it" }
+            }
+            when (key) {
+                "slots" -> slots = composite.decodeSerializableElement(descriptor, vIndex, slotSerializer)
+                else -> contexts[key] = composite.decodeSerializableElement(descriptor, vIndex, JsonContextSerializer)
+            }
+        }
+        composite.endStructure(descriptor)
+        return JsonContext(slots ?: hashMapOf(), contexts)
     }
 }

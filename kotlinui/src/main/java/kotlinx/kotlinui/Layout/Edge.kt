@@ -15,16 +15,22 @@ enum class Edge(val rawValue: Byte) {
     object Set {
         @Serializable(with = EdgeSetSerializer::class)
         var top: EnumSet<Edge> = EnumSet.of(Edge.top)
+
         @Serializable(with = EdgeSetSerializer::class)
         var leading: EnumSet<Edge> = EnumSet.of(Edge.leading)
+
         @Serializable(with = EdgeSetSerializer::class)
         var bottom: EnumSet<Edge> = EnumSet.of(Edge.bottom)
+
         @Serializable(with = EdgeSetSerializer::class)
         var trailing: EnumSet<Edge> = EnumSet.of(Edge.trailing)
+
         @Serializable(with = EdgeSetSerializer::class)
         var horizontal: EnumSet<Edge> = EnumSet.of(Edge.leading, Edge.trailing)
+
         @Serializable(with = EdgeSetSerializer::class)
         var vertical: EnumSet<Edge> = EnumSet.of(Edge.top, Edge.bottom)
+
         @Serializable(with = EdgeSetSerializer::class)
         var all: EnumSet<Edge> = EnumSet.allOf(Edge::class.java)
     }
@@ -82,11 +88,10 @@ class EdgeInsets constructor(
 
     override fun equals(other: Any?): Boolean {
         if (other !is EdgeInsets) return false
-        val s = other as EdgeInsets
-        return top.equals(s.top) &&
-            leading.equals(s.leading) &&
-            bottom.equals(s.bottom) &&
-            trailing.equals(s.trailing)
+        return top == other.top &&
+            leading == other.leading &&
+            bottom == other.bottom &&
+            trailing == other.trailing
     }
 
     override fun hashCode(): Int {

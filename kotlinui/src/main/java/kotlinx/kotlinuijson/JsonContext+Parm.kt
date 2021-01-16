@@ -32,10 +32,28 @@ fun JsonContext.var_(value: Float, key: String? = null): Float {
     return slot.toFloat()
 }
 
-fun JsonContext.var_(value: UInt, key: String? = null): UInt {
+fun JsonContext.var_(value: Byte, key: String? = null): Byte {
     val (id, slot) = nextKey(key)
-    slots[id] = JsonContext.Slot(typeOf<UInt>(), value)
-    return slot.toUInt()
+    slots[id] = JsonContext.Slot(typeOf<Byte>(), value)
+    return slot.toByte()
+}
+
+fun JsonContext.var_(value: Short, key: String? = null): Short {
+    val (id, slot) = nextKey(key)
+    slots[id] = JsonContext.Slot(typeOf<Short>(), value)
+    return slot.toShort()
+}
+
+fun JsonContext.var_(value: Int, key: String? = null): Int {
+    val (id, slot) = nextKey(key)
+    slots[id] = JsonContext.Slot(typeOf<Int>(), value)
+    return slot.toInt()
+}
+
+fun JsonContext.var_(value: Long, key: String? = null): Long {
+    val (id, slot) = nextKey(key)
+    slots[id] = JsonContext.Slot(typeOf<Long>(), value)
+    return slot.toLong()
 }
 
 fun JsonContext.var_(value: UByte, key: String? = null): UByte {
@@ -48,6 +66,12 @@ fun JsonContext.var_(value: UShort, key: String? = null): UShort {
     val (id, slot) = nextKey(key)
     slots[id] = JsonContext.Slot(typeOf<UShort>(), value)
     return slot.toUShort()
+}
+
+fun JsonContext.var_(value: UInt, key: String? = null): UInt {
+    val (id, slot) = nextKey(key)
+    slots[id] = JsonContext.Slot(typeOf<UInt>(), value)
+    return slot.toUInt()
 }
 
 fun JsonContext.var_(value: ULong, key: String? = null): ULong {

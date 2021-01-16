@@ -1,13 +1,23 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.*
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import kotlinx.system.*
+import java.lang.Exception
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
+
+inline fun <reified T> JsonUI(view: View) = JsonUI(typeOf<T>(), view)
 
 @Serializable(with = JsonUISerializer::class)
-class JsonUI(view: View) {
+class JsonUI(val type: KType, view: View) {
     val body: Any = view
     val anyView: AnyView?
         get() = body as? AnyView
@@ -41,15 +51,39 @@ internal object JsonUISerializer : KSerializer<JsonUI> {
         }
 
     override fun serialize(encoder: Encoder, value: JsonUI) {
-        val context = (encoder.serializersModule.getContextual(UserInfoJsonContext::class) as UserInfoJsonContext).context
+        val userInfoJsonContext = encoder.serializersModule.getContextual(UserInfoJsonContext::class) as? UserInfoJsonContext ?: throw Exception(".jsonContext")
+        val context = userInfoJsonContext.context
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, JsonContextSerializer, context)
+            context.encodeSuper(this, descriptor, 1, Pair(value.type, value.body))
         }
     }
 
     override fun deserialize(decoder: Decoder): JsonUI {
-        decoder.decodeStructure(descriptor) {
-            error("")
+        val userInfoJson = decoder.serializersModule.getContextual(UserInfoJson::class) as? UserInfoJson ?: throw Exception(".json")
+        val userInfoJsonContext = decoder.serializersModule.getContextual(UserInfoJsonContext::class) as? UserInfoJsonContext ?: return decoder.decodeStructure(descriptor) {
+            val index = decodeElementIndex(descriptor)
+            if (index != 0) throw Exception(".json Parse")
+            val nextContext = decodeSerializableElement(descriptor, 0, JsonContextSerializer)
+            val json = Json {
+                serializersModule = SerializersModule {
+                    contextual(userInfoJson)
+                    contextual(UserInfoJsonContext(nextContext))
+                }
+            }
+            json.decodeFromString(JsonUISerializer, userInfoJson.data)
+        }
+        return decoder.decodeStructure(descriptor) {
+            lateinit var body: Any
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+//                    1 -> body = decodeSerializableElement(descriptor, 1, serializer(type.underlyingType))!!
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+            body = Text("Test")
+            JsonUI<Text>(body)
         }
     }
 }

@@ -25,7 +25,7 @@ class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
                     serializersModule = SerializersModule { contextual(JsonUISerializer.UserInfoJsonContext(context)) }
                     prettyPrint = true
                 }
-                data = json.encodeToString(JsonUI.serializer(), JsonUI(view))
+                data = json.encodeToString(JsonUI.serializer(), JsonUI<Text>(view))
                 println(data)
             } catch (e: Exception) {
                 data = e.localizedMessage!!

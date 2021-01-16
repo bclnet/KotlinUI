@@ -2,6 +2,11 @@
 
 package kotlinx.kotlinuijson
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
+import kotlinx.serialization.serializer
 import kotlinx.system.*
 import kotlin.Exception
 import kotlin.reflect.KType
@@ -14,32 +19,69 @@ class DynaTypeParseErrorException(key: String) : Exception(key)
 class DynaTypeNameErrorException(actual: String, expected: String) : Exception("actual: $actual, expected: $expected")
 class DynaTypeNotCodableException(mode: String, key: String) : Exception("mode: $mode, key: $key")
 
+@Serializable(with = DynaTypeWithNilSerializer::class)
+class DynaTypeWithNil(val type: DynaType, val hasNil: Boolean)
+
+internal object DynaTypeWithNilSerializer : KSerializer<DynaTypeWithNil> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("DynaTypeWithNil", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: DynaTypeWithNil) =
+        encoder.encodeString(if (value.hasNil) value.type.underlyingKey else "$value.type.underlyingKey:nil")
+
+    override fun deserialize(decoder: Decoder): DynaTypeWithNil {
+        val raw = decoder.decodeString()
+        return if (!raw.endsWith(":nil")) DynaTypeWithNil(DynaType.find(raw), false)
+        else DynaTypeWithNil(DynaType.find(raw.substring(0 until raw.length - 4)), true)
+    }
+}
+
+fun CompositeEncoder.encodeSuper(descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) {
+    val hasNil = false
+    val dynaTypeWithNil = DynaTypeWithNil(DynaType.typeFor(value.first), hasNil)
+    this.encodeSerializableElement(descriptor, index, DynaTypeWithNilSerializer, dynaTypeWithNil)
+//            if hasNil { return }
+//            let unwrap = Mirror.optional(any: value)!
+//            guard let encodable = unwrap as? Encodable else {
+//                let newValue = try DynaType.convert(value: unwrap)
+//                guard let encodable2 = newValue as? Encodable else {
+//                    throw DynaTypeError.typeNotCodable("encodeDynaSuper", key: DynaType.typeKey(for: unwrap))
+//                }
+//                try encodable2.encode(to: self)
+//                    return
+//                }
+//            try encodable.encode(to: self)
+//            }
+}
+
+
+@Serializable(with = DynaTypeSerializer::class)
 sealed class DynaType {
-    data class type(val type: KType, var key: String) : DynaType()
-    data class tuple(val type: KType, var key: String, var components: Array<DynaType>) : DynaType()
+    data class type(val type: KType, val key: String) : DynaType()
+    data class tuple(val type: KType, val key: String, val components: Array<DynaType>) : DynaType()
     data class generic(
         val type: KType,
-        var key: String,
-        var any: String,
-        var components: Array<DynaType>
+        val key: String,
+        val any: String,
+        val components: Array<DynaType>
     ) : DynaType()
 
-    var underlyingKey: String =
-        when (this) {
+    val underlyingKey: String
+        get() = when (this) {
             is type -> this.key
             is tuple -> this.key
             is generic -> this.key
         }
 
-    var underlyingAny: String =
-        when (this) {
+    val underlyingAny: String
+        get() = when (this) {
             is type -> this.key
             is tuple -> this.key
             is generic -> this.any
         }
 
-    var underlyingType: KType =
-        when (this) {
+    val underlyingType: KType
+        get() = when (this) {
             is type -> this.type
             is tuple -> this.type
             is generic -> this.type
@@ -77,7 +119,7 @@ sealed class DynaType {
                 if (alias != null) knownTypes[alias] = type(type, key)
                 optionalTypes[typeOptional] = type
                 // generic
-                if (genericIdx != null) {
+                if (genericIdx != -1) {
                     val genericKey = if (baseKey != ":TupleView") baseKey else "$baseKey:${key.split(',').size}"
                     if (knownGenerics[genericKey] == null) knownGenerics[genericKey] = Pair(hashMapOf<String, KType>(), any)
                     knownGenerics[genericKey]!!.first[if (any != null) key else ""] = type
@@ -304,4 +346,15 @@ sealed class DynaType {
             return true
         }
     }
+}
+
+internal object DynaTypeSerializer : KSerializer<DynaType> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("DynaType", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: DynaType) =
+        encoder.encodeString(value.underlyingKey)
+
+    override fun deserialize(decoder: Decoder): DynaType =
+        DynaType.find(decoder.decodeString())
 }
