@@ -6,45 +6,37 @@ import kotlinx.serialization.encoding.*
 
 @Serializable(with = ColorSerializer::class)
 class Color : View {
-    open class AnyColorBox {
-        override fun equals(other: Any?): Boolean {
-            if (other !is AnyColorBox) return false
-            return this == other
-        }
-
-        override fun hashCode(): Int = this.hashCode()
-    }
+    private abstract class AnyColorBox
 
     enum class SystemColor {
         clear, black, white, gray, red, green, blue, orange, yellow, pink, purple, primary, secondary, accentColor
     }
 
-    class SystemColorType internal constructor(var value: SystemColor) : AnyColorBox() {
+    private data class SystemColorType(var value: SystemColor) : AnyColorBox() {
         override fun toString(): String = value.toString()
     }
 
-    class DisplayP3 internal constructor(
+    private data class DisplayP3(
         var red: Double,
         var green: Double,
         var blue: Double,
         var opacity: Double
     ) : AnyColorBox()
 
-    class _Resolved internal constructor(
+    private data class _Resolved(
         var linearRed: Double,
         var linearGreen: Double,
         var linearBlue: Double,
         var opacity: Double
     ) : AnyColorBox() {
-        override fun toString(): String =
-            String.format("#%02X%02X%02X%02X", linearRed, linearGreen, linearBlue, opacity)
+        override fun toString(): String = String.format("#%02X%02X%02X%02X", linearRed, linearGreen, linearBlue, opacity)
     }
 
     enum class RGBColorSpace {
         sRGB, sRGBLinear, displayP3
     }
 
-    var provider: AnyColorBox? = null
+    private val provider: AnyColorBox
 
     constructor(
         colorSpace: RGBColorSpace = RGBColorSpace.sRGB,

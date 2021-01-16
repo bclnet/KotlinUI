@@ -1,7 +1,7 @@
 package kotlinx.kotlinui
 
 import android.os.Bundle
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -99,8 +99,8 @@ class Text : View {
 
     companion object {
         fun register() {
-            DynaType.register<Text>()
-//            DynaType.register<Text.TruncationMode>()
+            PType.register<Text>()
+//            PType.register<Text.TruncationMode>()
         }
     }
 }
@@ -136,4 +136,4 @@ private fun Text.textWithModifier(modifier: Text.Modifier): Text {
     }
 }
 
-internal fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun Text._makeView(view: _GraphValue<Text>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

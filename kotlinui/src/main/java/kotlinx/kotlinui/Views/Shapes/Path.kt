@@ -5,23 +5,9 @@ import android.graphics.Rect
 import android.util.SizeF
 import android.graphics.Path as CGPath
 
-class FixedRoundedRect(var rect: Rect, var cornerSize: SizeF, var style: RoundedCornerStyle) {
-    override fun equals(other: Any?): Boolean {
-        if (other !is FixedRoundedRect) return false
-        return rect == other.rect &&
-            cornerSize == other.cornerSize &&
-            style == other.style
-    }
+data class FixedRoundedRect(var rect: Rect, var cornerSize: SizeF, var style: RoundedCornerStyle)
 
-    override fun hashCode(): Int {
-        var result = rect.hashCode()
-        result = 31 * result + cornerSize.hashCode()
-        result = 31 * result + style.hashCode()
-        return result
-    }
-}
-
-class StrokeStyle(
+data class StrokeStyle(
     var lineWidth: Float = 1f,
     var lineCap: LineCap = LineCap.butt,
     var lineJoin: LineJoin = LineJoin.miter,
@@ -42,71 +28,43 @@ enum class RoundedCornerStyle {
     circular, continuous
 }
 
-internal class TrimmedPath {
-    override fun equals(other: Any?): Boolean {
-        if (other !is TrimmedPath) return false
-        val s = other
-        return true
-    }
+internal class TrimmedPath
 
-    override fun hashCode(): Int = javaClass.hashCode()
-}
-
-internal class StrokedPath(var path: Path, var style: StrokeStyle) {
-    override fun equals(other: Any?): Boolean {
-        if (other !is StrokedPath) return false
-        return path == other.path &&
-            style == other.style
-    }
-
-    override fun hashCode(): Int {
-        var result = path.hashCode()
-        result = 31 * result + style.hashCode()
-        return result
-    }
-}
+internal data class StrokedPath(var path: Path, var style: StrokeStyle)
 
 class Path : Shape {
-    internal class PathBox(var cgPath: CGPath) {
-        override fun equals(other: Any?): Boolean {
-            if (other !is PathBox) return false
-            return cgPath == other.cgPath
-        }
+    internal data class PathBox(var cgPath: CGPath)
 
-        override fun hashCode(): Int = cgPath.hashCode()
+    internal sealed class Storage {
+        class empty : Storage()
+        data class rect(val rect: Rect) : Storage()
+        data class ellipse(val ellipse: Rect) : Storage()
+        data class roundedRect(val roundedRect: FixedRoundedRect) : Storage()
+        data class stroked(val stroked: StrokedPath) : Storage()
+        data class trimmed(val trimmed: TrimmedPath) : Storage()
+        data class path(val path: PathBox) : Storage()
     }
 
-    internal enum class StorageType { empty, rect, ellipse, roundedRect, stroked, trimmed, path }
-    internal class Storage(var type: StorageType) {
-        var rect: Rect? = null
-        var ellipse: Rect? = null
-        var roundedRect: FixedRoundedRect? = null
-        var stroked: StrokedPath? = null
-        var trimmed: TrimmedPath? = null
-        var path: PathBox? = null
+    sealed class Element {
+        data class move(val to: Point) : Element()
+        data class line(val to: Point) : Element()
+        data class quadCurve(val to: Point, val control: Point) : Element()
+        data class curve(val to: Point, val control1: Point, val control2: Point) : Element()
+        class closeSubpath : Element()
     }
 
-    enum class ElementType { move, line, quadCurve, curve }
-    class Element(var type: ElementType) {
-        var to: Point? = null
-        var control: Point? = null
-        var control2: Point? = null
-    }
-
-    internal var storage: Storage = Storage(StorageType.empty)
+    private lateinit var storage: Storage
 
     constructor() {
         error("Not Implemented")
     }
 
     constructor(path: CGPath) {
-        storage = Storage(StorageType.path)
-        storage.path = PathBox(path)
+        storage = Storage.path(PathBox(path))
     }
 
     constructor(rect: Rect) {
-        storage = Storage(StorageType.rect)
-        storage.rect = rect
+        storage = Storage.rect(rect)
     }
 
     constructor(
@@ -114,8 +72,7 @@ class Path : Shape {
         cornerSize: SizeF,
         style: RoundedCornerStyle = RoundedCornerStyle.circular
     ) {
-        storage = Storage(StorageType.roundedRect)
-        storage.roundedRect = FixedRoundedRect(roundedRect, cornerSize, style)
+        storage = Storage.roundedRect(FixedRoundedRect(roundedRect, cornerSize, style))
     }
 
     constructor(
@@ -124,13 +81,11 @@ class Path : Shape {
         style: RoundedCornerStyle = RoundedCornerStyle.circular
     ) {
         val cornerSize = SizeF(cornerRadius, cornerRadius)
-        storage = Storage(StorageType.roundedRect)
-        storage.roundedRect = FixedRoundedRect(roundedRect, cornerSize, style)
+        storage = Storage.roundedRect(FixedRoundedRect(roundedRect, cornerSize, style))
     }
 
 //    constructor(ellipse: Rect) {
-//    	storage = Storage(StorageType.ellipse);
-//    	storage.ellipse = ellipse;
+//    	storage = Storage.ellipse(ellipse);
 //    }
 
     constructor(callback: (Path) -> Unit) {
@@ -142,7 +97,8 @@ class Path : Shape {
     }
 
     override fun path(rect: Rect): Path = error("Never")
-    override val body: View
+
+    override val body: Never
         get() = error("Never")
 
     val cgPath: CGPath

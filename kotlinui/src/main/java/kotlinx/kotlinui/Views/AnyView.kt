@@ -1,8 +1,8 @@
 package kotlinx.kotlinui
 
-open class AnyViewStorageBase
+internal abstract class AnyViewStorageBase
 
-class AnyViewStorage<V : View>(val _view: V) : AnyViewStorageBase()
+internal class AnyViewStorage<V : View>(val _view: V) : AnyViewStorageBase()
 
 class AnyView private constructor(
     val _storage: AnyViewStorageBase

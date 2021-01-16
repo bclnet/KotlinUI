@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -16,7 +16,7 @@ class VSplitView<Content : View>(
 
     companion object {
         fun register() {
-            DynaType.register<VSplitView<AnyView>>()
+            PType.register<VSplitView<AnyView>>()
         }
     }
 }
@@ -40,4 +40,4 @@ class VSplitViewSerializer<Content : View>(private val contentSerializer: KSeria
         }
 }
 
-internal fun <Content : View> VSplitView<Content>._makeView(view: _GraphValue<VSplitView<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Content : View> VSplitView<Content>._makeView(view: _GraphValue<VSplitView<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

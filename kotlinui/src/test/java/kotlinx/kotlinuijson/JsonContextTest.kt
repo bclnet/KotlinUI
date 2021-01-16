@@ -29,8 +29,8 @@ class JsonContextTest {
 
         val orig_s2c0 = JsonContext()
         with(orig_s2c0) {
-            var_("String")
-            var_(1)
+            let("String")
+            let(1)
         }
         val data_s2c0 = json.encodeToString(JsonContextSerializer, orig_s2c0)
         val json_s2c0 = json.decodeFromString(JsonContextSerializer, data_s2c0)
@@ -38,8 +38,9 @@ class JsonContextTest {
 
         val orig_s0c1 = JsonContext()
         with(orig_s0c1) {
-            contexts["SomeContext"] = JsonContext()
-            contexts["SomeContext"]!!.var_("Test")
+            val newContext = JsonContext()
+            newContext.let("Test")
+            contexts["SomeContext"] = newContext
         }
         val data_s0c1 = json.encodeToString(JsonContextSerializer, orig_s0c1)
         val json_s0c1 = json.decodeFromString(JsonContextSerializer, data_s0c1)
@@ -47,8 +48,9 @@ class JsonContextTest {
 
         val orig_s1c1 = JsonContext()
         with(orig_s1c1) {
-            var_("String")
-            contexts["SomeContext"] = JsonContext()
+            let("String")
+            val newContext = JsonContext()
+            contexts["SomeContext"] = newContext
         }
         val data_s1c1 = json.encodeToString(JsonContextSerializer, orig_s1c1)
         val json_s1c1 = json.decodeFromString(JsonContextSerializer, data_s1c1)

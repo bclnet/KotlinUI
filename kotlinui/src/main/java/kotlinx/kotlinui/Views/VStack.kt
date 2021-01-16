@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
@@ -20,7 +20,7 @@ class VStack<Content : View>(
 
     companion object {
         fun register() {
-            DynaType.register<VStack<AnyView>>()
+            PType.register<VStack<AnyView>>()
         }
     }
 }
@@ -51,7 +51,7 @@ class VStackSerializer<Content : View>(private val contentSerializer: KSerialize
         }
 }
 
-internal fun <Content : View> VStack<Content>._makeView(view: _GraphValue<VStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Content : View> VStack<Content>._makeView(view: _GraphValue<VStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 
 @Serializable(with = _VStackLayoutSerializer::class)
 class _VStackLayout(

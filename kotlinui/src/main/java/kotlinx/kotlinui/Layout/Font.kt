@@ -1,55 +1,13 @@
 package kotlinx.kotlinui
 
-class Font(var provider: AnyFontBox) {
-    open class AnyFontBox {
-        override fun equals(other: Any?): Boolean {
-            if (other !is AnyFontBox) return false
-            return this == other
-        }
+data class Font private constructor(private val provider: AnyFontBox) {
+    private abstract class AnyFontBox
 
-        override fun hashCode(): Int = this.hashCode()
-    }
+    private data class SystemProvider(var size: Float, var weight: Weight, var design: Design) : AnyFontBox()
 
-    class SystemProvider(var size: Float, var weight: Weight, var design: Design) : AnyFontBox() {
-        override fun equals(other: Any?): Boolean {
-            if (other !is SystemProvider) return false
-            return size == other.size &&
-                weight == other.weight &&
-                design == other.design
-        }
+    private data class TextStyleProvider(var style: TextStyle, var design: Design) : AnyFontBox()
 
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + size.hashCode()
-            result = 31 * result + weight.hashCode()
-            result = 31 * result + design.hashCode()
-            return result
-        }
-    }
-
-    class TextStyleProvider(var style: TextStyle, var design: Design) : AnyFontBox() {
-        override fun equals(other: Any?): Boolean {
-            if (other !is TextStyleProvider) return false
-            return style == other.style &&
-                design == other.design
-        }
-
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + style.hashCode()
-            result = 31 * result + design.hashCode()
-            return result
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is Font) return false
-        return provider == other.provider
-    }
-
-    override fun hashCode(): Int = provider.hashCode()
-
-    class Weight(var value: Float) {
+    data class Weight(var value: Float) {
         companion object {
             var ultraLight = Weight(100f)
             var thin = Weight(200f)

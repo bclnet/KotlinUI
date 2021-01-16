@@ -26,5 +26,5 @@ class ForEach<Data : List<Any?>, ID, Content : View>(
         get() = error("Never")
 }
 
-internal fun <Data : List<Any?>, ID, Content : View> ForEach<Data, ID, Content>._makeView(view: _GraphValue<ForEach<Data, ID, Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
-internal fun <Data : List<Any?>, ID, Content : View> ForEach<Data, ID, Content>._makeViewList(view: _GraphValue<ForEach<Data, ID, Content>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")
+//internal fun <Data : List<Any?>, ID, Content : View> ForEach<Data, ID, Content>._makeView(view: _GraphValue<ForEach<Data, ID, Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Data : List<Any?>, ID, Content : View> ForEach<Data, ID, Content>._makeViewList(view: _GraphValue<ForEach<Data, ID, Content>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

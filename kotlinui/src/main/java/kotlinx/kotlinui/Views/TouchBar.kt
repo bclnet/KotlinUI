@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
@@ -19,7 +19,7 @@ class TouchBar<Content : View>(
 
     companion object {
         fun register() {
-            DynaType.register<TouchBar<AnyView>>()
+            PType.register<TouchBar<AnyView>>()
         }
     }
 }
@@ -47,6 +47,6 @@ class TouchBarSerializer<Content : View>(private val contentSerializer: KSeriali
         }
 }
 
-internal fun <Content : View> TouchBar<Content>._makeView(view: _GraphValue<TouchBar<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Content : View> TouchBar<Content>._makeView(view: _GraphValue<TouchBar<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 
 internal class TouchBarContainer(var id: String?)

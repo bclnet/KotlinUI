@@ -2,11 +2,10 @@
 
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import kotlin.reflect.typeOf
 
 @Serializable(with = DividerSerializer::class)
 class Divider : View {
@@ -15,7 +14,7 @@ class Divider : View {
 
     companion object {
         fun register() {
-            DynaType.register<Divider>()
+            PType.register<Divider>()
         }
     }
 }
@@ -35,4 +34,4 @@ internal object DividerSerializer : KSerializer<Divider> {
         }
 }
 
-internal fun Divider._makeView(view: _GraphValue<Divider>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun Divider._makeView(view: _GraphValue<Divider>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

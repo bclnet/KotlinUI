@@ -7,7 +7,7 @@ interface EnvironmentKey {
     var defaultValue: Any?
 }
 
-class EnvironmentValues {
+object EnvironmentValues {
     var values: HashMap<String, Any?> = HashMap<String, Any?>()
 
     operator fun <V> get(key: EnvironmentKey): V = (values[key.key] ?: key.defaultValue) as V

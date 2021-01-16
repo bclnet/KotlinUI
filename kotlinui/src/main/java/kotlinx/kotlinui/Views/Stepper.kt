@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 
 class Stepper<Label : View> private constructor(
     var onIncrement: (() -> Unit)?,
@@ -30,8 +30,8 @@ class Stepper<Label : View> private constructor(
 
     companion object {
         fun register() {
-//            DynaType.register<Stepper<EmptyView>>()
-            DynaType.register<Stepper<AnyView>>()
+//            PType.register<Stepper<EmptyView>>()
+            PType.register<Stepper<AnyView>>()
         }
     }
 }

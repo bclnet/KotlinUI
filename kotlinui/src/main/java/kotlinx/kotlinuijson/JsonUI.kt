@@ -3,6 +3,7 @@
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.*
+import kotlinx.ptype.KSerializerUserInfo
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -55,7 +56,7 @@ internal object JsonUISerializer : KSerializer<JsonUI> {
         val context = userInfoJsonContext.context
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, JsonContextSerializer, context)
-            context.encodeSuper(this, descriptor, 1, Pair(value.type, value.body))
+//            context.encodeSuper(this, descriptor, 1, Pair(value.type, value.body))
         }
     }
 

@@ -6,30 +6,27 @@ import kotlinx.system.WritableKeyPath
 internal interface DynamicProperty
 
 class Environment<Value> : DynamicProperty {
-    enum class ContentType { keyPath, value }
-    class Content<Value>(var type: ContentType) {
-        var keyPath: KeyPath<EnvironmentValues, Value>? = null
-        var value: Value? = null
+    sealed class Content {
+        data class keyPath<Value>(var keyPath: KeyPath<EnvironmentValues, Value>) : Content()
+        data class value<Value>(var value: Value) : Content()
     }
 
-    var content: Content<Value> = Content(ContentType.keyPath);
+    private val content: Content
 
     constructor(keyPath: KeyPath<EnvironmentValues, Value>) {
-        content = Content(ContentType.keyPath)
-        content.keyPath = keyPath
+        content = Content.keyPath(keyPath)
     }
 
     constructor(value: Value) {
-        content = Content(ContentType.value)
-        content.value = value
+        content = Content.value(value)
     }
 
     val wrappedValue: Value
         get() =
-            when (content.type) {
-//            ContentType.keyPath -> EnvironmentValues()[content.keyPath]
-                ContentType.value -> content.value!!
-                else -> error("${content.type}")
+            when (content) {
+//                is Content.keyPath<*> -> EnvironmentValues[content.keyPath]
+                is Content.value<*> -> content.value as Value
+                else -> error("$content")
             }
 
     internal fun error(): Never = error("Not Implemented")

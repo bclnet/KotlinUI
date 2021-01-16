@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -32,7 +32,7 @@ class Toggle<Label : View>(
 
     companion object {
         fun register() {
-            DynaType.register<Toggle<AnyView>>()
+            PType.register<Toggle<AnyView>>()
         }
     }
 }

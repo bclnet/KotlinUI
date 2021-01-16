@@ -3,34 +3,22 @@
 package kotlinx.kotlinuijson
 
 import kotlinx.kotlinui.EdgeInsetsSerializer
+import kotlinx.ptype.PType
+import kotlinx.ptype.PTypeSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.serializer
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KType
 
 @Serializable(with = JsonContextSerializer::class)
-class JsonContext(
+data class JsonContext(
     val slots: HashMap<String, Slot> = hashMapOf(),
     val contexts: HashMap<String, JsonContext> = hashMapOf()
 ) {
-    override fun equals(other: Any?): Boolean {
-        if (other !is JsonContext) return false
-        return slots == other.slots &&
-            contexts == other.contexts
-    }
-
-    override fun hashCode(): Int {
-        var result = slots.hashCode()
-        result = 31 * result + contexts.hashCode()
-        return result
-    }
-
-    // MARK: - Static
     companion object {
         var cachedContexts = WeakHashMap<String, JsonContext>()
 
@@ -52,44 +40,32 @@ class JsonContext(
 
     // MARK: - Slot
     @Serializable(with = SlotSerializer::class)
-    class Slot internal constructor(val type: DynaType, val value: Any) {
-        constructor(type: KType, value: Any) : this(DynaType.typeFor(type), value)
-
-        override fun equals(other: Any?): Boolean {
-            if (other !is Slot) return false
-            return type == other.type &&
-                value == other.value
-        }
-
-        override fun hashCode(): Int {
-            var result = type.hashCode()
-            result = 31 * result + value.hashCode()
-            return result
-        }
+    data class Slot internal constructor(val type: PType, val value: Any) {
+        constructor(type: KType, value: Any) : this(PType.typeFor(type), value)
     }
 
     internal object SlotSerializer : KSerializer<Slot> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Slot") {
-                element<DynaType>("type")
+                element<PType>("type")
                 element("default", buildClassSerialDescriptor("Any"))
             }
 
         override fun serialize(encoder: Encoder, value: Slot) {
             encoder.encodeStructure(EdgeInsetsSerializer.descriptor) {
-                encodeSerializableElement(descriptor, 0, DynaTypeSerializer, value.type)
-                encodeSerializableElement(descriptor, 1, serializer(value.type.underlyingType), value.value)
+                encodeSerializableElement(descriptor, 0, PTypeSerializer, value.type)
+                encodeSerializableElement(descriptor, 1, serializer(value.type.type), value.value)
             }
         }
 
         override fun deserialize(decoder: Decoder): Slot =
             decoder.decodeStructure(descriptor) {
-                lateinit var type: DynaType
+                lateinit var type: PType
                 lateinit var value: Any
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> type = decodeSerializableElement(descriptor, 0, DynaTypeSerializer)
-                        1 -> value = decodeSerializableElement(descriptor, 1, serializer(type.underlyingType))!!
+                        0 -> type = decodeSerializableElement(descriptor, 0, PTypeSerializer)
+                        1 -> value = decodeSerializableElement(descriptor, 1, serializer(type.type))!!
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
@@ -111,11 +87,11 @@ class JsonContext(
 //        return state
 //    }
 
-    fun encodeSuper(encoder: CompositeEncoder, descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) =
-        encoder.encodeSuper(descriptor, index, value)
+//    fun encodeSuper(encoder: CompositeEncoder, descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) =
+//        encoder.encodeSuper(descriptor, index, value)
 
-//    fun dynaSuperInit(from: Decoder, dynaType: DynaType): Any {
-//        //try decoder.dynaSuperInit(for: dynaType)
+//    fun dynaSuperInit(from: Decoder, ptype: PType): Any {
+//        //try decoder.dynaSuperInit(for: ptype)
 //    }
 //
 //    fun decodeDynaSuper(from: Decoder): Any {

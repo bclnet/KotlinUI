@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-class Angle(var radians: Double = 0.0) {
+data class Angle(var radians: Double = 0.0) {
     var degrees: Double
         get() = radians * (180.0 / Math.PI)
         set(newValue) {

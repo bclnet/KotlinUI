@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -25,7 +25,7 @@ class TextField<Label : Text> internal constructor(
 
     companion object {
         fun register() {
-            DynaType.register<TextField<Text>>()
+            PType.register<TextField<Text>>()
         }
     }
 }

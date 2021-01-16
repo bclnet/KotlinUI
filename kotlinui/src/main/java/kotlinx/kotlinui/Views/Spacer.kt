@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 
 class Spacer : View {
     override val body: Never
@@ -8,7 +8,7 @@ class Spacer : View {
 
     companion object {
         fun register() {
-            DynaType.register<Spacer>()
+            PType.register<Spacer>()
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = AlignmentSerializer::class)
-class Alignment(var horizontal: HorizontalAlignment, var vertical: VerticalAlignment) {
+data class Alignment(var horizontal: HorizontalAlignment, var vertical: VerticalAlignment) {
     companion object {
         var center = Alignment(HorizontalAlignment.center, VerticalAlignment.center)
         var leading = Alignment(HorizontalAlignment.leading, VerticalAlignment.center)

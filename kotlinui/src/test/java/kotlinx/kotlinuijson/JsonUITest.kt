@@ -12,14 +12,14 @@ class JsonUITest {
     @Test
     fun serialize_jsonui() {
         val context = JsonContext()
-        context.var_("Test")
+        context.let("Test")
 
         val json = Json {
             serializersModule = SerializersModule { contextual(JsonUISerializer.UserInfoJsonContext(context)) }
             prettyPrint = true
         }
 
-        val orig_s0 = JsonUI(Text("Verbatim"))
+        val orig_s0 = JsonUI<Text>(Text("Verbatim"))
         val data_s0 = json.encodeToString(JsonUISerializer, orig_s0)
         val json_s0 = json.decodeFromString(JsonUISerializer, data_s0)
         Assert.assertEquals(orig_s0, json_s0)

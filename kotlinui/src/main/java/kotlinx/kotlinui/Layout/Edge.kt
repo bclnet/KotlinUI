@@ -78,29 +78,13 @@ internal object EdgeSerializer : KSerializer<Edge> {
 }
 
 @Serializable(with = EdgeInsetsSerializer::class)
-class EdgeInsets constructor(
+data class EdgeInsets(
     var top: Float = 0f,
     var leading: Float = 0f,
     var bottom: Float = 0f,
     var trailing: Float = 0f
 ) {
     constructor(all: Float) : this(all, all, all, all)
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is EdgeInsets) return false
-        return top == other.top &&
-            leading == other.leading &&
-            bottom == other.bottom &&
-            trailing == other.trailing
-    }
-
-    override fun hashCode(): Int {
-        var result = top.hashCode()
-        result = 31 * result + leading.hashCode()
-        result = 31 * result + bottom.hashCode()
-        result = 31 * result + trailing.hashCode()
-        return result
-    }
 }
 
 internal object EdgeInsetsSerializer : KSerializer<EdgeInsets> {

@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-open class AnyLocationBase
+abstract class AnyLocationBase
 
 open class AnyLocation<Value>(var value: Value) : AnyLocationBase()
 
@@ -25,4 +25,4 @@ class State<Value>(value: Value) {
         get() = Binding<Value>({ wrappedValue }, { newValue -> wrappedValue = newValue });
 }
 
-internal fun <Value, V> State<Value>._makeProperty(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) {}
+//internal fun <Value, V> State<Value>._makeProperty(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) {}

@@ -12,7 +12,7 @@ class HStack<Content : View>(
         get() = error("Never")
 }
 
-internal fun <Content : View> HStack<Content>._makeView(view: _GraphValue<HStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Content : View> HStack<Content>._makeView(view: _GraphValue<HStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 
 class _HStackLayout(
     var alignment: VerticalAlignment? = VerticalAlignment.center,

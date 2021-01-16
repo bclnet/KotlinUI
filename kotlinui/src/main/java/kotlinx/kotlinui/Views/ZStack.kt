@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.DynaType
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -18,7 +18,7 @@ class ZStack<Content : View>(
 
     companion object {
         fun register() {
-            DynaType.register<ZStack<AnyView>>()
+            PType.register<ZStack<AnyView>>()
         }
     }
 }
@@ -49,7 +49,7 @@ class ZStackSerializer<Content : View>(private val contentSerializer: KSerialize
         }
 }
 
-internal fun <Content : View> ZStack<Content>._makeView(view: _GraphValue<ZStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
+//internal fun <Content : View> ZStack<Content>._makeView(view: _GraphValue<ZStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 
 @Serializable(with = _ZStackLayoutSerializer::class)
 class _ZStackLayout(var alignment: Alignment = Alignment.center) : _VariadicView_UnaryViewRoot
