@@ -3,7 +3,10 @@
 package kotlinx.ptype
 
 import kotlinx.kotlinui.*
+import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.*
 import kotlinx.system.*
 import org.junit.Test
 import org.junit.Assert.*
@@ -79,5 +82,21 @@ class PTypeTest {
         assertEquals("\"#List<#String>\"", Json.encodeToString(PTypeSerializer, PType.find("#List<#String>")))
         assertEquals("\"#List<#String>\"", Json.encodeToString(PTypeWithNilSerializer, PTypeWithNil(PType.find("#List<#String>"), false)))
         assertEquals("\"#List<#String>:nil\"", Json.encodeToString(PTypeWithNilSerializer, PTypeWithNil(PType.find("#List<#String>"), true)))
+    }
+
+    @Test
+    fun serializemodel_test() {
+        val module = SerializersModule {
+            polymorphic(View::class) {
+                subclass(Text::class)
+////                default { BasicProject.serializer() }
+            }
+        }
+        val json = Json { serializersModule = module }
+
+        // standard type
+        val orig_c0 = Text("Sample")
+        val data_c0 = json.encodeToString(PolymorphicSerializer(View::class), orig_c0)
+        //val json_c0 = json.decodeFromString(data_c0)
     }
 }

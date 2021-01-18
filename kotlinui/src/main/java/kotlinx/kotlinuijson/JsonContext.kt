@@ -2,7 +2,7 @@
 
 package kotlinx.kotlinuijson
 
-import kotlinx.kotlinui.EdgeInsetsSerializer
+import kotlinx.kotlinui.EdgeInsets
 import kotlinx.ptype.PType
 import kotlinx.ptype.PTypeSerializer
 import kotlinx.serialization.*
@@ -52,7 +52,7 @@ data class JsonContext(
             }
 
         override fun serialize(encoder: Encoder, value: Slot) {
-            encoder.encodeStructure(EdgeInsetsSerializer.descriptor) {
+            encoder.encodeStructure(EdgeInsets.Serializer.descriptor) {
                 encodeSerializableElement(descriptor, 0, PTypeSerializer, value.type)
                 encodeSerializableElement(descriptor, 1, serializer(value.type.type), value.value)
             }

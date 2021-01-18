@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = ColorSerializer::class)
+@Serializable(with = Color.Serializer::class)
 class Color : View {
     private abstract class AnyColorBox
 
@@ -111,21 +111,22 @@ class Color : View {
             }
         }
     }
-}
 
-class ColorSerializer : KSerializer<Color> {
-    override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("Color") {
-        }
+    //: Codable
+    internal object Serializer : KSerializer<Color> {
+        override val descriptor: SerialDescriptor =
+            buildClassSerialDescriptor("Color") {
+            }
 
-    override fun serialize(encoder: Encoder, value: Color) =
-        encoder.encodeStructure(descriptor) {
-        }
+        override fun serialize(encoder: Encoder, value: Color) =
+            encoder.encodeStructure(descriptor) {
+            }
 
-    override fun deserialize(decoder: Decoder): Color =
-        decoder.decodeStructure(descriptor) {
-            error("")
-        }
+        override fun deserialize(decoder: Decoder): Color =
+            decoder.decodeStructure(descriptor) {
+                error("")
+            }
+    }
 }
 
 //fun foregroundColor(color: Color?): View = environment(\.foregroundColor, color)
