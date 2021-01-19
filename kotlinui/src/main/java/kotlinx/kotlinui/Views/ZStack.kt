@@ -49,7 +49,7 @@ class ZStack<Content : View>(
                         else -> error("Unexpected index: $index")
                     }
                 }
-                ZStack(root.alignment) { content }
+                ZStack(root.alignment) { content ?: error("content") }
             }
     }
 

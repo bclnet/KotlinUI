@@ -15,28 +15,40 @@ data class Text internal constructor(
     var _storage: Storage,
     var _modifiers: Array<Modifier>
 ) : View, IAnyView {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Text) return false
+        return _storage == other._storage && _modifiers contentEquals other._modifiers
+    }
+
+    override fun hashCode(): Int {
+        var result = _storage.hashCode()
+        result = 31 * result + _modifiers.contentHashCode()
+        return result
+    }
+
     // region STORAGE
 
+    @Serializable
     internal sealed class Storage {
         data class text(val string: String) : Storage()
         data class verbatim(val verbatim: String) : Storage()
         data class anyTextStorage(val anyTextStorage: AnyTextStorage) : Storage()
 
-        override fun equals(other: Any?): Boolean {
-            if (other !is Storage) return false
-            return when (this) {
-                is text -> other is text && string == other.string
-                is verbatim -> other is verbatim && verbatim == other.verbatim
-                is anyTextStorage -> other is anyTextStorage && anyTextStorage == other.anyTextStorage
-            }
-        }
-
-        override fun hashCode(): Int =
-            when (this) {
-                is text -> string.hashCode()
-                is verbatim -> verbatim.hashCode()
-                is anyTextStorage -> anyTextStorage.hashCode()
-            }
+//        override fun equals(other: Any?): Boolean {
+//            if (other !is Storage) return false
+//            return when (this) {
+//                is text -> other is text && string == other.string
+//                is verbatim -> other is verbatim && verbatim == other.verbatim
+//                is anyTextStorage -> other is anyTextStorage && anyTextStorage == other.anyTextStorage
+//            }
+//        }
+//
+//        override fun hashCode(): Int =
+//            when (this) {
+//                is text -> string.hashCode()
+//                is verbatim -> verbatim.hashCode()
+//                is anyTextStorage -> anyTextStorage.hashCode()
+//            }
     }
 
     internal abstract class AnyTextStorage {
@@ -44,7 +56,7 @@ data class Text internal constructor(
     }
 
     @Serializable(with = AttachmentTextStorage.Serializer::class)
-    internal class AttachmentTextStorage(
+    internal data class AttachmentTextStorage(
         val image: Image
     ) : AnyTextStorage() {
         override fun apply(): Text = Text(image)
@@ -65,8 +77,8 @@ data class Text internal constructor(
                 decoder.decodeStructure(descriptor) {
                     lateinit var image: Image
                     while (true) {
-                        when (val index = decodeElementIndex(JsonContext.SlotSerializer.descriptor)) {
-                            0 -> image = decodeSerializableElement(JsonContext.SlotSerializer.descriptor, 0, Image.Serializer)
+                        when (val index = decodeElementIndex(descriptor)) {
+                            0 -> image = decodeSerializableElement(descriptor, 0, Image.Serializer)
                             CompositeDecoder.DECODE_DONE -> break
                             else -> error("Unexpected index: $index")
                         }
@@ -77,7 +89,7 @@ data class Text internal constructor(
     }
 
     @Serializable(with = LocalizedTextStorage.Serializer::class)
-    internal class LocalizedTextStorage(
+    internal data class LocalizedTextStorage(
         val key: LocalizedStringKey,
         val table: String?,
         val bundle: ResourceBundle?
@@ -90,7 +102,7 @@ data class Text internal constructor(
                 buildClassSerialDescriptor("LocalizedTextStorage") {
                     element<LocalizedStringKey>("text")
                     element<String?>("table")
-                    element<ResourceBundle?>("bundle")
+                    element("bundle", ResourceBundleSerializer.descriptor)
                 }
 
             override fun serialize(encoder: Encoder, value: LocalizedTextStorage) =
@@ -119,38 +131,25 @@ data class Text internal constructor(
         }
     }
 
-/*
     @Serializable(with = FormatterTextStorage.Serializer::class)
-    internal class FormatterTextStorage(
-        val object_: NSObject,
+    internal data class FormatterTextStorage(
+        val object_: Any,
         val formatter: Formatter,
     ) : AnyTextStorage() {
-        override fun apply(): Text = Text(object_, formatter)
+        override fun apply(): Text = error("Not Implemented")
 
         //: Codable
         object Serializer : KSerializer<FormatterTextStorage> {
-            override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("FormatterTextStorage") {
-                }
-
-            override fun serialize(encoder: Encoder, value: FormatterTextStorage) =
-                encoder.encodeStructure(descriptor) {
-                    error("")
-                }
-
-            override fun deserialize(decoder: Decoder): FormatterTextStorage =
-                decoder.decodeStructure(descriptor) {
-                    error("")
-                }
+            override val descriptor: SerialDescriptor = buildClassSerialDescriptor("FormatterTextStorage")
+            override fun serialize(encoder: Encoder, value: FormatterTextStorage) = error("Not Implemented")
+            override fun deserialize(decoder: Decoder): FormatterTextStorage = error("Not Implemented")
         }
     }
-*/
 
     @Serializable(with = DateTextStorage.Serializer::class)
-    internal class DateTextStorage(
+    internal data class DateTextStorage(
         val storage: Storage
     ) : AnyTextStorage() {
-
         override fun apply(): Text =
             when (storage) {
                 is Storage.absolute -> Text(storage.date, storage.style)
@@ -174,9 +173,9 @@ data class Text internal constructor(
                 override val descriptor: SerialDescriptor =
                     buildClassSerialDescriptor("Storage") {
                         element<String>("value")
-                        element<Date>("date")
+                        element("date", DateSerializer.descriptor)
                         element<DateStyle>("style")
-                        element<DateInterval>("interval")
+                        element("interval", DateIntervalSerializer.descriptor)
                     }
 
                 override fun serialize(encoder: Encoder, value: Storage) =
@@ -224,8 +223,9 @@ data class Text internal constructor(
 
     // region MODIFIER
 
-    data class LineStyle(val active: Boolean, val color: Color?)
+    internal data class LineStyle(val active: Boolean, val color: Color?)
 
+    @Serializable
     internal sealed class Modifier {
         data class color(val color: Color?) : Modifier()
         data class font(val font: Font?) : Modifier()
@@ -248,31 +248,31 @@ data class Text internal constructor(
                 is anyTextModifier -> (anyTextModifier as AnyTextModifier).apply(text)
             }
 
-        override fun equals(other: Any?): Boolean {
-            if (other !is Modifier) return false
-            return when (this) {
-                is color -> other is color && color!! == other.color!!
-                is font -> other is font && font!! == other.font!!
-                is italic -> other is italic
-                is weight -> other is weight && weight!! == other.weight!!
-                is kerning -> other is kerning && kerning == other.kerning
-                is tracking -> other is tracking && tracking == other.tracking
-                is baseline -> other is baseline && baseline == other.baseline
-                is anyTextModifier -> other is anyTextModifier && anyTextModifier == other.anyTextModifier
-            }
-        }
+//        override fun equals(other: Any?): Boolean {
+//            if (other !is Modifier) return false
+//            return when (this) {
+//                is color -> other is color && color!! == other.color!!
+//                is font -> other is font && font!! == other.font!!
+//                is italic -> other is italic
+//                is weight -> other is weight && weight!! == other.weight!!
+//                is kerning -> other is kerning && kerning == other.kerning
+//                is tracking -> other is tracking && tracking == other.tracking
+//                is baseline -> other is baseline && baseline == other.baseline
+//                is anyTextModifier -> other is anyTextModifier && anyTextModifier == other.anyTextModifier
+//            }
+//        }
 
-        override fun hashCode(): Int =
-            when (this) {
-                is color -> color.hashCode()
-                is font -> font.hashCode()
-                is italic -> 0
-                is weight -> weight.hashCode()
-                is kerning -> kerning.hashCode()
-                is tracking -> tracking.hashCode()
-                is baseline -> baseline.hashCode()
-                is anyTextModifier -> anyTextModifier.hashCode()
-            }
+//        override fun hashCode(): Int =
+//            when (this) {
+//                is color -> color.hashCode()
+//                is font -> font.hashCode()
+//                is italic -> 0
+//                is weight -> weight.hashCode()
+//                is kerning -> kerning.hashCode()
+//                is tracking -> tracking.hashCode()
+//                is baseline -> baseline.hashCode()
+//                is anyTextModifier -> anyTextModifier.hashCode()
+//            }
 
         //: Codable
         object Serializer : KSerializer<Modifier> {
@@ -285,7 +285,9 @@ data class Text internal constructor(
                     element<Float>("kerning")
                     element<Float>("tracking")
                     element<Float>("baseline")
-                    element<AnyTextModifier>("any")
+                    element<BoldTextModifier>("bold")
+                    element<StrikethroughTextModifier>("strikethrough")
+                    element<UnderlineTextModifier>("underline")
                 }
 
             override fun serialize(encoder: Encoder, value: Modifier) =
@@ -300,8 +302,8 @@ data class Text internal constructor(
                         is baseline -> encodeFloatElement(descriptor, 6, value.baseline)
                         is anyTextModifier -> when (value.anyTextModifier) {
                             is BoldTextModifier -> encodeSerializableElement(descriptor, 7, BoldTextModifier.Serializer, value.anyTextModifier)
-                            is StrikethroughTextModifier -> encodeSerializableElement(descriptor, 7, StrikethroughTextModifier.Serializer, value.anyTextModifier)
-                            is UnderlineTextModifier -> encodeSerializableElement(descriptor, 7, UnderlineTextModifier.Serializer, value.anyTextModifier)
+                            is StrikethroughTextModifier -> encodeSerializableElement(descriptor, 8, StrikethroughTextModifier.Serializer, value.anyTextModifier)
+                            is UnderlineTextModifier -> encodeSerializableElement(descriptor, 9, UnderlineTextModifier.Serializer, value.anyTextModifier)
                             else -> error("$value.anyTextModifier")
                         }
                     }
@@ -319,7 +321,9 @@ data class Text internal constructor(
                             4 -> modifier = kerning(decodeFloatElement(descriptor, 4))
                             5 -> modifier = tracking(decodeFloatElement(descriptor, 5))
                             6 -> modifier = baseline(decodeFloatElement(descriptor, 6))
-//                            7 -> modifier = anyTextModifier(decodeSerializableElement(descriptor, 0, Color.Serializer))
+                            7 -> modifier = anyTextModifier(decodeSerializableElement(descriptor, 7, BoldTextModifier.Serializer))
+                            8 -> modifier = anyTextModifier(decodeSerializableElement(descriptor, 8, StrikethroughTextModifier.Serializer))
+                            9 -> modifier = anyTextModifier(decodeSerializableElement(descriptor, 9, UnderlineTextModifier.Serializer))
                             CompositeDecoder.DECODE_DONE -> break
                             else -> error("Unexpected index: $index")
                         }
@@ -334,7 +338,7 @@ data class Text internal constructor(
     }
 
     @Serializable(with = BoldTextModifier.Serializer::class)
-    internal class BoldTextModifier() : AnyTextModifier() {
+    internal class BoldTextModifier : AnyTextModifier() {
         override fun apply(text: Text): Text = text.bold()
 
         //: Codable
@@ -355,7 +359,7 @@ data class Text internal constructor(
     }
 
     @Serializable(with = StrikethroughTextModifier.Serializer::class)
-    internal class StrikethroughTextModifier(
+    internal data class StrikethroughTextModifier(
         val lineStyle: LineStyle?
     ) : AnyTextModifier() {
         override fun apply(text: Text): Text = text.strikethrough(lineStyle?.active ?: true, lineStyle?.color)
@@ -393,7 +397,7 @@ data class Text internal constructor(
     }
 
     @Serializable(with = UnderlineTextModifier.Serializer::class)
-    internal class UnderlineTextModifier(
+    internal data class UnderlineTextModifier(
         val lineStyle: LineStyle?
     ) : AnyTextModifier() {
         override fun apply(text: Text): Text = text.underline(lineStyle?.active ?: true, lineStyle?.color)
@@ -434,6 +438,11 @@ data class Text internal constructor(
 
     enum class Init { string, verbatim }
 
+    constructor(init: Init, string: String) : this(when (init) {
+        Init.string -> Storage.text(string)
+        Init.verbatim -> Storage.verbatim(string)
+    }, arrayOf())
+
     constructor(
         key: LocalizedStringKey,
         tableName: String? = null,
@@ -441,11 +450,7 @@ data class Text internal constructor(
         comment: String? = null
     ) : this(Storage.anyTextStorage(LocalizedTextStorage(key, tableName, bundle)), arrayOf())
 
-    constructor(string: String, init: Init = Init.string) : this(when (init) {
-        Init.string -> Storage.anyTextStorage(LocalizedTextStorage(LocalizedStringKey(string), null, null))
-        Init.verbatim -> Storage.verbatim(string)
-    }, arrayOf())
-
+    constructor(string: String) : this(Storage.text(string), arrayOf())
     constructor(image: Image) : this(Storage.anyTextStorage(AttachmentTextStorage(image)), arrayOf())
     constructor(range: ClosedRange<Date>) : this(Storage.anyTextStorage(DateTextStorage(DateTextStorage.Storage.interval(DateInterval(range.start.time, range.endInclusive.time)))), arrayOf())
     constructor(interval: DateInterval) : this(Storage.anyTextStorage(DateTextStorage(DateTextStorage.Storage.interval(interval))), arrayOf())
@@ -461,10 +466,13 @@ data class Text internal constructor(
     internal object Serializer : KSerializer<Text> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Text") {
-                element<Image>("text")
-                element<Image>("verbatim")
-                element<Image>("any")
-                element<Image>("modifiers")
+                element<String>("text")
+                element<String>("verbatim")
+                element<LocalizedTextStorage>("local")
+                element<AttachmentTextStorage>("attach")
+                element<FormatterTextStorage>("format")
+                element<DateTextStorage>("date")
+                element<Array<Modifier>>("modifiers")
             }
 
         override fun serialize(encoder: Encoder, value: Text) =
@@ -474,32 +482,35 @@ data class Text internal constructor(
                     is Storage.verbatim -> encodeStringElement(descriptor, 1, storage.verbatim)
                     is Storage.anyTextStorage -> when (storage.anyTextStorage) {
                         is LocalizedTextStorage -> encodeSerializableElement(descriptor, 2, LocalizedTextStorage.Serializer, storage.anyTextStorage)
-                        is AttachmentTextStorage -> encodeSerializableElement(descriptor, 2, AttachmentTextStorage.Serializer, storage.anyTextStorage)
-//                        is FormatterTextStorage -> encodeSerializableElement(descriptor, 2, FormatterTextStorage.Serializer, storage.anyTextStorage)
-                        is DateTextStorage -> encodeSerializableElement(descriptor, 2, DateTextStorage.Serializer, storage.anyTextStorage)
+                        is AttachmentTextStorage -> encodeSerializableElement(descriptor, 3, AttachmentTextStorage.Serializer, storage.anyTextStorage)
+                        is FormatterTextStorage -> encodeSerializableElement(descriptor, 4, FormatterTextStorage.Serializer, storage.anyTextStorage)
+                        is DateTextStorage -> encodeSerializableElement(descriptor, 5, DateTextStorage.Serializer, storage.anyTextStorage)
                         else -> error("$storage.anyTextStorage")
                     }
                 }
                 val modifiers = value._modifiers
                 if (!modifiers.isEmpty())
-                    encodeSerializableElement(descriptor, 3, serializer<Array<Modifier>>(), modifiers)
+                    encodeSerializableElement(descriptor, 6, serializer<Array<Modifier>>(), modifiers)
             }
 
         override fun deserialize(decoder: Decoder): Text =
             decoder.decodeStructure(descriptor) {
                 lateinit var storage: Storage
-                lateinit var modifiers: Array<Modifier>
+                var modifiers: Array<Modifier>? = null
                 while (true) {
-                    when (val index = decodeElementIndex(JsonContext.SlotSerializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> storage = Storage.text(decodeStringElement(descriptor, 0))
                         1 -> storage = Storage.verbatim(decodeStringElement(descriptor, 1))
-//                        2 -> storage = Storage.anyTextStorage(decodeSerializableElement(descriptor, 2, PolymorphicSerializer()))
-                        3 -> modifiers = decodeSerializableElement(descriptor, 3, serializer<Array<Modifier>>())
+                        2 -> storage = Storage.anyTextStorage(decodeSerializableElement(descriptor, 2, LocalizedTextStorage.Serializer))
+                        3 -> storage = Storage.anyTextStorage(decodeSerializableElement(descriptor, 3, AttachmentTextStorage.Serializer))
+                        4 -> storage = Storage.anyTextStorage(decodeSerializableElement(descriptor, 4, FormatterTextStorage.Serializer))
+                        5 -> storage = Storage.anyTextStorage(decodeSerializableElement(descriptor, 5, DateTextStorage.Serializer))
+                        6 -> modifiers = decodeSerializableElement(descriptor, 6, serializer<Array<Modifier>>())
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                Text(storage, modifiers)
+                Text(storage, modifiers ?: arrayOf())
             }
     }
 
@@ -514,7 +525,7 @@ data class Text internal constructor(
     // region ADDITIONAL TYPES
 
     @Serializable(with = DateStyle.Serializer::class)
-    class DateStyle(var id: Int) {
+    data class DateStyle private constructor(var id: Int) {
         companion object {
             var date = DateStyle(0)
             var offset = DateStyle(1)
@@ -540,12 +551,12 @@ data class Text internal constructor(
 
             override fun deserialize(decoder: Decoder): DateStyle =
                 when (val value = decoder.decodeString()) {
-                    "date" -> DateStyle.date
-                    "offset" -> DateStyle.offset
-                    "relative" -> DateStyle.relative
-                    "bottom" -> DateStyle.date
-                    "time" -> DateStyle.time
-                    "timer" -> DateStyle.timer
+                    "date" -> date
+                    "offset" -> offset
+                    "relative" -> relative
+                    "bottom" -> date
+                    "time" -> time
+                    "timer" -> timer
                     else -> error(value)
                 }
         }
@@ -557,7 +568,7 @@ data class Text internal constructor(
 
         internal object Serializer : KSerializer<TruncationMode> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Case", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor("TruncationMode", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: TruncationMode) {
                 when (value) {
@@ -569,9 +580,9 @@ data class Text internal constructor(
 
             override fun deserialize(decoder: Decoder): TruncationMode =
                 when (val value = decoder.decodeString()) {
-                    "head" -> TruncationMode.head
-                    "tail" -> TruncationMode.tail
-                    "middle" -> TruncationMode.middle
+                    "head" -> head
+                    "tail" -> tail
+                    "middle" -> middle
                     else -> error(value)
                 }
         }
@@ -587,15 +598,15 @@ data class Text internal constructor(
 
             override fun serialize(encoder: Encoder, value: Case) {
                 when (value) {
-                    Case.uppercase -> encoder.encodeString("uppercase")
-                    Case.lowercase -> encoder.encodeString("lowercase")
+                    uppercase -> encoder.encodeString("uppercase")
+                    lowercase -> encoder.encodeString("lowercase")
                 }
             }
 
             override fun deserialize(decoder: Decoder): Case =
                 when (val value = decoder.decodeString()) {
-                    "uppercase" -> Case.uppercase
-                    "lowercase" -> Case.lowercase
+                    "uppercase" -> uppercase
+                    "lowercase" -> lowercase
                     else -> error(value)
                 }
         }

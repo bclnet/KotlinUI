@@ -88,6 +88,12 @@ data class EdgeInsets(
 ) {
     constructor(all: Float) : this(all, all, all, all)
 
+    val isEmpty: Boolean
+        get() = top == 0f && leading == 0f && bottom == 0f && trailing == 0f
+
+    val isEqual: Boolean
+        get() = top == leading && leading == bottom && bottom == trailing
+
     internal object Serializer : KSerializer<EdgeInsets> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("EdgeInsets") {

@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.icu.util.DateInterval
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -16,4 +17,15 @@ internal object DateSerializer : KSerializer<Date> {
 
     override fun deserialize(decoder: Decoder): Date =
         df.parse(decoder.decodeString())
+}
+
+internal object DateIntervalSerializer : KSerializer<DateInterval> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("UXImage", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: DateInterval) =
+        encoder.encodeSerializableValue(serializer(), arrayOf(value.fromDate, value.toDate))
+
+    override fun deserialize(decoder: Decoder): DateInterval =
+        decoder.decodeSerializableValue(serializer<LongArray>()).let { DateInterval(it[0], it[1]) }
 }
