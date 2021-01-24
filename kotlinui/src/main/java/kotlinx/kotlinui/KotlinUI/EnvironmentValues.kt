@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import kotlinx.system.KeyPath
 import java.util.HashMap
 
 interface EnvironmentKey {
@@ -14,5 +15,9 @@ object EnvironmentValues {
 
     operator fun <V> set(key: EnvironmentKey, newValue: V) {
         values[key.key] = newValue
+    }
+
+    fun <Root, Value> find(keyPath: KeyPath<Root, Value>): String {
+        return ""
     }
 }

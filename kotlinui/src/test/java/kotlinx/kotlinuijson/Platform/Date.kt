@@ -14,20 +14,30 @@ class DateTest {
             prettyPrint = true
         }
 
-        // date
-        val orig_s0 = Date()
-        val data_s0 = json.encodeToString(DateSerializer, orig_s0)
-        val json_s0 = json.decodeFromString(DateSerializer, data_s0)
-        Assert.assertEquals(orig_s0, json_s0)
+        // Date
+        val date = mockk<Date>(relaxed = true)
+        every { date.time } returns 1220227200L * 1000
+        every { date.equals(any()) } returns true
+        val orig_d = date
+        val data_d = json.encodeToString(DateSerializer, orig_d)
+        val json_d = json.decodeFromString(DateSerializer, data_d)
+        Assert.assertEquals(orig_d, json_d)
+        Assert.assertEquals("\"31/08/2008 19:00:00.000\"", data_d)
 
-        // dateinterval
-        val dateInterval = mockk<DateInterval>()
-        every { dateInterval.getFromDate() } returns 0
-        every { dateInterval.getToDate() } returns 1
-        val orig_s1 = dateInterval
-        val data_s1 = json.encodeToString(DateIntervalSerializer, orig_s1)
-        val json_s1 = json.decodeFromString(DateIntervalSerializer, data_s1)
-//        Assert.assertEquals(orig_s1.fromDate, json_s1.fromDate)
-//        Assert.assertEquals(orig_s1.toDate, json_s1.toDate)
+        // DateInterval
+        val dateInterval = mockk<DateInterval>(relaxed = true)
+        every { dateInterval.equals(any()) } returns true
+        every { dateInterval.getFromDate() } returns 1220227200L * 1000
+        every { dateInterval.getToDate() } returns 1220227200L * 1000
+        val orig_di = dateInterval
+        val data_di = json.encodeToString(DateIntervalSerializer, orig_di)
+        val json_di = json.decodeFromString(DateIntervalSerializer, data_di)
+        Assert.assertEquals(orig_di, json_di)
+        Assert.assertEquals(
+            """[
+    "31/08/2008 19:00:00.000",
+    "31/08/2008 19:00:00.000"
+]""".trimIndent(), data_di
+        )
     }
 }

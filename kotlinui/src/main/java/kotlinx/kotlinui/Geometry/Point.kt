@@ -6,24 +6,21 @@ import kotlinx.serialization.encoding.*
 
 @Serializable(with = Point.Serializer::class)
 data class Point(var x: Int, var y: Int) {
-    companion object {
-        var zero = Point(0, 0)
-    }
-
     //: Codable
     internal object Serializer : KSerializer<Point> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Point", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: Point) {
-            when (value) {
-                else -> error("$value")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: Point) =
+            encoder.encodeSerializableValue(serializer<Array<Int>>(), arrayOf(value.x, value.y))
 
         override fun deserialize(decoder: Decoder): Point =
-            when (val value = decoder.decodeString()) {
-                else -> error(value)
+            decoder.decodeSerializableValue(serializer<Array<Int>>()).let {
+                Point(it[0], it[1])
             }
+    }
+
+    companion object {
+        var zero = Point(0, 0)
     }
 }

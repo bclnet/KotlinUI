@@ -6,7 +6,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = TouchBarSerializer::class)
+@Serializable(with = TouchBar.Serializer::class)
 class TouchBar<Content : View>(
     id: String?,
     content: ViewBuilder.() -> Content
@@ -17,36 +17,44 @@ class TouchBar<Content : View>(
     override val body: View
         get() = error("Not Implemented")
 
+    internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<TouchBar<Content>> {
+        override val descriptor: SerialDescriptor =
+            buildClassSerialDescriptor("TouchBar") {
+                element<String>("id")
+                element<View>("content")
+            }
+
+        override fun serialize(encoder: Encoder, value: TouchBar<Content>) =
+            encoder.encodeStructure(descriptor) {
+                val container = value.container
+                if (container.id != null) encodeStringElement(descriptor, 0, container.id!!)
+                encodeSerializableElement(descriptor, 1, contentSerializer, value.content)
+            }
+
+        override fun deserialize(decoder: Decoder): TouchBar<Content> =
+            decoder.decodeStructure(descriptor) {
+                var id: String? = null
+                lateinit var content: Content
+                while (true) {
+                    when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
+                        0 -> id = decodeStringElement(descriptor, 0)
+                        1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer)
+                        CompositeDecoder.DECODE_DONE -> break
+                        else -> error("Unexpected index: $index")
+                    }
+                }
+                TouchBar(id) { content }
+            }
+    }
+
     companion object {
+        //: Register
         fun register() {
             PType.register<TouchBar<AnyView>>()
         }
     }
 }
 
-class TouchBarSerializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<TouchBar<Content>> {
-    override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("TouchBar") {
-            element<String?>("id")
-            element<View>("content")
-        }
-
-    override fun serialize(encoder: Encoder, value: TouchBar<Content>) =
-        encoder.encodeStructure(descriptor) {
-            val container = value.container
-            encodeNullableSerializableElement(descriptor, 0, String.serializer(), container.id)
-            encodeSerializableElement(descriptor, 1, contentSerializer, value.content)
-        }
-
-    @ExperimentalSerializationApi
-    override fun deserialize(decoder: Decoder): TouchBar<Content> =
-        decoder.decodeStructure(descriptor) {
-            val id = decodeNullableSerializableElement(descriptor, 0, String.serializer() as KSerializer<String?>)
-            val content = decodeSerializableElement(descriptor, 1, contentSerializer)
-            TouchBar(id) { content }
-        }
-}
+internal class TouchBarContainer(var id: String?)
 
 //internal fun <Content : View> TouchBar<Content>._makeView(view: _GraphValue<TouchBar<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
-
-internal class TouchBarContainer(var id: String?)

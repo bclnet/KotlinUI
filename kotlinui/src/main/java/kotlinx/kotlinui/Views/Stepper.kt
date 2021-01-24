@@ -29,6 +29,7 @@ class Stepper<Label : View> private constructor(
         get() = label
 
     companion object {
+        //: Register
         fun register() {
 //            PType.register<Stepper<EmptyView>>()
             PType.register<Stepper<AnyView>>()

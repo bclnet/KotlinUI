@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import java.util.*
-import android.media.Image as UXImage
+import android.graphics.drawable.Drawable as UXImage
 import android.media.Image as CGImage
 
 @Serializable(with = Image.Serializer::class)
@@ -16,6 +16,7 @@ data class Image internal constructor(
 
     internal data class Location(val system: Boolean, val bundle: ResourceBundle?)
 
+    @Serializable
     internal abstract class AnyImageBox { //: AnyImageProviderBox
         abstract fun apply(): Image
     }
@@ -91,7 +92,7 @@ data class Image internal constructor(
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("RenderingModeProvider") {
                     element<Image>("base")
-                    element<TemplateRenderingMode>("mode")
+                    element("mode", TemplateRenderingMode.Serializer.descriptor)
                 }
 
             override fun serialize(encoder: Encoder, value: RenderingModeProvider) =
@@ -129,7 +130,7 @@ data class Image internal constructor(
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("InterpolationProvider") {
                     element<Image>("base")
-                    element<Interpolation>("interpolation")
+                    element("interpolation", Interpolation.Serializer.descriptor)
                 }
 
             override fun serialize(encoder: Encoder, value: InterpolationProvider) =
@@ -167,7 +168,7 @@ data class Image internal constructor(
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("AntialiasedProvider") {
                     element<Image>("base")
-                    element<Interpolation>("interpolation")
+                    element<Boolean>("antialiased")
                 }
 
             override fun serialize(encoder: Encoder, value: AntialiasedProvider) =
@@ -179,7 +180,7 @@ data class Image internal constructor(
             override fun deserialize(decoder: Decoder): AntialiasedProvider =
                 decoder.decodeStructure(descriptor) {
                     lateinit var base: Image
-                    var isAntialiased = false
+                    var isAntialiased = true
                     while (true) {
                         when (val index = decodeElementIndex(descriptor)) {
                             0 -> base = decodeSerializableElement(descriptor, 0, Image.Serializer)
@@ -209,16 +210,16 @@ data class Image internal constructor(
         object Serializer : KSerializer<CGImageProvider> {
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("CGImageProvider") {
-                    element<CGImage>("image")
+                    element("image", CGImageSerializer.descriptor)
                     element<Text>("label")
                     element<Boolean>("decorative")
                     element<Float>("scale")
-                    element<Orientation>("orientation")
+                    element("orientation", Orientation.Serializer.descriptor)
                 }
 
             override fun serialize(encoder: Encoder, value: CGImageProvider) =
                 encoder.encodeStructure(descriptor) {
-                    encodeSerializableElement(descriptor, 0, UXImageSerializer, value.image)
+                    encodeSerializableElement(descriptor, 0, CGImageSerializer, value.image)
                     if (value.label != null) encodeSerializableElement(descriptor, 1, Text.Serializer, value.label)
                     if (value.decorative) encodeBooleanElement(descriptor, 2, value.decorative)
                     if (value.scale != 0f) encodeFloatElement(descriptor, 3, value.scale)
@@ -234,7 +235,7 @@ data class Image internal constructor(
                     var orientation = Orientation.up
                     while (true) {
                         when (val index = decodeElementIndex(descriptor)) {
-                            0 -> image = decodeSerializableElement(descriptor, 0, UXImageSerializer)
+                            0 -> image = decodeSerializableElement(descriptor, 0, CGImageSerializer)
                             1 -> label = decodeSerializableElement(descriptor, 1, Text.Serializer)
                             2 -> decorative = decodeBooleanElement(descriptor, 2)
                             3 -> scale = decodeFloatElement(descriptor, 3)
@@ -258,7 +259,7 @@ data class Image internal constructor(
         object Serializer : KSerializer<PlatformProvider> {
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("PlatformProvider") {
-                    element<UXImage>("image")
+                    element("image", UXImageSerializer.descriptor)
                 }
 
             override fun serialize(encoder: Encoder, value: PlatformProvider) =
@@ -291,12 +292,11 @@ data class Image internal constructor(
 
         //: Codable
         object Serializer : KSerializer<ResizableProvider> {
-            override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("ResizableProvider") {
-                    element<Image>("base")
-                    element<EdgeInsets>("capInsets")
-                    element<ResizingMode>("resizingMode")
-                }
+            override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ResizableProvider") {
+                element<Image>("base")
+                element<EdgeInsets>("capInsets")
+                element<ResizingMode>("resizingMode")
+            }
 
             override fun serialize(encoder: Encoder, value: ResizableProvider) =
                 encoder.encodeStructure(descriptor) {
@@ -353,13 +353,13 @@ data class Image internal constructor(
     internal object Serializer : KSerializer<Image> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Image") {
-//                element<NamedImageProvider>("named")
-//                element<RenderingModeProvider>("mode")
-//                element<InterpolationProvider>("interpolation")
-//                element<AntialiasedProvider>("antialiased")
-//                element<CGImageProvider>("cgimage")
-//                element<PlatformProvider>("platform")
-                element<ResizableProvider>("resizable")
+                element<AnyImageBox>("named")
+                element<AnyImageBox>("renderingMode")
+                element<AnyImageBox>("interpolation")
+                element<AnyImageBox>("antialiased")
+                element<AnyImageBox>("cgimage")
+                element<AnyImageBox>("platform")
+                element<AnyImageBox>("resizable")
             }
 
         override fun serialize(encoder: Encoder, value: Image) =
@@ -539,13 +539,13 @@ data class Image internal constructor(
 }
 
 fun Image.resizable(capInsets: EdgeInsets, resizingMode: Image.ResizingMode): Image =
-    error("Not Implemented")
+    Image(Image.ResizableProvider(this, capInsets, resizingMode))
 
 fun Image.renderingMode(renderingMode: Image.TemplateRenderingMode?): Image =
-    error("Not Implemented")
+    Image(Image.RenderingModeProvider(this, renderingMode ?: Image.TemplateRenderingMode.original))
 
 fun Image.interpolation(interpolation: Image.Interpolation): Image =
-    error("Not Implemented")
+    Image(Image.InterpolationProvider(this, interpolation))
 
 fun Image.antialiased(antialiased: Boolean): Image =
-    error("Not Implemented")
+    Image(Image.AntialiasedProvider(this, antialiased))

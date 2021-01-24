@@ -1,5 +1,5 @@
 package kotlinx.system
 
-class KeyPath<Values, Value>
+open class KeyPath<Values, Value>
 
-class WritableKeyPath<Values, Value>
+class WritableKeyPath<Values, Value> : KeyPath<Values, Value>()

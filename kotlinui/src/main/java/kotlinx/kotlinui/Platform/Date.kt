@@ -1,31 +1,45 @@
 package kotlinx.kotlinui
 
+import android.annotation.SuppressLint
 import android.icu.util.DateInterval
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import java.text.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-internal object DateSerializer : KSerializer<Date> {
-    private val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS")
+object DateSerializer : KSerializer<Date> {
+    @SuppressLint("SimpleDateFormat")
+    internal val formatter: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS")
+
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Date) =
-        encoder.encodeString(df.format(value))
+        encoder.encodeString(formatter.format(value))
 
     override fun deserialize(decoder: Decoder): Date =
-        df.parse(decoder.decodeString())
+        formatter.parse(decoder.decodeString())!!
 }
 
-internal object DateIntervalSerializer : KSerializer<DateInterval> {
+object DateIntervalSerializer : KSerializer<DateInterval> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("UXImage", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("DateInterval", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: DateInterval) =
-        encoder.encodeSerializableValue(serializer(), arrayOf(value.fromDate, value.toDate))
+        encoder.encodeSerializableValue(
+            serializer(), arrayOf(
+                DateSerializer.formatter.format(Date(value.fromDate)),
+                DateSerializer.formatter.format(Date(value.toDate))
+            )
+        )
 
     override fun deserialize(decoder: Decoder): DateInterval =
-        decoder.decodeSerializableValue(serializer<LongArray>()).let { DateInterval(it[0], it[1]) }
+        decoder.decodeSerializableValue(serializer<Array<String>>()).let {
+            DateInterval(
+                DateSerializer.formatter.parse(it[0])!!.time,
+                DateSerializer.formatter.parse(it[1])!!.time
+            )
+        }
 }

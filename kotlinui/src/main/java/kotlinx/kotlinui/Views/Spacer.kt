@@ -7,6 +7,7 @@ class Spacer : View {
         get() = error("Never")
 
     companion object {
+        //: Register
         fun register() {
             PType.register<Spacer>()
         }

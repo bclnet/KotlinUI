@@ -24,32 +24,33 @@ data class Alignment(var horizontal: HorizontalAlignment, var vertical: Vertical
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Alignment", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: Alignment) {
-            when (value) {
-                Alignment.center -> encoder.encodeString("center")
-                Alignment.leading -> encoder.encodeString("leading")
-                Alignment.trailing -> encoder.encodeString("trailing")
-                Alignment.top -> encoder.encodeString("top")
-                Alignment.bottom -> encoder.encodeString("bottom")
-                Alignment.topLeading -> encoder.encodeString("topLeading")
-                Alignment.topTrailing -> encoder.encodeString("topTrailing")
-                Alignment.bottomLeading -> encoder.encodeString("bottomLeading")
-                Alignment.bottomTrailing -> encoder.encodeString("bottomTrailing")
-                else -> error("$value")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: Alignment) =
+            encoder.encodeString(
+                when (value) {
+                    center -> "center"
+                    leading -> "leading"
+                    trailing -> "trailing"
+                    top -> "top"
+                    bottom -> "bottom"
+                    topLeading -> "topLeading"
+                    topTrailing -> "topTrailing"
+                    bottomLeading -> "bottomLeading"
+                    bottomTrailing -> "bottomTrailing"
+                    else -> error("$value")
+                }
+            )
 
         override fun deserialize(decoder: Decoder): Alignment =
             when (val value = decoder.decodeString()) {
-                "center" -> Alignment.center
-                "leading" -> Alignment.leading
-                "trailing" -> Alignment.trailing
-                "top" -> Alignment.top
-                "bottom" -> Alignment.bottom
-                "topLeading" -> Alignment.topLeading
-                "topTrailing" -> Alignment.topTrailing
-                "bottomLeading" -> Alignment.bottomLeading
-                "bottomTrailing" -> Alignment.bottomTrailing
+                "center" -> center
+                "leading" -> leading
+                "trailing" -> trailing
+                "top" -> top
+                "bottom" -> bottom
+                "topLeading" -> topLeading
+                "topTrailing" -> topTrailing
+                "bottomLeading" -> bottomLeading
+                "bottomTrailing" -> bottomTrailing
                 else -> error(value)
             }
     }
@@ -64,19 +65,20 @@ enum class HorizontalAlignment {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("HorizontalAlignment", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: HorizontalAlignment) {
-            when (value) {
-                HorizontalAlignment.leading -> encoder.encodeString("leading")
-                HorizontalAlignment.center -> encoder.encodeString("center")
-                HorizontalAlignment.trailing -> encoder.encodeString("trailing")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: HorizontalAlignment) =
+            encoder.encodeString(
+                when (value) {
+                    leading -> "leading"
+                    center -> "center"
+                    trailing -> "trailing"
+                }
+            )
 
         override fun deserialize(decoder: Decoder): HorizontalAlignment =
             when (val value = decoder.decodeString()) {
-                "leading" -> HorizontalAlignment.leading
-                "center" -> HorizontalAlignment.center
-                "trailing" -> HorizontalAlignment.trailing
+                "leading" -> leading
+                "center" -> center
+                "trailing" -> trailing
                 else -> error(value)
             }
     }
@@ -91,23 +93,24 @@ enum class VerticalAlignment {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("VerticalAlignment", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: VerticalAlignment) {
-            when (value) {
-                VerticalAlignment.top -> encoder.encodeString("top")
-                VerticalAlignment.center -> encoder.encodeString("center")
-                VerticalAlignment.bottom -> encoder.encodeString("bottom")
-                VerticalAlignment.firstTextBaseline -> encoder.encodeString("firstTextBaseline")
-                VerticalAlignment.lastTextBaseline -> encoder.encodeString("lastTextBaseline")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: VerticalAlignment) =
+            encoder.encodeString(
+                when (value) {
+                    top -> "top"
+                    center -> "center"
+                    bottom -> "bottom"
+                    firstTextBaseline -> "firstTextBaseline"
+                    lastTextBaseline -> "lastTextBaseline"
+                }
+            )
 
         override fun deserialize(decoder: Decoder): VerticalAlignment =
             when (val value = decoder.decodeString()) {
-                "top" -> VerticalAlignment.top
-                "center" -> VerticalAlignment.center
-                "bottom" -> VerticalAlignment.bottom
-                "firstTextBaseline" -> VerticalAlignment.firstTextBaseline
-                "lastTextBaseline" -> VerticalAlignment.lastTextBaseline
+                "top" -> top
+                "center" -> center
+                "bottom" -> bottom
+                "firstTextBaseline" -> firstTextBaseline
+                "lastTextBaseline" -> lastTextBaseline
                 else -> error(value)
             }
     }

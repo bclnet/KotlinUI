@@ -26,7 +26,7 @@ data class Text internal constructor(
         return result
     }
 
-    // region STORAGE
+    // region ANYTEXTSTORAGE
 
     @Serializable
     internal sealed class Storage {
@@ -51,6 +51,7 @@ data class Text internal constructor(
 //            }
     }
 
+    @Serializable
     internal abstract class AnyTextStorage {
         abstract fun apply(): Text
     }
@@ -182,12 +183,12 @@ data class Text internal constructor(
                     encoder.encodeStructure(descriptor) {
                         when (value) {
                             is absolute -> {
-                                encodeSerializableElement(descriptor, 0, DateSerializer, value.date)
-                                encodeSerializableElement(descriptor, 0, DateStyle.Serializer, value.style)
+                                encodeSerializableElement(descriptor, 1, DateSerializer, value.date)
+                                encodeSerializableElement(descriptor, 2, DateStyle.Serializer, value.style)
                                 encodeStringElement(descriptor, 0, "absolute")
                             }
                             is interval -> {
-                                encodeSerializableElement(descriptor, 0, DateIntervalSerializer, value.interval)
+                                encodeSerializableElement(descriptor, 3, DateIntervalSerializer, value.interval)
                                 encodeStringElement(descriptor, 0, "interval")
                             }
                         }
@@ -221,7 +222,7 @@ data class Text internal constructor(
 
     // endregion
 
-    // region MODIFIER
+    // region ANYTEXTMODIFIER
 
     internal data class LineStyle(val active: Boolean, val color: Color?)
 
@@ -468,10 +469,10 @@ data class Text internal constructor(
             buildClassSerialDescriptor("Text") {
                 element<String>("text")
                 element<String>("verbatim")
-                element<LocalizedTextStorage>("local")
-                element<AttachmentTextStorage>("attach")
-                element<FormatterTextStorage>("format")
-                element<DateTextStorage>("date")
+                element<AnyTextStorage>("local")
+                element<AnyTextStorage>("attach")
+                element<AnyTextStorage>("format")
+                element<AnyTextStorage>("date")
                 element<Array<Modifier>>("modifiers")
             }
 
@@ -522,7 +523,7 @@ data class Text internal constructor(
         }
     }
 
-    // region ADDITIONAL TYPES
+    // region ADDITIONALTYPES
 
     @Serializable(with = DateStyle.Serializer::class)
     data class DateStyle private constructor(var id: Int) {

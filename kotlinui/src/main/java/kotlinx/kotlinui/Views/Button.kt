@@ -13,17 +13,6 @@ class Button<Label : View> private constructor(
         get() = _label
 }
 
-interface ButtonStyle {
-    fun makeBody(configuration: ButtonStyleConfiguration): View
-}
-
-class ButtonStyleConfiguration(val label: Label, val isPressed: Boolean) {
-    class Label(val storage: Any) : View {
-        override val body: Never
-            get() = error("Never")
-    }
-}
-
 fun <S : ButtonStyle> View.buttonStyle(style: S): View {
     val label = ButtonStyleConfiguration.Label(this)
     val configuration = ButtonStyleConfiguration(label, false)

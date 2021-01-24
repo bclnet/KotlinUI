@@ -10,6 +10,7 @@ class TupleView<T>(
         get() = error("Never")
 
     companion object {
+        //: Register
         fun register() {
             PType.register<TupleView<AnyView>>()
             PType.register<TupleView<Tuple2<AnyView, AnyView>>>()

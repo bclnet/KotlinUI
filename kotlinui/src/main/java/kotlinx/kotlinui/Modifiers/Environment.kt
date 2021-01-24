@@ -32,7 +32,5 @@ class Environment<Value> : DynamicProperty {
     internal fun error(): Never = error("Not Implemented")
 }
 
-class _EnvironmentKeyWritingModifier<Value>(var keyPath: WritableKeyPath<EnvironmentValues, Value>, var value: Value) : ViewModifier
-
 fun <V> View.environment(keyPath: WritableKeyPath<EnvironmentValues, V>, value: V): View =
     modifier(_EnvironmentKeyWritingModifier(keyPath, value))

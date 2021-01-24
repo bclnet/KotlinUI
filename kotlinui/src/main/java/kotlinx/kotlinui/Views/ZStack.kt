@@ -21,7 +21,7 @@ class ZStack<Content : View>(
         get() = AnyView(this)
 
     //: Codable
-    internal data class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<ZStack<Content>> {
+    internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<ZStack<Content>> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("ZStack") {
                 element<_ZStackLayout>("root")
@@ -32,8 +32,7 @@ class ZStack<Content : View>(
             encoder.encodeStructure(descriptor) {
                 val tree = value._tree
                 val root = tree.root
-                if (root.alignment != Alignment.center)
-                    encodeSerializableElement(descriptor, 0, _ZStackLayout.Serializer, root)
+                if (root.alignment != Alignment.center) encodeSerializableElement(descriptor, 0, _ZStackLayout.Serializer, root)
                 encodeSerializableElement(descriptor, 1, contentSerializer, tree.content)
             }
 
@@ -49,7 +48,7 @@ class ZStack<Content : View>(
                         else -> error("Unexpected index: $index")
                     }
                 }
-                ZStack(root.alignment) { content ?: error("content") }
+                ZStack(root.alignment) { content }
             }
     }
 
@@ -61,10 +60,10 @@ class ZStack<Content : View>(
     }
 }
 
-//internal fun <Content : View> ZStack<Content>._makeView(view: _GraphValue<ZStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
-
 @Serializable(with = _ZStackLayout.Serializer::class)
-data class _ZStackLayout(var alignment: Alignment = Alignment.center) : _VariadicView_UnaryViewRoot {
+data class _ZStackLayout(
+    var alignment: Alignment = Alignment.center
+) : _VariadicView_UnaryViewRoot {
     //: Codable
     internal object Serializer : KSerializer<_ZStackLayout> {
         override val descriptor: SerialDescriptor =
@@ -92,3 +91,4 @@ data class _ZStackLayout(var alignment: Alignment = Alignment.center) : _Variadi
     }
 }
 
+//internal fun <Content : View> ZStack<Content>._makeView(view: _GraphValue<ZStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

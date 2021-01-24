@@ -17,65 +17,75 @@ enum class Edge(val rawValue: Byte) {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Edge", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: Edge) {
-            when (value) {
-                Edge.top -> encoder.encodeString("top")
-                Edge.leading -> encoder.encodeString("leading")
-                Edge.bottom -> encoder.encodeString("bottom")
-                Edge.trailing -> encoder.encodeString("trailing")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: Edge) =
+            encoder.encodeString(
+                when (value) {
+                    top -> "top"
+                    leading -> "leading"
+                    bottom -> "bottom"
+                    trailing -> "trailing"
+                }
+            )
 
         override fun deserialize(decoder: Decoder): Edge =
             when (val value = decoder.decodeString()) {
-                "top" -> Edge.top
-                "leading" -> Edge.leading
-                "bottom" -> Edge.bottom
-                "trailing" -> Edge.trailing
+                "top" -> top
+                "leading" -> leading
+                "bottom" -> bottom
+                "trailing" -> trailing
                 else -> error(value)
             }
     }
 
     object Set {
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var top: EnumSet<Edge> = EnumSet.of(Edge.top)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var leading: EnumSet<Edge> = EnumSet.of(Edge.leading)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var bottom: EnumSet<Edge> = EnumSet.of(Edge.bottom)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var trailing: EnumSet<Edge> = EnumSet.of(Edge.trailing)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var horizontal: EnumSet<Edge> = EnumSet.of(Edge.leading, Edge.trailing)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var vertical: EnumSet<Edge> = EnumSet.of(Edge.top, Edge.bottom)
 
-        @Serializable(with = EdgeSetSerializer::class)
+        @Serializable(with = SetSerializer::class)
         var all: EnumSet<Edge> = EnumSet.allOf(Edge::class.java)
     }
 
     //: Codable
-    internal object EdgeSetSerializer : KSerializer<EnumSet<Edge>> {
+    internal object SetSerializer : KSerializer<EnumSet<Edge>> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("Edge.Set", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: EnumSet<Edge>) {
-            when (value) {
-                else -> error("$value")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: EnumSet<Edge>) =
+            encoder.encodeSerializableValue(serializer(), if (value != Set.all) value.map {
+                when (it) {
+                    top -> "top"
+                    leading -> "leading"
+                    bottom -> "bottom"
+                    trailing -> "trailing"
+                }
+            }.toList() else listOf("all"))
 
-        override fun deserialize(decoder: Decoder): EnumSet<Edge> {
-            val value = decoder.decodeString()
-            when (value) {
-                else -> error(value)
-            }
-        }
+        override fun deserialize(decoder: Decoder): EnumSet<Edge> =
+            EnumSet.copyOf(decoder.decodeSerializableValue(serializer<Array<String>>()).map {
+                when (it) {
+                    "all" -> return Set.all
+                    "top" -> top
+                    "leading" -> leading
+                    "bottom" -> bottom
+                    "trailing" -> trailing
+                    else -> error(it)
+                }
+            }.toList())
     }
 }
 
@@ -105,10 +115,10 @@ data class EdgeInsets(
 
         override fun serialize(encoder: Encoder, value: EdgeInsets) =
             encoder.encodeStructure(descriptor) {
-                encodeFloatElement(descriptor, 0, value.top)
-                encodeFloatElement(descriptor, 1, value.leading)
-                encodeFloatElement(descriptor, 2, value.bottom)
-                encodeFloatElement(descriptor, 3, value.trailing)
+                if (value.top != 0f) encodeFloatElement(descriptor, 0, value.top)
+                if (value.leading != 0f) encodeFloatElement(descriptor, 1, value.leading)
+                if (value.bottom != 0f) encodeFloatElement(descriptor, 2, value.bottom)
+                if (value.trailing != 0f) encodeFloatElement(descriptor, 3, value.trailing)
             }
 
         override fun deserialize(decoder: Decoder): EdgeInsets =

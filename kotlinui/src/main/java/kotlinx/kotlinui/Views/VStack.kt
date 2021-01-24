@@ -26,15 +26,14 @@ class VStack<Content : View>(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("VStack") {
                 element<_VStackLayout>("root")
-                element<View>("content")
+                element("content", contentSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: VStack<Content>) =
             encoder.encodeStructure(descriptor) {
                 val tree = value._tree
                 val root = tree.root
-                if (root.alignment != HorizontalAlignment.center || root.spacing != null)
-                    encodeSerializableElement(descriptor, 0, _VStackLayout.Serializer, root)
+                if (root.alignment != HorizontalAlignment.center || root.spacing != null) encodeSerializableElement(descriptor, 0, _VStackLayout.Serializer, root)
                 encodeSerializableElement(descriptor, 1, contentSerializer, tree.content)
             }
 
@@ -62,10 +61,8 @@ class VStack<Content : View>(
     }
 }
 
-//internal fun <Content : View> VStack<Content>._makeView(view: _GraphValue<VStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
-
 @Serializable(with = _VStackLayout.Serializer::class)
-class _VStackLayout(
+data class _VStackLayout(
     var alignment: HorizontalAlignment = HorizontalAlignment.center,
     var spacing: Float? = null
 ) : _VariadicView_UnaryViewRoot {
@@ -99,3 +96,5 @@ class _VStackLayout(
             }
     }
 }
+
+//internal fun <Content : View> VStack<Content>._makeView(view: _GraphValue<VStack<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

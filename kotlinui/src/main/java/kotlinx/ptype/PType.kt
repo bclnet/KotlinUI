@@ -17,23 +17,23 @@ class PTypeParseErrorException(key: String) : Exception(key)
 class PTypeNameErrorException(actual: String, expected: String) : Exception("actual: $actual, expected: $expected")
 class PTypeNotCodableException(mode: String, key: String) : Exception("mode: $mode, key: $key")
 
-fun CompositeEncoder.encodeSuper(descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) {
-    val hasNil = false
-    val ptypeWithNil = PTypeWithNil(PType.typeFor(value.first), hasNil)
-    this.encodeSerializableElement(descriptor, index, PTypeWithNilSerializer, ptypeWithNil)
-//            if hasNil { return }
-//            let unwrap = Mirror.optional(any: value)!
-//            guard let encodable = unwrap as? Encodable else {
-//                let newValue = try PType.convert(value: unwrap)
-//                guard let encodable2 = newValue as? Encodable else {
-//                    throw PTypeError.typeNotCodable("encodeDynaSuper", key: PType.typeKey(for: unwrap))
-//                }
-//                try encodable2.encode(to: self)
-//                    return
-//                }
-//            try encodable.encode(to: self)
-//            }
-}
+//fun CompositeEncoder.encodeSuper(descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) {
+//    val hasNil = false
+//    val ptypeWithNil = PTypeWithNil(PType.typeFor(value.first), hasNil)
+//    this.encodeSerializableElement(descriptor, index, PTypeWithNilSerializer, ptypeWithNil)
+////            if hasNil { return }
+////            let unwrap = Mirror.optional(any: value)!
+////            guard let encodable = unwrap as? Encodable else {
+////                let newValue = try PType.convert(value: unwrap)
+////                guard let encodable2 = newValue as? Encodable else {
+////                    throw PTypeError.typeNotCodable("encodeDynaSuper", key: PType.typeKey(for: unwrap))
+////                }
+////                try encodable2.encode(to: self)
+////                    return
+////                }
+////            try encodable.encode(to: self)
+////            }
+//}
 
 interface PConvertible {
     fun init(any: Any)
@@ -94,8 +94,8 @@ sealed class PType {
         fun typeKey(value: KType, namespace: String? = null): String =
             typeKey(value.toString(), namespace)
 
-//        fun typeKey(value: Any, namespace: String? = null): String =
-//            typeKey(value.toString(), namespace)
+        inline fun <reified T> typeKey(value: T, namespace: String? = null): String =
+            typeKey(typeOf<T>().toString(), namespace)
 
         fun typeKey(value: String, namespace: String? = null): String {
             val key = typeKeyPlatform(value)
@@ -197,6 +197,13 @@ sealed class PType {
             val z = registered
             return optionalTypes[type] ?: type
         }
+
+        // MARK: - FindAction
+        fun <Action> findAction(key: String, action: String): Action? =
+            actionTypes[key]!![action] as? Action
+
+        fun <Action> findActionAndType(key: String, action: String): Tuple2<Action?, PType> =
+            Tuple2(findAction(key, action), find(key))
 
         // MARK: - Find
         private fun typeParseTokens(raw: String): List<Pair<Char, String>> {
