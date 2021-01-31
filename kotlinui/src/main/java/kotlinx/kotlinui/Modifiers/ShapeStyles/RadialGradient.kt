@@ -6,7 +6,8 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = RadialGradient.Serializer::class)
-class RadialGradient(
+@SerialName(":RadialGradient")
+data class RadialGradient(
     val gradient: Gradient,
     val center: UnitPoint,
     val startRadius: Float,

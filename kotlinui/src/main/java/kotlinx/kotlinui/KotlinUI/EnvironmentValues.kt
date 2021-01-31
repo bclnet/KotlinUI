@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import kotlinx.ptype.PType
 import kotlinx.system.KeyPath
 import java.util.HashMap
 
@@ -19,5 +20,9 @@ object EnvironmentValues {
 
     fun <Root, Value> find(keyPath: KeyPath<Root, Value>): String {
         return ""
+    }
+
+    //: Register
+    fun register() {
     }
 }

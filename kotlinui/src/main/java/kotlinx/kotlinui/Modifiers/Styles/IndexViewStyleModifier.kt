@@ -1,20 +1,22 @@
 package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
-@Serializable(with = IndexViewStyleModifier.Serializer::class)
-internal data class IndexViewStyleModifier<Style>(
-    val style: Style
+@Serializable //(with = IndexViewStyleModifier.Serializer::class)
+@SerialName(":IndexViewStyleModifier")
+internal data class IndexViewStyleModifier<Style : IndexViewStyle>(
+    @Polymorphic val style: Style
 ) : ViewModifier {
 //    fun body(content: AnyView) : AnyView = action(AnyView { content })
 
     //: Codable
-    internal class Serializer<Style>(private val styleType: KType, private val styleSerializer: KSerializer<Style>) : KSerializer<IndexViewStyleModifier<Style>> {
+    internal class Serializer<Style : IndexViewStyle> : KSerializer<IndexViewStyleModifier<Style>> {
+        val styleSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("IndexViewStyleModifier") {
                 element<String>("style")
@@ -22,28 +24,27 @@ internal data class IndexViewStyleModifier<Style>(
 
         override fun serialize(encoder: Encoder, value: IndexViewStyleModifier<Style>) =
             encoder.encodeStructure(descriptor) {
-                val styleKey = PType.typeKey(styleType)
-                encodeStringElement(descriptor, 0, styleKey)
+                encodeSerializableElement(descriptor, 0, styleSerializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): IndexViewStyleModifier<Style> =
             decoder.decodeStructure(descriptor) {
-                lateinit var styleKey: String
+                lateinit var style: Style
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> styleKey = decodeStringElement(descriptor, 0)
+                        0 -> style = decodeSerializableElement(descriptor, 0, styleSerializer) as Style
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                IndexViewStyleModifier(PType.findAction<() -> Style>(styleKey, "style")!!())
+                IndexViewStyleModifier(style)
             }
     }
 
     companion object {
         //: Register
         fun register() {
-            PType.register<IndexViewStyleModifier<Any>>()
+            PType.register<IndexViewStyleModifier<IndexViewStyle>>()
             PType.register<PageIndexViewStyle>(actions = hashMapOf("style" to ::PageIndexViewStyle))
         }
     }
@@ -51,4 +52,9 @@ internal data class IndexViewStyleModifier<Style>(
 
 interface IndexViewStyle
 
-class PageIndexViewStyle : IndexViewStyle
+@Serializable
+@SerialName(":PageIndexViewStyle")
+class PageIndexViewStyle : IndexViewStyle {
+    override fun equals(other: Any?): Boolean = other is PageIndexViewStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}

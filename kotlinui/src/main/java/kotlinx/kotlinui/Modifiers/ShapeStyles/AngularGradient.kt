@@ -6,7 +6,8 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = AngularGradient.Serializer::class)
-class AngularGradient(
+@SerialName(":AngularGradient")
+data class AngularGradient(
     val gradient: Gradient,
     val center: UnitPoint,
     val startAngle: Angle,

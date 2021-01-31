@@ -6,13 +6,15 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _EnvironmentKeyWritingModifier.Serializer::class)
-class _IdentifiedModifier<Identifier>(
+data class _IdentifiedModifier<Identifier>(
     val identifier: Identifier
 ) : ViewModifier {
 //    fun body(content: AnyView): AnyView { AnyView(content.modifier(self)) }
 
     //: Codable
-    internal class Serializer<Identifier>(private val identifierSerializer: KSerializer<Identifier>) : KSerializer<_IdentifiedModifier<Identifier>> {
+    internal class Serializer<Identifier> : KSerializer<_IdentifiedModifier<Identifier>> {
+        val identifierSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_IdentifiedModifier") {
                 element("identifier", identifierSerializer.descriptor)
@@ -20,7 +22,7 @@ class _IdentifiedModifier<Identifier>(
 
         override fun serialize(encoder: Encoder, value: _IdentifiedModifier<Identifier>) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 1, identifierSerializer, value.identifier)
+                encodeSerializableElement(descriptor, 1, identifierSerializer, value.identifier as Any)
             }
 
         override fun deserialize(decoder: Decoder): _IdentifiedModifier<Identifier> =
@@ -28,7 +30,7 @@ class _IdentifiedModifier<Identifier>(
                 var identifier: Identifier? = null
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> identifier = decodeSerializableElement(descriptor, 0, identifierSerializer)
+                        0 -> identifier = decodeSerializableElement(descriptor, 0, identifierSerializer) as Identifier
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }

@@ -2,13 +2,16 @@
 
 package kotlinx.ptype
 
+import kotlinx.kotlinui.*
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
+import kotlinx.serialization.modules.*
 import kotlinx.system.*
+import java.io.File
+import java.net.URL
 import kotlin.Exception
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
+import kotlin.reflect.*
 
 val typeParseTokens_breaks: CharArray = arrayOf('<', '(', ',', ')', '>').toCharArray()
 
@@ -90,6 +93,24 @@ sealed class PType {
         } else this
 
     companion object {
+        // MARK: - SerializersModule
+        fun hookSerializersModule(base: SerializersModule): SerializersModule {
+            val kclass = Class.forName("kotlinx.serialization.modules.SerialModuleImpl")
+            kclass.getDeclaredField("class2Serializer").apply {
+                isAccessible = true
+                set(base, class2Serializer)
+            }
+            kclass.getDeclaredField("polyBase2Serializers").apply {
+                isAccessible = true
+                set(base, polyBase2Serializers)
+            }
+            kclass.getDeclaredField("polyBase2NamedSerializers").apply {
+                isAccessible = true
+                set(base, polyBase2NamedSerializers)
+            }
+            return base
+        }
+
         // MARK: - TypeKey
         fun typeKey(value: KType, namespace: String? = null): String =
             typeKey(value.toString(), namespace)
@@ -144,6 +165,46 @@ sealed class PType {
                 .replace(":", "koltinx.kotlinui.")
 
         // MARK: - Register
+        val class2Serializer = mapOf<KClass<*>, KSerializer<*>>()
+        val polyBase2SerializersAny = mutableMapOf<KClass<*>, KSerializer<*>>()
+        val polyBase2NamedSerializersAny = mutableMapOf<String, KSerializer<*>>()
+        val polyBase2Serializers = mapOf<KClass<*>, Map<KClass<*>, KSerializer<*>>>(Any::class to polyBase2SerializersAny)
+        val polyBase2NamedSerializers = mapOf<KClass<*>, Map<String, KSerializer<*>>>(Any::class to polyBase2NamedSerializersAny)
+
+//            polyBase2Serializers[Any::class] = mapOf(
+//                DefaultTabViewStyle::class to DefaultTabViewStyle.serializer(),
+//                DefaultButtonStyle::class to DefaultButtonStyle.serializer(),
+//                DefaultDatePickerStyle::class to DefaultDatePickerStyle.serializer(),
+//                DefaultGroupBoxStyle::class to DefaultGroupBoxStyle.serializer(),
+//                PageIndexViewStyle::class to PageIndexViewStyle.serializer(),
+//                DefaultLabelStyle::class to DefaultLabelStyle.serializer(),
+//                DefaultListStyle::class to DefaultListStyle.serializer(),
+//                DefaultMenuStyle::class to DefaultMenuStyle.serializer(),
+//                DefaultNavigationViewStyle::class to DefaultNavigationViewStyle.serializer(),
+//                DefaultPickerStyle::class to DefaultPickerStyle.serializer(),
+//                DefaultProgressViewStyle::class to DefaultProgressViewStyle.serializer(),
+//                DefaultTextFieldStyle::class to DefaultTextFieldStyle.serializer(),
+//                DefaultToggleStyle::class to DefaultToggleStyle.serializer(),
+//            )
+//            val polyBase2NamedSerializers = mutableMapOf<KClass<*>, Map<String, KSerializer<*>>>()
+//            polyBase2NamedSerializers[Any::class] = mapOf(
+//                ":DefaultTabViewStyle" to DefaultTabViewStyle.serializer(),
+//                ":DefaultButtonStyle" to DefaultButtonStyle.serializer(),
+//                ":DefaultDatePickerStyle" to DefaultDatePickerStyle.serializer(),
+//                ":DefaultGroupBoxStyle" to DefaultGroupBoxStyle.serializer(),
+//                ":PageIndexViewStyle" to PageIndexViewStyle.serializer(),
+//                ":DefaultLabelStyle" to DefaultLabelStyle.serializer(),
+//                ":DefaultListStyle" to DefaultListStyle.serializer(),
+//                ":DefaultMenuStyle" to DefaultMenuStyle.serializer(),
+//                ":DefaultNavigationViewStyle" to DefaultNavigationViewStyle.serializer(),
+//                ":DefaultPickerStyle" to DefaultPickerStyle.serializer(),
+//                ":DefaultProgressViewStyle" to DefaultProgressViewStyle.serializer(),
+//                ":DefaultTextFieldStyle" to DefaultTextFieldStyle.serializer(),
+//                ":DefaultToggleStyle" to DefaultToggleStyle.serializer(),
+//                )
+
+
+        var module = hookSerializersModule(SerializersModule { })
         var knownTypes = hashMapOf<String, PType>()
         var knownGenerics = hashMapOf<String, Pair<HashMap<String, KType>, Array<KType?>?>>()
         var optionalTypes = hashMapOf<Any, KType>()
@@ -152,7 +213,16 @@ sealed class PType {
 
         inline fun <reified T> register(any: Array<KType?>? = null, namespace: String? = null, actions: HashMap<String, Any>? = null, alias: String? = null) {
             val type = typeOf<T>()
+            val klass = T::class as KClass<*>
             val key = typeKey(type, namespace)
+            val annotation = klass.annotations.find { it is Serializable } as? Serializable
+            if (annotation != null) {
+                val with = annotation.with as KClass<*>
+                val serializer: KSerializer<*> = if (with === KSerializer::class) serializer(type)
+                else (with.objectInstance ?: with.constructors.first().call()) as KSerializer<*>
+                polyBase2SerializersAny[klass] = serializer
+                polyBase2NamedSerializersAny[key] = serializer
+            }
             if (knownTypes[key] == null) {
                 // register
                 val typeOptional = typeOf<T?>()

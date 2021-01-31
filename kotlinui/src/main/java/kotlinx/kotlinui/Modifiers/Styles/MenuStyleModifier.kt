@@ -1,20 +1,22 @@
 package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = MenuStyleModifier.Serializer::class)
-internal data class MenuStyleModifier<Style>(
-    val style: Style
+@SerialName(":MenuStyleModifier")
+internal data class MenuStyleModifier<Style : MenuStyle>(
+    @Polymorphic val style: Style
 ) : ViewModifier {
 //    fun body(content: AnyView) : AnyView = action(AnyView { content })
 
     //: Codable
-    internal class Serializer<Style>(private val styleType: KType, private val styleSerializer: KSerializer<Style>) : KSerializer<MenuStyleModifier<Style>> {
+    internal class Serializer<Style : MenuStyle> : KSerializer<MenuStyleModifier<Style>> {
+        val styleSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("MenuStyleModifier") {
                 element<String>("style")
@@ -22,28 +24,27 @@ internal data class MenuStyleModifier<Style>(
 
         override fun serialize(encoder: Encoder, value: MenuStyleModifier<Style>) =
             encoder.encodeStructure(descriptor) {
-                val styleKey = PType.typeKey(styleType)
-                encodeStringElement(descriptor, 0, styleKey)
+                encodeSerializableElement(descriptor, 0, styleSerializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): MenuStyleModifier<Style> =
             decoder.decodeStructure(descriptor) {
-                lateinit var styleKey: String
+                lateinit var style: Style
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> styleKey = decodeStringElement(descriptor, 0)
+                        0 -> style = decodeSerializableElement(descriptor, 0, styleSerializer) as Style
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                MenuStyleModifier(PType.findAction<() -> Style>(styleKey, "style")!!())
+                MenuStyleModifier(style)
             }
     }
 
     companion object {
         //: Register
         fun register() {
-            PType.register<MenuStyleModifier<Any>>()
+            PType.register<MenuStyleModifier<MenuStyle>>()
             PType.register<BorderlessButtonMenuStyle>(actions = hashMapOf("style" to ::BorderlessButtonMenuStyle))
             PType.register<DefaultMenuStyle>(actions = hashMapOf("style" to ::DefaultMenuStyle))
             PType.register<BorderedButtonMenuStyle>(actions = hashMapOf("style" to ::BorderedButtonMenuStyle))
@@ -55,15 +56,27 @@ interface MenuStyle {
     fun makeBody(configuration: MenuStyleConfiguration): View
 }
 
+@Serializable
+@SerialName(":BorderlessButtonMenuStyle")
 class BorderlessButtonMenuStyle : MenuStyle {
+    override fun equals(other: Any?): Boolean = other is BorderlessButtonMenuStyle
+    override fun hashCode(): Int = javaClass.hashCode()
     override fun makeBody(configuration: MenuStyleConfiguration): View = configuration.label
 }
 
+@Serializable
+@SerialName(":DefaultMenuStyle")
 class DefaultMenuStyle : MenuStyle {
+    override fun equals(other: Any?): Boolean = other is DefaultMenuStyle
+    override fun hashCode(): Int = javaClass.hashCode()
     override fun makeBody(configuration: MenuStyleConfiguration): View = configuration.label
 }
 
+@Serializable
+@SerialName(":BorderedButtonMenuStyle")
 class BorderedButtonMenuStyle : MenuStyle {
+    override fun equals(other: Any?): Boolean = other is BorderedButtonMenuStyle
+    override fun hashCode(): Int = javaClass.hashCode()
     override fun makeBody(configuration: MenuStyleConfiguration): View = configuration.label
 }
 

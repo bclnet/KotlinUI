@@ -1,6 +1,6 @@
 package kotlinx.kotlinui
 
-class _UnaryViewAdaptor<Content : View>(
+data class _UnaryViewAdaptor<Content : View>(
     val content: Content
 ) : View {
     override val body: Never

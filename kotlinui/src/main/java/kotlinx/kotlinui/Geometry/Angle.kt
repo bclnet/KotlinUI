@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = Edge.Serializer::class)
+@Serializable(with = Angle.Serializer::class)
 data class Angle(
     var radians: Double = 0.0
 ) {

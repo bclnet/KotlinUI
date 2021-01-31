@@ -1,13 +1,22 @@
 package kotlinx.kotlinui
 
-class _VariadicView_Tree<Root : _VariadicView_Root, Content : View>(
-    var root: Root,
-    var content: Content
+import kotlinx.ptype.PType
+
+data class _VariadicView_Tree<Root : _VariadicView_Root, Content : View>(
+    val root: Root,
+    val content: Content
 ) : View {
     constructor(root: Root, content: ViewBuilder.() -> Content) : this(root, content(ViewBuilder))
 
     override val body: View
         get() = error("Never")
+
+    companion object {
+        //: Register
+        fun register() {
+            PType.register<_VariadicView_Tree<_ContextMenuContainer.Container<AnyView>, AnyView>>()
+        }
+    }
 }
 
 class _VariadicView_Children : View {

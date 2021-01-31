@@ -1,20 +1,22 @@
 package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = PickerStyleWriter.Serializer::class)
-internal data class PickerStyleWriter<Style>(
-    val style: Style
+@SerialName(":PickerStyleWriter")
+internal data class PickerStyleWriter<Style : PickerStyle>(
+    @Polymorphic val style: Style
 ) : ViewModifier {
 //    fun body(content: AnyView) : AnyView = action(AnyView { content })
 
     //: Codable
-    internal class Serializer<Style>(private val styleType: KType, private val styleSerializer: KSerializer<Style>) : KSerializer<PickerStyleWriter<Style>> {
+    internal class Serializer<Style : PickerStyle> : KSerializer<PickerStyleWriter<Style>> {
+        val styleSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("PickerStyleWriter") {
                 element<String>("style")
@@ -22,28 +24,27 @@ internal data class PickerStyleWriter<Style>(
 
         override fun serialize(encoder: Encoder, value: PickerStyleWriter<Style>) =
             encoder.encodeStructure(descriptor) {
-                val styleKey = PType.typeKey(styleType)
-                encodeStringElement(descriptor, 0, styleKey)
+                encodeSerializableElement(descriptor, 0, styleSerializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): PickerStyleWriter<Style> =
             decoder.decodeStructure(descriptor) {
-                lateinit var styleKey: String
+                lateinit var style: Style
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> styleKey = decodeStringElement(descriptor, 0)
+                        0 -> style = decodeSerializableElement(descriptor, 0, styleSerializer) as Style
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                PickerStyleWriter(PType.findAction<() -> Style>(styleKey, "style")!!())
+                PickerStyleWriter(style)
             }
     }
 
     companion object {
         //: Register
         fun register() {
-            PType.register<PickerStyleWriter<Any>>()
+            PType.register<PickerStyleWriter<PickerStyle>>()
             PType.register<CircularProgressViewStyle>(actions = hashMapOf("style" to ::CircularProgressViewStyle))
             PType.register<DefaultPickerStyle>(actions = hashMapOf("style" to ::DefaultPickerStyle))
             PType.register<InlinePickerStyle>(actions = hashMapOf("style" to ::InlinePickerStyle))
@@ -60,13 +61,54 @@ internal data class PickerStyleWriter<Style>(
 
 interface PickerStyle
 
-class DefaultPickerStyle : PickerStyle
-class InlinePickerStyle : PickerStyle
-class MenuPickerStyle : PickerStyle
-class SegmentedPickerStyle : PickerStyle
-class WheelPickerStyle : PickerStyle
-class PopUpButtonPickerStyle : PickerStyle
-class RadioGroupPickerStyle : PickerStyle
+@Serializable
+@SerialName(":DefaultPickerStyle")
+class DefaultPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is DefaultPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":InlinePickerStyle")
+class InlinePickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is InlinePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":MenuPickerStyle")
+class MenuPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is MenuPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":SegmentedPickerStyle")
+class SegmentedPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is SegmentedPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":WheelPickerStyle")
+class WheelPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is WheelPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":PopUpButtonPickerStyle")
+class PopUpButtonPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is PopUpButtonPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":RadioGroupPickerStyle")
+class RadioGroupPickerStyle : PickerStyle {
+    override fun equals(other: Any?): Boolean = other is RadioGroupPickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
 
 //internal fun <SelectionValue> DefaultPickerStyle._makeView(value: _GraphValue<_PickerValue<DefaultPickerStyle, SelectionValue>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 //internal fun <SelectionValue> DefaultPickerStyle._makeViewList(value: _GraphValue<_PickerValue<DefaultPickerStyle, SelectionValue>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

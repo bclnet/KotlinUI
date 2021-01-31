@@ -7,7 +7,8 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = ImagePaint.Serializer::class)
-class ImagePaint(
+@SerialName(":ImagePaint")
+data class ImagePaint(
     val image: Image,
     val sourceRect: RectF,
     val scale: Float
@@ -23,7 +24,7 @@ class ImagePaint(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("ImagePaint") {
                 element<Image>("image")
-                element<RectF>("sourceRect")
+                element("sourceRect", RectFSerializer.descriptor)
                 element<Float>("scale")
             }
 

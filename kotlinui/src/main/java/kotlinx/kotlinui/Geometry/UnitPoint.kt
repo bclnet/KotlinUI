@@ -4,18 +4,19 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
+@Serializable(with = UnitPoint.Serializer::class)
 data class UnitPoint(val x: Float, val y: Float) {
     companion object {
-        var zero = UnitPoint(0f, 0f)
-        var center = UnitPoint(.5f, .5f)
-        var leading = UnitPoint(1f, 1f)
-        var trailing = UnitPoint(1f, 2f)
-        var top = UnitPoint(1f, 3f)
-        var bottom = UnitPoint(1f, 4f)
-        var topLeading = UnitPoint(1f, 5f)
-        var topTrailing = UnitPoint(1f, 6f)
-        var bottomLeading = UnitPoint(1f, 7f)
-        var bottomTrailing = UnitPoint(1f, 8f)
+        val zero = UnitPoint(0f, 0f)
+        val center = UnitPoint(.5f, .5f)
+        val leading = UnitPoint(1f, 1f)
+        val trailing = UnitPoint(1f, 2f)
+        val top = UnitPoint(1f, 3f)
+        val bottom = UnitPoint(1f, 4f)
+        val topLeading = UnitPoint(1f, 5f)
+        val topTrailing = UnitPoint(1f, 6f)
+        val bottomLeading = UnitPoint(1f, 7f)
+        val bottomTrailing = UnitPoint(1f, 8f)
     }
 
     //: Codable

@@ -17,7 +17,9 @@ class TouchBar<Content : View>(
     override val body: View
         get() = error("Not Implemented")
 
-    internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<TouchBar<Content>> {
+    internal class Serializer<Content : View> : KSerializer<TouchBar<Content>> {
+        val contentSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("TouchBar") {
                 element<String>("id")
@@ -38,7 +40,7 @@ class TouchBar<Content : View>(
                 while (true) {
                     when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
                         0 -> id = decodeStringElement(descriptor, 0)
-                        1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer)
+                        1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
@@ -55,6 +57,6 @@ class TouchBar<Content : View>(
     }
 }
 
-internal class TouchBarContainer(var id: String?)
+internal data class TouchBarContainer(val id: String?)
 
 //internal fun <Content : View> TouchBar<Content>._makeView(view: _GraphValue<TouchBar<Content>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")

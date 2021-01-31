@@ -7,14 +7,16 @@ import kotlinx.serialization.encoding.*
 import kotlinx.system.*
 
 @Serializable(with = _EnvironmentKeyWritingModifier.Serializer::class)
-class _EnvironmentKeyWritingModifier<Value>(
+data class _EnvironmentKeyWritingModifier<Value>(
     val keyPath: WritableKeyPath<EnvironmentValues, Value>,
     val value: Value
 ) : ViewModifier {
 //    fun body(content: AnyView) -> AnyView { AnyView(content.environment(keyPath, value)) }
 
     //: Codable
-    internal class Serializer<Value>(private val valueSerializer: KSerializer<Value>) : KSerializer<_EnvironmentKeyWritingModifier<Value>> {
+    internal class Serializer<Value> : KSerializer<_EnvironmentKeyWritingModifier<Value>> {
+        val valueSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_EnvironmentKeyWritingModifier") {
                 element<String>("keyPath")
@@ -25,7 +27,7 @@ class _EnvironmentKeyWritingModifier<Value>(
             encoder.encodeStructure(descriptor) {
                 val action: String = EnvironmentValues.find(value.keyPath)!!
                 encodeStringElement(descriptor, 0, action)
-                encodeSerializableElement(descriptor, 1, valueSerializer, value.value)
+                encodeSerializableElement(descriptor, 1, valueSerializer, value.value as Any)
             }
 
         override fun deserialize(decoder: Decoder): _EnvironmentKeyWritingModifier<Value> =
@@ -35,7 +37,7 @@ class _EnvironmentKeyWritingModifier<Value>(
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
                         0 -> action = decodeStringElement(descriptor, 0)
-                        1 -> value = decodeSerializableElement(descriptor, 1, valueSerializer)
+                        1 -> value = decodeSerializableElement(descriptor, 1, valueSerializer) as Value
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }

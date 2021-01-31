@@ -9,7 +9,7 @@ import android.media.Image as CGImage
 
 @Serializable(with = Image.Serializer::class)
 data class Image internal constructor(
-    var _provider: AnyImageBox
+    val _provider: AnyImageBox
 ) : View, IAnyView {
 
     // region STORAGE

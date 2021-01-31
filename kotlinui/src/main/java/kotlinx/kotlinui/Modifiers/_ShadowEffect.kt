@@ -7,18 +7,18 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _ShadowEffect.Serializer::class)
-class _ShadowEffect(
-    var color: Color,
-    var radius: Float,
-    var offset: SizeF
+data class _ShadowEffect(
+    val color: Color,
+    val radius: Float,
+    val offset: SizeF
 ) : ViewModifier {
     //: Codable
     internal object Serializer : KSerializer<_ShadowEffect> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_ShadowEffect") {
-                element<Color>("color")
+                element("color", Color.Serializer.descriptor)
                 element<Float>("radius")
-                element<SizeF>("offset")
+                element("offset", SizeFSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: _ShadowEffect) =

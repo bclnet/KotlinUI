@@ -1,24 +1,28 @@
 package kotlinx.kotlinui
 
+data class PropertyList(val elements: Element? = null) {
+    class Tracker
+    class Element
+}
+
 abstract class AnyLocationBase
 
 open class AnyLocation<Value>(var value: Value) : AnyLocationBase()
 
+class StoredLocation<Value>(value: Value) : AnyLocation<Value>(value)
+
 class _DynamicPropertyBuffer
 
-class State<Value>(value: Value) {
-    var _value: Value
-    var _location: AnyLocation<Value>?
+class Transaction(var plist: PropertyList = PropertyList())
 
-    init {
-        _value = value
-        _location = AnyLocation(value)
-    }
-
+data class State<Value>(
+    val value: Value,
+    val location: AnyLocation<Value> = AnyLocation(value)
+) {
     var wrappedValue: Value
-        get() = _location!!.value
+        get() = location.value
         set(newValue) {
-            _location!!.value = newValue
+            location.value = newValue
         }
 
     val projectedValue: Binding<Value>

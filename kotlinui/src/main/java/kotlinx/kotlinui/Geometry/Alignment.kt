@@ -56,12 +56,13 @@ data class Alignment(var horizontal: HorizontalAlignment, var vertical: Vertical
     }
 }
 
-@Serializable(with = HorizontalAlignment.Serializer::class)
+//@Serializable(with = HorizontalAlignment.Serializer::class)
 enum class HorizontalAlignment {
     leading, center, trailing;
 
     //: Codable
-    internal object Serializer : KSerializer<HorizontalAlignment> {
+    @kotlinx.serialization.Serializer(forClass = HorizontalAlignment::class)
+    object Serializer : KSerializer<HorizontalAlignment> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("HorizontalAlignment", PrimitiveKind.STRING)
 

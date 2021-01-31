@@ -22,7 +22,9 @@ class VStack<Content : View>(
         get() = AnyView(this)
 
     //: Codable
-    internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<VStack<Content>> {
+    internal class Serializer<Content : View> : KSerializer<VStack<Content>> {
+        val contentSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("VStack") {
                 element<_VStackLayout>("root")
@@ -44,7 +46,7 @@ class VStack<Content : View>(
                 while (true) {
                     when (val index = decodeElementIndex(_ZStackLayout.Serializer.descriptor)) {
                         0 -> root = decodeSerializableElement(descriptor, 0, _VStackLayout.Serializer)
-                        1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer)
+                        1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
@@ -63,8 +65,8 @@ class VStack<Content : View>(
 
 @Serializable(with = _VStackLayout.Serializer::class)
 data class _VStackLayout(
-    var alignment: HorizontalAlignment = HorizontalAlignment.center,
-    var spacing: Float? = null
+    val alignment: HorizontalAlignment = HorizontalAlignment.center,
+    val spacing: Float? = null
 ) : _VariadicView_UnaryViewRoot {
     //: Codable
     internal object Serializer : KSerializer<_VStackLayout> {

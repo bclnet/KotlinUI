@@ -7,8 +7,8 @@ import kotlinx.serialization.encoding.*
 import java.util.EnumSet
 
 @Serializable(with = _SafeAreaIgnoringLayout.Serializer::class)
-class _SafeAreaIgnoringLayout(
-    var edges: EnumSet<Edge>
+data class _SafeAreaIgnoringLayout(
+    val edges: EnumSet<Edge>
 ) : ViewModifier {
     //: Codable
     internal object Serializer : KSerializer<_SafeAreaIgnoringLayout> {

@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _FrameLayout.Serializer::class)
-class _FrameLayout(
+data class _FrameLayout(
     val width: Float?,
     val height: Float?,
     val alignment: Alignment,

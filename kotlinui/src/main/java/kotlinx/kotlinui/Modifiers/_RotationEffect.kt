@@ -7,7 +7,7 @@ import kotlinx.serialization.encoding.*
 import java.util.*
 
 @Serializable(with = _RotationEffect.Serializer::class)
-class _RotationEffect(
+data class _RotationEffect(
     val angle: Angle,
     val anchor: UnitPoint
 ) : ViewModifier {

@@ -12,8 +12,8 @@ import java.util.*
 
 @Serializable(with = Text.Serializer::class)
 data class Text internal constructor(
-    var _storage: Storage,
-    var _modifiers: Array<Modifier>
+    val _storage: Storage,
+    val _modifiers: Array<Modifier>
 ) : View, IAnyView {
     override fun equals(other: Any?): Boolean {
         if (other !is Text) return false

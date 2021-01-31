@@ -8,7 +8,9 @@ import kotlinx.serialization.encoding.*
 @Serializable(with = ContextMenu.Serializer::class)
 class ContextMenu<MenuItems : View> {
     //: Codable
-    internal class Serializer<MenuItems : View>(private val menuItemsSerializer: KSerializer<MenuItems>) : KSerializer<ContextMenu<MenuItems>> {
+    internal class Serializer<MenuItems : View> : KSerializer<ContextMenu<MenuItems>> {
+        val menuItemsSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("ContextMenu") {
             }
@@ -25,7 +27,7 @@ class ContextMenu<MenuItems : View> {
 }
 
 @Serializable(with = _ContextMenuContainer.Serializer::class)
-class _ContextMenuContainer(
+data class _ContextMenuContainer(
     val contextMenu: Any
 ) {
 //    fun body(children: _VariadicView_Children): Content =
@@ -51,12 +53,14 @@ class _ContextMenuContainer(
     }
 
     @Serializable(with = Container.Serializer::class)
-    class Container<Content : View>(
+    data class Container<Content : View>(
         val contextMenu: ContextMenu<Content>?,
         val content: Content
     ) : _VariadicView_ViewRoot {
         //: Codable
-        internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<Container<Content>> {
+        internal class Serializer<Content : View> : KSerializer<Container<Content>> {
+            val contentSerializer = PolymorphicSerializer(Any::class)
+
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor("Container") {
                     element<String>("contextMenu")
@@ -65,7 +69,7 @@ class _ContextMenuContainer(
 
             override fun serialize(encoder: Encoder, value: Container<Content>) =
                 encoder.encodeStructure(descriptor) {
-                    if (value.contextMenu != null) encodeSerializableElement(descriptor, 0, ContextMenu.Serializer(contentSerializer), value.contextMenu)
+                    if (value.contextMenu != null) encodeSerializableElement(descriptor, 0, ContextMenu.Serializer(), value.contextMenu)
                     encodeSerializableElement(descriptor, 1, contentSerializer, value.content)
                 }
 
@@ -75,8 +79,8 @@ class _ContextMenuContainer(
                     var content: Content? = null
                     while (true) {
                         when (val index = decodeElementIndex(descriptor)) {
-                            0 -> contextMenu = decodeSerializableElement(descriptor, 0, ContextMenu.Serializer(contentSerializer))
-                            1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer)
+                            0 -> contextMenu = decodeSerializableElement(descriptor, 0, ContextMenu.Serializer())
+                            1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                             CompositeDecoder.DECODE_DONE -> break
                             else -> error("Unexpected index: $index")
                         }
@@ -101,7 +105,8 @@ class StyleContextWriter<Context> : ViewModifier {
 //    fun body(content: AnyView): AnyView { AnyView(content) }
 
     //: Codable
-    internal class Serializer<Context>(private val contextSerializer: KSerializer<Context>) : KSerializer<StyleContextWriter<Context>> {
+    internal class Serializer<Context> : KSerializer<StyleContextWriter<Context>> {
+        val contextSerializer = PolymorphicSerializer(Any::class)
         override val descriptor: SerialDescriptor = buildClassSerialDescriptor("StyleContextWriter") {}
         override fun serialize(encoder: Encoder, value: StyleContextWriter<Context>) {}
         override fun deserialize(decoder: Decoder): StyleContextWriter<Context> = StyleContextWriter()

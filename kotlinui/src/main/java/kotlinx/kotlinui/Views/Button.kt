@@ -1,7 +1,9 @@
 package kotlinx.kotlinui
 
-class Button<Label : View> private constructor(
-    val _action: () -> Unit,
+import kotlinx.ptype.PType
+
+data class Button<Label : View> private constructor(
+    val action: () -> Unit,
     val _label: Label
 ) : View {
     constructor(action: () -> Unit, label: ViewBuilder.() -> Label) : this(action, label(ViewBuilder))
@@ -11,6 +13,13 @@ class Button<Label : View> private constructor(
 
     override val body: Label
         get() = _label
+
+    companion object {
+        //: Register
+        fun register() {
+            PType.register<Button<AnyView>>()
+        }
+    }
 }
 
 fun <S : ButtonStyle> View.buttonStyle(style: S): View {

@@ -1,8 +1,8 @@
 package kotlinx.kotlinui
 
-class ModifiedContent<Content, Modifier : ViewModifier>(
-    var content: Content,
-    var modifier: Modifier
+data class ModifiedContent<Content, Modifier : ViewModifier>(
+    val content: Content,
+    val modifier: Modifier
 ) : View {
     override val body: Never
         get() = error("Never")

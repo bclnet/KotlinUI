@@ -1,8 +1,8 @@
 package kotlinx.kotlinui
 
-class ForEach<Data : List<Any?>, ID, Content : View>(
-    var data: Data,
-    var content: ViewBuilder.(Any?) -> Content
+data class ForEach<Data : List<Any?>, ID, Content : View>(
+    val data: Data,
+    val content: ViewBuilder.(Any?) -> Content
 ) : View {
 
     //where ID == Data.Element.ID, Content: View, Data.Element: Identifiable {

@@ -6,8 +6,8 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = SelectionShapeStyle.Serializer::class)
-class SelectionShapeStyle(
-) : ShapeStyle {
+@SerialName(":SelectionShapeStyle")
+data class SelectionShapeStyle(val isSelected: Boolean) : ShapeStyle {
     //: Codable
     internal object Serializer : KSerializer<SelectionShapeStyle> {
         override val descriptor: SerialDescriptor =
@@ -16,12 +16,11 @@ class SelectionShapeStyle(
 
         override fun serialize(encoder: Encoder, value: SelectionShapeStyle) =
             encoder.encodeStructure(descriptor) {
-                error("Not Implemented")
             }
 
         override fun deserialize(decoder: Decoder): SelectionShapeStyle =
             decoder.decodeStructure(descriptor) {
-                error("Not Implemented")
+                SelectionShapeStyle(true)
             }
     }
 

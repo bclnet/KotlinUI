@@ -30,7 +30,9 @@ class Toggle<Label : View>(
     override val body: Label
         get() = _label
 
-    internal class Serializer<Label : View>(private val labelSerializer: KSerializer<Label>) : KSerializer<Toggle<Label>> {
+    internal class Serializer<Label : View> : KSerializer<Toggle<Label>> {
+        val labelSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Toggle") {
                 element<Binding<Boolean>>("isOn")
@@ -50,7 +52,7 @@ class Toggle<Label : View>(
                 while (true) {
                     when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
                         0 -> isOn = decodeSerializableElement(descriptor, 0, serializer())
-                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer)
+                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer) as Label
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }

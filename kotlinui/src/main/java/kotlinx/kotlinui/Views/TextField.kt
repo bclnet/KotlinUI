@@ -6,9 +6,9 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = TextField.Serializer::class)
-class TextField<Label : Text> internal constructor(
+data class TextField<Label : Text> internal constructor(
     val _text: Binding<String>,
-    val label: Label,
+    @Polymorphic val label: Label,
     val onEditingChanged: (Boolean) -> Unit,
     val onCommit: () -> Unit
 ) : View {
@@ -18,7 +18,9 @@ class TextField<Label : Text> internal constructor(
     override val body: Text
         get() = label
 
-    internal class Serializer<Label : Text>(private val labelSerializer: KSerializer<Label>) : KSerializer<TextField<Label>> {
+    internal class Serializer<Label : Text> : KSerializer<TextField<Label>> {
+        val labelSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("TextField") {
                 element<String>("text")
@@ -43,8 +45,8 @@ class TextField<Label : Text> internal constructor(
                 lateinit var onCommit: () -> Unit
                 while (true) {
                     when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
-                        0 -> text = decodeSerializableElement(descriptor, 0, serializer<Binding<String>>())
-                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer)
+                        0 -> text = decodeSerializableElement(descriptor, 0, serializer())
+                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer) as Label
                         2 -> onEditingChanged = decodeAction1Element(descriptor, 2)
                         3 -> onCommit = decodeAction0Element(descriptor, 3)
                         CompositeDecoder.DECODE_DONE -> break

@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _AlignmentWritingModifier.Serializer::class)
-class _AlignmentWritingModifier(
+data class _AlignmentWritingModifier(
     val active: Boolean
 ) : ViewModifier {
 //     fun body(content: AnyView): AnyView { AnyView(content.modifier(self)) }

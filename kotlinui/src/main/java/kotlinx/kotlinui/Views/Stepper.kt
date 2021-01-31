@@ -2,11 +2,11 @@ package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
 
-class Stepper<Label : View> private constructor(
-    var onIncrement: (() -> Unit)?,
-    var onDecrement: (() -> Unit)?,
-    var onEditingChanged: (Boolean) -> Unit = {},
-    var label: Label
+data class Stepper<Label : View> private constructor(
+    val onIncrement: (() -> Unit)?,
+    val onDecrement: (() -> Unit)?,
+    val onEditingChanged: (Boolean) -> Unit = {},
+    val label: Label
 ) : View {
     constructor(
         onIncrement: (() -> Unit)?,

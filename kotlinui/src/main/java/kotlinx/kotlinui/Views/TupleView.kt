@@ -3,8 +3,8 @@ package kotlinx.kotlinui
 import kotlinx.ptype.PType
 import kotlinx.system.*
 
-class TupleView<T>(
-    var value: T
+data class TupleView<T>(
+    val value: T
 ) : View {
     override val body: View
         get() = error("Never")

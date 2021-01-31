@@ -1,18 +1,26 @@
 package kotlinx.kotlinui
 
-internal abstract class AnyViewStorageBase
-
-internal class AnyViewStorage<V : View>(val _view: V) : AnyViewStorageBase()
+import kotlinx.ptype.PType
 
 interface IAnyView {
     val anyView: AnyView
 }
 
-class AnyView private constructor(
-    val _storage: AnyViewStorageBase
+data class AnyView internal constructor(
+    val storage: AnyViewStorageBase
 ) : View {
     constructor(view: View) : this(AnyViewStorage<View>(view))
 
+    internal abstract class AnyViewStorageBase
+    internal data class AnyViewStorage<V : View>(val view: V) : AnyViewStorageBase()
+
     override val body: Never
         get() = error("Never")
+
+    companion object {
+        //: Register
+        fun register() {
+            PType.register<AnyView>()
+        }
+    }
 }

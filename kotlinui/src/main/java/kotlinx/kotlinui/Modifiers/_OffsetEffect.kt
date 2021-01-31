@@ -7,7 +7,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _OffsetEffect.Serializer::class)
-class _OffsetEffect(
+data class _OffsetEffect(
     val offset: SizeF,
 ) : ViewModifier {
 //    fun body(content: AnyView): AnyView { AnyView(content.modifier(self)) }
@@ -16,7 +16,7 @@ class _OffsetEffect(
     internal object Serializer : KSerializer<_OffsetEffect> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_OffsetEffect") {
-                element<SizeF>("offset")
+                element("offset", SizeFSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: _OffsetEffect) =

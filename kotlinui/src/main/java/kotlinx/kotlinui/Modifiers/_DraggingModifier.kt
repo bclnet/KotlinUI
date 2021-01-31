@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _DraggingModifier.Serializer::class)
-class _DraggingModifier(
+data class _DraggingModifier(
     val itemsForDragHandler: Any
 ) : ViewModifier {
 //    fun body(content: AnyView): AnyView { fatalError("Not Supported") }

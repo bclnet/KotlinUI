@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _AllowsHitTestingModifier.Serializer::class)
-class _AllowsHitTestingModifier(
+data class _AllowsHitTestingModifier(
     val allowsHitTesting: Boolean
 ) : ViewModifier {
 //    fun body(content: AnyView): AnyView { AnyView(content.modifier(self)) }

@@ -1,49 +1,50 @@
 package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = DatePickerStyleModifier.Serializer::class)
-internal data class DatePickerStyleModifier<Style>(
-    val style: Style
+@SerialName(":DatePickerStyleModifier")
+internal data class DatePickerStyleModifier<Style : DatePickerStyle>(
+    @Polymorphic val style: Style
 ) : ViewModifier {
 //    fun body(content: AnyView) : AnyView = action(AnyView { content })
 
     //: Codable
-    internal class Serializer<Style>(private val styleType: KType, private val styleSerializer: KSerializer<Style>) : KSerializer<DatePickerStyleModifier<Style>> {
+    internal class Serializer<Style : DatePickerStyle> : KSerializer<DatePickerStyleModifier<Style>> {
+        val styleSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("DatePickerStyleModifier") {
-                element<String>("style")
+                element("style", styleSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: DatePickerStyleModifier<Style>) =
             encoder.encodeStructure(descriptor) {
-                val styleKey = PType.typeKey(styleType)
-                encodeStringElement(descriptor, 0, styleKey)
+                encodeSerializableElement(descriptor, 0, styleSerializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): DatePickerStyleModifier<Style> =
             decoder.decodeStructure(descriptor) {
-                lateinit var styleKey: String
+                lateinit var style: Style
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> styleKey = decodeStringElement(descriptor, 0)
+                        0 -> style = decodeSerializableElement(descriptor, 0, styleSerializer) as Style
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                DatePickerStyleModifier(PType.findAction<() -> Style>(styleKey, "style")!!())
+                DatePickerStyleModifier(style)
             }
     }
 
     companion object {
         //: Register
         fun register() {
-            PType.register<DatePickerStyleModifier<Any>>()
+            PType.register<DatePickerStyleModifier<DatePickerStyle>>()
             PType.register<CompactDatePickerStyle>(actions = hashMapOf("style" to ::CompactDatePickerStyle))
             PType.register<DefaultDatePickerStyle>(actions = hashMapOf("style" to ::DefaultDatePickerStyle))
             PType.register<GraphicalDatePickerStyle>(actions = hashMapOf("style" to ::GraphicalDatePickerStyle))
@@ -56,10 +57,45 @@ internal data class DatePickerStyleModifier<Style>(
 
 interface DatePickerStyle
 
-class CompactDatePickerStyle : DatePickerStyle
-class DefaultDatePickerStyle : ListStyle
-class GraphicalDatePickerStyle : ListStyle
-class WheelDatePickerStyle : ListStyle
-class FieldDatePickerStyle : ListStyle
-class StepperFieldDatePickerStyle : ListStyle
+@Serializable
+@SerialName(":CompactDatePickerStyle")
+class CompactDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is CompactDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":DefaultDatePickerStyle")
+class DefaultDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is DefaultDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":GraphicalDatePickerStyle")
+class GraphicalDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is GraphicalDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":WheelDatePickerStyle")
+class WheelDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is WheelDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":FieldDatePickerStyle")
+class FieldDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is FieldDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
+
+@Serializable
+@SerialName(":StepperFieldDatePickerStyle")
+class StepperFieldDatePickerStyle : DatePickerStyle {
+    override fun equals(other: Any?): Boolean = other is StepperFieldDatePickerStyle
+    override fun hashCode(): Int = javaClass.hashCode()
+}
 

@@ -7,7 +7,7 @@ import kotlinx.serialization.encoding.*
 import java.util.*
 
 @Serializable(with = _PaddingLayout.Serializer::class)
-class _PaddingLayout(
+data class _PaddingLayout(
     val edges: EnumSet<Edge>,
     val insets: EdgeInsets?
 ) : ViewModifier {

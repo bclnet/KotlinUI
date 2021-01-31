@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _AppearanceActionModifier.Serializer::class)
-class _AppearanceActionModifier(
+data class _AppearanceActionModifier(
     val appear: (() -> Unit)?,
     val disappear: (() -> Unit)?
 ) : ViewModifier {

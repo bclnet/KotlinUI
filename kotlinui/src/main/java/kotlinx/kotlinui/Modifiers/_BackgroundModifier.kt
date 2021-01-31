@@ -6,12 +6,14 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _BackgroundModifier.Serializer::class)
-class _BackgroundModifier<Background : View>(
+data class _BackgroundModifier<Background : View>(
     val background: Background,
     val alignment: Alignment
 ) : ViewModifier {
     //: Codable
-    internal class Serializer<Background : View>(private val backgroundSerializer: KSerializer<Background>) : KSerializer<_BackgroundModifier<Background>> {
+    internal class Serializer<Background : View> : KSerializer<_BackgroundModifier<Background>> {
+        val backgroundSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_BackgroundModifier") {
                 element("background", backgroundSerializer.descriptor)
@@ -30,7 +32,7 @@ class _BackgroundModifier<Background : View>(
                 lateinit var alignment: Alignment
                 while (true) {
                     when (val index = decodeElementIndex(_ZStackLayout.Serializer.descriptor)) {
-                        0 -> background = decodeSerializableElement(descriptor, 0, backgroundSerializer)
+                        0 -> background = decodeSerializableElement(descriptor, 0, backgroundSerializer) as Background
                         1 -> alignment = decodeSerializableElement(descriptor, 1, Alignment.Serializer)
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")

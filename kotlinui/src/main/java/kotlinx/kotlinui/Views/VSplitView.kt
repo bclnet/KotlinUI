@@ -14,7 +14,9 @@ class VSplitView<Content : View>(
     override val body: View
         get() = error("Not Implemented")
 
-    internal class Serializer<Content : View>(private val contentSerializer: KSerializer<Content>) : KSerializer<VSplitView<Content>> {
+    internal class Serializer<Content : View> : KSerializer<VSplitView<Content>> {
+        val contentSerializer = PolymorphicSerializer(Any::class)
+
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("VSplitView") {
                 element<View>("content")
@@ -30,7 +32,7 @@ class VSplitView<Content : View>(
                 lateinit var content: Content
                 while (true) {
                     when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
-                        0 -> content = decodeSerializableElement(descriptor, 0, contentSerializer)
+                        0 -> content = decodeSerializableElement(descriptor, 0, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
