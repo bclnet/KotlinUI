@@ -13,10 +13,14 @@ class _AlignmentWritingModifierTest {
         }
 
         // _AlignmentWritingModifier
-        val orig_dtsi = __DesignTimeSelectionIdentifier("id")
-        val data_dtsi = json.encodeToString(__DesignTimeSelectionIdentifier.Serializer, orig_dtsi)
-        val json_dtsi = json.decodeFromString(__DesignTimeSelectionIdentifier.Serializer, data_dtsi)
-        Assert.assertEquals(orig_dtsi, json_dtsi)
-        Assert.assertEquals("\"id\"", data_dtsi)
+        val orig_awm = _AlignmentWritingModifier(true)
+        val data_awm = json.encodeToString(_AlignmentWritingModifier.Serializer, orig_awm)
+        val json_awm = json.decodeFromString(_AlignmentWritingModifier.Serializer, data_awm)
+        Assert.assertEquals(orig_awm, json_awm)
+        Assert.assertEquals(
+            """{
+    "active": true
+}""".trimIndent(), data_awm
+        )
     }
 }

@@ -83,8 +83,8 @@ data class FillStyle(
 
         override fun serialize(encoder: Encoder, value: FillStyle) =
             encoder.encodeStructure(descriptor) {
-                if (value.isEOFilled) encodeBooleanElement(descriptor, 0, value.isEOFilled)
-                if (value.isAntialiased) encodeBooleanElement(descriptor, 1, value.isAntialiased)
+                if (!value.isEOFilled) encodeBooleanElement(descriptor, 0, value.isEOFilled)
+                if (!value.isAntialiased) encodeBooleanElement(descriptor, 1, value.isAntialiased)
             }
 
         override fun deserialize(decoder: Decoder): FillStyle =
@@ -171,8 +171,8 @@ data class StrokeStyle(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("StrokeStyle") {
                 element<Float>("lineWidth")
-                element<CGLineCap>("lineCap")
-                element<CGLineJoin>("lineJoin")
+                element("lineCap", CGLineCap.Serializer.descriptor)
+                element("lineJoin", CGLineJoin.Serializer.descriptor)
                 element<Float>("miterLimit")
                 element<FloatArray>("dash")
                 element<Float>("dashPhase")

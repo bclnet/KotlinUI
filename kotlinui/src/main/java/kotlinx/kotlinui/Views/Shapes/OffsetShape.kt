@@ -19,7 +19,7 @@ data class OffsetShape<Content : Shape>(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("OffsetShape") {
                 element("shape", contentSerializer.descriptor)
-                element<SizeF>("offset")
+                element("offset", SizeFSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: OffsetShape<Content>) =

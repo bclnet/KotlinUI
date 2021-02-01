@@ -4,11 +4,9 @@ package kotlinx.kotlinui
 
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
-import kotlin.reflect.typeOf
 
 class ListStyleModifierTest {
     @Test
@@ -17,6 +15,7 @@ class ListStyleModifierTest {
             serializersModule = PType.module
             prettyPrint = true
         }
+        _Plane.register()
 
         // ListStyleModifier
         val orig_lsm = ListStyleModifier(DefaultListStyle())

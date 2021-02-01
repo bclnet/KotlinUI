@@ -13,10 +13,12 @@ class _ContextMenuContainerTest {
         }
 
         // _ContextMenuContainer
-        val orig_dtsi = __DesignTimeSelectionIdentifier("id")
-        val data_dtsi = json.encodeToString(__DesignTimeSelectionIdentifier.Serializer, orig_dtsi)
-        val json_dtsi = json.decodeFromString(__DesignTimeSelectionIdentifier.Serializer, data_dtsi)
-        Assert.assertEquals(orig_dtsi, json_dtsi)
-        Assert.assertEquals("\"id\"", data_dtsi)
+        val orig_cmc = _ContextMenuContainer("id")
+        val data_cmc = json.encodeToString(_ContextMenuContainer.Serializer, orig_cmc)
+        val json_cmc = json.decodeFromString(_ContextMenuContainer.Serializer, data_cmc)
+        Assert.assertEquals(orig_cmc, json_cmc)
+        Assert.assertEquals("""
+            
+        """.trimIndent(), data_cmc)
     }
 }

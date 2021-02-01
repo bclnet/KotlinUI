@@ -7,7 +7,7 @@ import kotlinx.serialization.encoding.*
 
 @Serializable(with = _BackgroundModifier.Serializer::class)
 data class _BackgroundModifier<Background : View>(
-    val background: Background,
+    @Polymorphic val background: Background,
     val alignment: Alignment
 ) : ViewModifier {
     //: Codable
@@ -31,7 +31,7 @@ data class _BackgroundModifier<Background : View>(
                 lateinit var background: Background
                 lateinit var alignment: Alignment
                 while (true) {
-                    when (val index = decodeElementIndex(_ZStackLayout.Serializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> background = decodeSerializableElement(descriptor, 0, backgroundSerializer) as Background
                         1 -> alignment = decodeSerializableElement(descriptor, 1, Alignment.Serializer)
                         CompositeDecoder.DECODE_DONE -> break

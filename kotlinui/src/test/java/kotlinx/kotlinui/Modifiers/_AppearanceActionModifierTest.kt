@@ -11,12 +11,18 @@ class _AppearanceActionModifierTest {
         val json = Json {
             prettyPrint = true
         }
+        _Plane.mockActionManager()
 
         // _AppearanceActionModifier
-        val orig_dtsi = __DesignTimeSelectionIdentifier("id")
-        val data_dtsi = json.encodeToString(__DesignTimeSelectionIdentifier.Serializer, orig_dtsi)
-        val json_dtsi = json.decodeFromString(__DesignTimeSelectionIdentifier.Serializer, data_dtsi)
-        Assert.assertEquals(orig_dtsi, json_dtsi)
-        Assert.assertEquals("\"id\"", data_dtsi)
+        val orig_aam = _AppearanceActionModifier({}, {})
+        val data_aam = json.encodeToString(_AppearanceActionModifier.Serializer, orig_aam)
+        val json_aam = json.decodeFromString(_AppearanceActionModifier.Serializer, data_aam)
+        Assert.assertEquals(orig_aam, json_aam)
+        Assert.assertEquals(
+            """{
+    "appear": "#0",
+    "disappear": "#1"
+}""".trimIndent(), data_aam
+        )
     }
 }

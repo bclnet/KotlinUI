@@ -17,7 +17,7 @@ data class _ClipEffect<ClipShape : Shape>(
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_ClipEffect") {
+            buildClassSerialDescriptor(":_ClipEffect") {
                 element("shape", shapeSerializer.descriptor)
                 element<FillStyle>("style")
             }

@@ -15,14 +15,7 @@ class RadialGradientTest {
         val json = Json {
             prettyPrint = true
         }
-
-        // mock
-        val cgColor = mockk<CGColor>(relaxed = true)
-        every { cgColor == any() } returns true
-        every { cgColor.toString() } returns "color"
-        mockkStatic(CGColor::class)
-        every { CGColor.valueOf(any()) } returns cgColor
-        every { CGColor.valueOf(any(), any(), any()) } returns cgColor
+        _Plane.mockColors()
 
         // RadialGradient
         val orig_rg = RadialGradient(Gradient(arrayOf(Color.red)), UnitPoint.center, 1f, 2f)
@@ -33,7 +26,7 @@ class RadialGradientTest {
             """{
     "gradient": [
         {
-            "color": "clear"
+            "color": "red"
         }
     ],
     "center": "center",

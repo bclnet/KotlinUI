@@ -6,7 +6,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = Capsule.Serializer::class)
+@Serializable(with = Circle.Serializer::class)
 class Circle : Shape {
     override fun equals(other: Any?): Boolean = other is Circle
     override fun hashCode(): Int = javaClass.hashCode()

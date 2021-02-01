@@ -13,10 +13,12 @@ class _AllowsHitTestingModifierTest {
         }
 
         // _AllowsHitTestingModifier
-        val orig_dtsi = __DesignTimeSelectionIdentifier("id")
-        val data_dtsi = json.encodeToString(__DesignTimeSelectionIdentifier.Serializer, orig_dtsi)
-        val json_dtsi = json.decodeFromString(__DesignTimeSelectionIdentifier.Serializer, data_dtsi)
-        Assert.assertEquals(orig_dtsi, json_dtsi)
-        Assert.assertEquals("\"id\"", data_dtsi)
+        val orig_ahtm = _AllowsHitTestingModifier(true)
+        val data_ahtm = json.encodeToString(_AllowsHitTestingModifier.Serializer, orig_ahtm)
+        val json_ahtm = json.decodeFromString(_AllowsHitTestingModifier.Serializer, data_ahtm)
+        Assert.assertEquals(orig_ahtm, json_ahtm)
+        Assert.assertEquals("""{
+    "active": true
+}""".trimIndent(), data_ahtm)
     }
 }

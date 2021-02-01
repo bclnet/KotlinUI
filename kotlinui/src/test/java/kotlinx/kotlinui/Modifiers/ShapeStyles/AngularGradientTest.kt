@@ -16,13 +16,7 @@ class AngularGradientTest {
         val json = Json {
             prettyPrint = true
         }
-
-        // mock
-        val cgColor = mockk<CGColor>(relaxed = true)
-        every { cgColor == any() } returns true
-        mockkStatic(CGColor::class)
-        every { CGColor.valueOf(any()) } returns cgColor
-        every { CGColor.valueOf(any(), any(), any()) } returns cgColor
+        _Plane.mockColors()
 
         // AngularGradient
         val orig_ag = AngularGradient(Gradient(arrayOf(Color.red)), UnitPoint.center, Angle(1.0), Angle(2.0))
@@ -33,7 +27,7 @@ class AngularGradientTest {
             """{
     "gradient": [
         {
-            "color": "clear"
+            "color": "red"
         }
     ],
     "center": "center",

@@ -15,23 +15,20 @@ class GradientTest {
         val json = Json {
             prettyPrint = true
         }
-
-        // mock
-        val cgColor = mockk<CGColor>(relaxed = true)
-        every { cgColor == any() } returns true
-        mockkStatic(CGColor::class)
-        every { CGColor.valueOf(any()) } returns cgColor
-        every { CGColor.valueOf(any(), any(), any()) } returns cgColor
+        _Plane.mockColors()
 
         // Gradient
-        val orig_g = Gradient(arrayOf(Color.red))
+        val orig_g = Gradient(arrayOf(Color.red, Color.blue))
         val data_g = json.encodeToString(Gradient.Serializer, orig_g)
         val json_g = json.decodeFromString(Gradient.Serializer, data_g)
         Assert.assertEquals(orig_g, json_g)
         Assert.assertEquals(
             """[
     {
-        "color": "clear"
+        "color": "red"
+    },
+    {
+        "color": "blue"
     }
 ]""".trimIndent(), data_g
         )

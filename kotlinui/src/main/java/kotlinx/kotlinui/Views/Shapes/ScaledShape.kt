@@ -20,7 +20,7 @@ data class ScaledShape<Content : Shape>(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("ScaledShape") {
                 element("shape", contentSerializer.descriptor)
-                element<SizeF>("scale")
+                element("scale", SizeFSerializer.descriptor)
                 element<UnitPoint>("anchor")
             }
 

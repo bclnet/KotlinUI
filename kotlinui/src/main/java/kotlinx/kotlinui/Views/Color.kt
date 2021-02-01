@@ -25,7 +25,7 @@ data class Color internal constructor(
         //: Codable - JsonContentPolymorphicSerializer
         object Serializer : KSerializer<AnyColorBox> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("AnyColorBox")
+                buildClassSerialDescriptor(":Color")
 
             override fun serialize(encoder: Encoder, value: AnyColorBox) {
                 val actualSerializer = findPolymorphicSerializer(value)
@@ -51,7 +51,7 @@ data class Color internal constructor(
                 }) as KSerializer<AnyColorBox>
 
             fun findPolymorphicSerializer(tree: JsonElement) =
-                (when (val provider = tree.jsonObject["provider"]?.jsonPrimitive?.content) {
+                (when (val provider = tree.jsonObject["color"]?.jsonPrimitive?.content) {
                     "system" -> __NSCFType.Serializer
                     "resolved" -> _Resolved.Serializer
                     "displayP3" -> DisplayP3.Serializer
@@ -72,8 +72,8 @@ data class Color internal constructor(
         //: Codable
         object Serializer : KSerializer<__NSCFType> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("__NSCFType") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Color") {
+                    element<String>("color")
                     element("value", CGColorSerializer.descriptor)
                 }
 
@@ -112,8 +112,8 @@ data class Color internal constructor(
         //: Codable
         object Serializer : KSerializer<_Resolved> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Resolved") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Color") {
+                    element<String>("color")
                     element<Float>("red")
                     element<Float>("green")
                     element<Float>("blue")
@@ -163,8 +163,8 @@ data class Color internal constructor(
         //: Codable
         object Serializer : KSerializer<DisplayP3> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("DisplayP3") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Color") {
+                    element<String>("color")
                     element<Float>("red")
                     element<Float>("green")
                     element<Float>("blue")
@@ -212,8 +212,8 @@ data class Color internal constructor(
         //: Codable
         object Serializer : KSerializer<NamedColor> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("NamedColor") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Color") {
+                    element<String>("color")
                     element<String>("name")
                     element("bundle", ResourceBundleSerializer.descriptor)
                 }
@@ -253,7 +253,7 @@ data class Color internal constructor(
 //        object Serializer : KSerializer<PlatformColor> {
 //            override val descriptor: SerialDescriptor =
 //                buildClassSerialDescriptor("PlatformColor") {
-//                    element<String>("provider")
+//                    element<String>("color")
 //                    element<UXColorSerializer>("bundle")
 //                }
 //
@@ -290,8 +290,8 @@ data class Color internal constructor(
         //: Codable
         object Serializer : KSerializer<OpacityColor> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("OpacityColor") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Color") {
+                    element<String>("color")
                     element<Color>("base")
                     element<Double>("opacity")
                 }
@@ -355,34 +355,40 @@ data class Color internal constructor(
     //: Codable
     internal object Serializer : KSerializer<Color> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Color") {
-                element<String>("provider")
+            buildClassSerialDescriptor(":Color") {
+                element<String>("color")
             }
 
-        override fun serialize(encoder: Encoder, value: Color) =
-            when (value) {
-                clear -> encoder.encodeString("clear")
-                black -> encoder.encodeString("black")
-                white -> encoder.encodeString("white")
-                gray -> encoder.encodeString("gray")
-                red -> encoder.encodeString("red")
-                green -> encoder.encodeString("green")
-                blue -> encoder.encodeString("blue")
-                orange -> encoder.encodeString("orange")
-                yellow -> encoder.encodeString("yellow")
-                pink -> encoder.encodeString("pink")
-                purple -> encoder.encodeString("purple")
-                primary -> encoder.encodeString("primary")
-                secondary -> encoder.encodeString("secondary")
-                accentColor -> encoder.encodeString("accentColor")
-                else -> encoder.encodeSerializableValue(AnyColorBox.Serializer, value.provider)
+        override fun serialize(encoder: Encoder, value: Color) {
+            val color = when (value) {
+                clear -> "clear"
+                black -> "black"
+                white -> "white"
+                gray -> "gray"
+                red -> "red"
+                green -> "green"
+                blue -> "blue"
+                orange -> "orange"
+                yellow -> "yellow"
+                pink -> "pink"
+                purple -> "purple"
+                primary -> "primary"
+                secondary -> "secondary"
+                accentColor -> "accentColor"
+                else -> {
+                    encoder.encodeSerializableValue(AnyColorBox.Serializer, value.provider)
+                    return
+                }
             }
+            encoder.encodeStructure(descriptor) {
+                encodeStringElement(descriptor, 0, color)
+            }
+        }
 
         override fun deserialize(decoder: Decoder): Color {
             val input = decoder as JsonDecoder
             val tree = input.decodeJsonElement()
-            return if (tree is JsonObject) Color(input.json.decodeFromJsonElement(AnyColorBox.Serializer, tree))
-            else when (val provider = tree.jsonPrimitive?.content) {
+            return when (val color = tree.jsonObject["color"]?.jsonPrimitive?.content) {
                 "clear" -> clear
                 "black" -> black
                 "white" -> white
@@ -397,7 +403,7 @@ data class Color internal constructor(
                 "primary" -> primary
                 "secondary" -> secondary
                 "accentColor" -> accentColor
-                else -> error(provider)
+                else -> Color(input.json.decodeFromJsonElement(AnyColorBox.Serializer, tree))
             }
         }
     }
@@ -407,20 +413,20 @@ data class Color internal constructor(
     }
 
     companion object {
-        val clear = Color(CGColor.valueOf(CGColor.TRANSPARENT))
-        val black = Color(CGColor.valueOf(CGColor.BLACK))
-        val white = Color(CGColor.valueOf(CGColor.WHITE))
-        val gray = Color(CGColor.valueOf(CGColor.GRAY))
-        val red = Color(CGColor.valueOf(CGColor.RED))
-        val green = Color(CGColor.valueOf(CGColor.GREEN))
-        val blue = Color(CGColor.valueOf(CGColor.BLUE))
-        val orange = Color(CGColor.valueOf(1f, 0f, 0f))
-        val yellow = Color(CGColor.valueOf(CGColor.YELLOW))
-        val pink = Color(CGColor.valueOf(2f, 0f, 0f))
-        val purple = Color(CGColor.valueOf(3f, 0f, 0f))
-        val primary = Color(CGColor.valueOf(4f, 0f, 0f))
-        val secondary = Color(CGColor.valueOf(5f, 0f, 0f))
-        val accentColor = Color(CGColor.valueOf(6f, 0f, 0f))
+        val clear = Color(_Plane.colors[0] ?: CGColor.valueOf(CGColor.TRANSPARENT))
+        val black = Color(_Plane.colors[1] ?: CGColor.valueOf(CGColor.BLACK))
+        val white = Color(_Plane.colors[2] ?: CGColor.valueOf(CGColor.WHITE))
+        val gray = Color(_Plane.colors[3] ?: CGColor.valueOf(CGColor.GRAY))
+        val red = Color(_Plane.colors[4] ?: CGColor.valueOf(CGColor.RED))
+        val green = Color(_Plane.colors[5] ?: CGColor.valueOf(CGColor.GREEN))
+        val blue = Color(_Plane.colors[6] ?: CGColor.valueOf(CGColor.BLUE))
+        val orange = Color(_Plane.colors[7] ?: CGColor.valueOf(1f, 0f, 0f))
+        val yellow = Color(_Plane.colors[8] ?: CGColor.valueOf(CGColor.YELLOW))
+        val pink = Color(_Plane.colors[9] ?: CGColor.valueOf(2f, 0f, 0f))
+        val purple = Color(_Plane.colors[10] ?: CGColor.valueOf(3f, 0f, 0f))
+        val primary = Color(_Plane.colors[11] ?: CGColor.valueOf(4f, 0f, 0f))
+        val secondary = Color(_Plane.colors[12] ?: CGColor.valueOf(5f, 0f, 0f))
+        val accentColor = Color(_Plane.colors[13] ?: CGColor.valueOf(6f, 0f, 0f))
 
         private fun hsbToRGB(hue: Double, saturation: Double, brightness: Double): DoubleArray {
             val i: Double = Math.floor(hue * 6)

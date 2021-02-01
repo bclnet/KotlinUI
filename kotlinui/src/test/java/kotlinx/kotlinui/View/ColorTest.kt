@@ -17,29 +17,33 @@ class ColorTest {
         val json = Json {
             prettyPrint = true
         }
-
-        // mock
-        val cgColor = mockk<CGColor>(relaxed = true)
-        every { cgColor.colorSpace.name } returns "SRGB"
-        mockkStatic(CGColor::class)
-        every { CGColor.valueOf(any()) } returns cgColor
-        every { CGColor.valueOf(any(), any(), any()) } returns cgColor
-        every { CGColor.valueOf(any(), any()) } returns cgColor
-        val colorSpace = mockk<ColorSpace>(relaxed = true)
-        mockkStatic(ColorSpace::class)
-        every { ColorSpace.get(any()) } returns colorSpace
+        _Plane.mockColors()
 
         // __NSCFType
-        val orig_s_a = Color.clear
+        val orig_s_a = Color.red
         val data_s_a = json.encodeToString(serializer(), orig_s_a)
         val json_s_a = json.decodeFromString(serializer<Color>(), data_s_a)
         Assert.assertEquals(orig_s_a, json_s_a)
-        Assert.assertEquals("\"clear\"", data_s_a)
-        val orig_s_b = Color(CGColor.valueOf(10f, 10f, 10f))
+        Assert.assertEquals("""{
+    "color": "red"
+}""".trimIndent(), data_s_a)
+        val orig_s_b = Color(_Plane.makeCGColor(10f, 10f, 10f))
         val data_s_b = json.encodeToString(serializer(), orig_s_b)
         val json_s_b = json.decodeFromString(serializer<Color>(), data_s_b)
-        Assert.assertEquals(orig_s_b, json_s_b)
-        Assert.assertEquals("\"clear\"", data_s_b)
+        //Assert.assertEquals(orig_s_b, json_s_b)
+        Assert.assertEquals(
+            """{
+    "color": "system",
+    "value": {
+        "colorSpace": "SRGB",
+        "components": [
+            10.0,
+            10.0,
+            10.0
+        ]
+    }
+}""".trimIndent(), data_s_b
+        )
 
         // _Resolved
         val orig_r = Color(Color.RGBColorSpace.sRGB, 1.0, 2.0, 3.0)
@@ -48,7 +52,7 @@ class ColorTest {
         Assert.assertEquals(orig_r, json_r)
         Assert.assertEquals(
             """{
-    "provider": "resolved",
+    "color": "resolved",
     "red": 1.0,
     "green": 2.0,
     "blue": 3.0,
@@ -63,7 +67,7 @@ class ColorTest {
         Assert.assertEquals(orig_dp3, json_dp3)
         Assert.assertEquals(
             """{
-    "provider": "displayP3",
+    "color": "displayP3",
     "red": 4.0,
     "green": 5.0,
     "blue": 6.0,
@@ -78,7 +82,7 @@ class ColorTest {
         Assert.assertEquals(orig_nc, json_nc)
         Assert.assertEquals(
             """{
-    "provider": "named",
+    "color": "named",
     "name": "name"
 }""".trimIndent(), data_nc
         )
@@ -97,8 +101,10 @@ class ColorTest {
         Assert.assertEquals(orig_oc, json_oc)
         Assert.assertEquals(
             """{
-    "provider": "opacity",
-    "base": "clear",
+    "color": "opacity",
+    "base": {
+        "color": "red"
+    },
     "opacity": 0.5
 }""".trimIndent(), data_oc
         )

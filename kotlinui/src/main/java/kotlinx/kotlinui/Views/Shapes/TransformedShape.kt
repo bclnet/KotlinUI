@@ -19,7 +19,7 @@ data class TransformedShape<Content : Shape>(
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("TransformedShape") {
                 element("shape", contentSerializer.descriptor)
-                element<Matrix>("transform")
+                element("transform", MatrixSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: TransformedShape<Content>) =

@@ -19,7 +19,7 @@ data class Capsule(
     internal class Serializer : KSerializer<Capsule> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Capsule") {
-                element<RoundedCornerStyle>("style")
+                element("style", RoundedCornerStyle.Serializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: Capsule) =

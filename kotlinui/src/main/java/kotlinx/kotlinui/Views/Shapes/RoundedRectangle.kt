@@ -22,9 +22,9 @@ data class RoundedRectangle(
     internal object Serializer : KSerializer<RoundedRectangle> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("RoundedRectangle") {
-                element<SizeF>("cornerSize")
+                element("cornerSize", SizeFSerializer.descriptor)
                 element<Float>("cornerRadius")
-                element<RoundedCornerStyle>("style")
+                element("style", RoundedCornerStyle.Serializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: RoundedRectangle) =

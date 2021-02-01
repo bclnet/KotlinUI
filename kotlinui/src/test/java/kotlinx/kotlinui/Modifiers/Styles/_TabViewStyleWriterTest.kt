@@ -2,24 +2,20 @@
 
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.JsonUI
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
-import kotlin.reflect.typeOf
 
 class _TabViewStyleWriterTest {
-
     @Test
     fun serialize() {
         val json = Json {
             serializersModule = PType.module
             prettyPrint = true
         }
-        JsonUI.registered
+        _Plane.register()
 
         // _TabViewStyleWriter
         val orig_tvsm = _TabViewStyleWriter(DefaultTabViewStyle())

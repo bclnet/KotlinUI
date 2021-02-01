@@ -12,18 +12,18 @@ data class _AlignmentWritingModifier(
 //     fun body(content: AnyView): AnyView { AnyView(content.modifier(self)) }
 
     //: Codable
-    internal object Serializer : KSerializer<_AccessibilityIgnoresInvertColorsViewModifier> {
+    internal object Serializer : KSerializer<_AlignmentWritingModifier> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("_AccessibilityIgnoresInvertColorsViewModifier") {
                 element<Boolean>("active")
             }
 
-        override fun serialize(encoder: Encoder, value: _AccessibilityIgnoresInvertColorsViewModifier) =
+        override fun serialize(encoder: Encoder, value: _AlignmentWritingModifier) =
             encoder.encodeStructure(descriptor) {
                 encodeBooleanElement(descriptor, 0, value.active)
             }
 
-        override fun deserialize(decoder: Decoder): _AccessibilityIgnoresInvertColorsViewModifier =
+        override fun deserialize(decoder: Decoder): _AlignmentWritingModifier =
             decoder.decodeStructure(descriptor) {
                 var active: Boolean = false
                 while (true) {
@@ -33,7 +33,7 @@ data class _AlignmentWritingModifier(
                         else -> error("Unexpected index: $index")
                     }
                 }
-                _AccessibilityIgnoresInvertColorsViewModifier(active)
+                _AlignmentWritingModifier(active)
             }
     }
 
