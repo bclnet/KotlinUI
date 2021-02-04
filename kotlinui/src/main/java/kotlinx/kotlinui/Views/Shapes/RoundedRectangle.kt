@@ -21,7 +21,7 @@ data class RoundedRectangle(
     //: Codable
     internal object Serializer : KSerializer<RoundedRectangle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("RoundedRectangle") {
+            buildClassSerialDescriptor(":RoundedRectangle") {
                 element("cornerSize", SizeFSerializer.descriptor)
                 element<Float>("cornerRadius")
                 element("style", RoundedCornerStyle.Serializer.descriptor)
@@ -59,7 +59,7 @@ data class RoundedRectangle(
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":RoundedRectangle._Inset") {
                     element<RoundedRectangle>("base")
                     element<Float>("amount")
                 }

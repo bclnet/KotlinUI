@@ -6,7 +6,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = SeparatorShapeStyle.Serializer::class)
-@SerialName(":SeparatorShapeStyle")
 class SeparatorShapeStyle {
     override fun equals(other: Any?): Boolean = other is SeparatorShapeStyle
     override fun hashCode(): Int = javaClass.hashCode()
@@ -14,17 +13,13 @@ class SeparatorShapeStyle {
     //: Codable
     internal object Serializer : KSerializer<SeparatorShapeStyle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("SeparatorShapeStyle") {
-            }
+            buildClassSerialDescriptor(":SeparatorShapeStyle") { }
 
         override fun serialize(encoder: Encoder, value: SeparatorShapeStyle) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): SeparatorShapeStyle =
-            decoder.decodeStructure(descriptor) {
-                SeparatorShapeStyle()
-            }
+            decoder.decodeStructure(descriptor) { SeparatorShapeStyle() }
     }
 
     companion object {

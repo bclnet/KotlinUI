@@ -19,17 +19,13 @@ class ContainerRelativeShape : Shape {
     //: Codable
     internal class Serializer : KSerializer<ContainerRelativeShape> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ContainerRelativeShape") {
-            }
+            buildClassSerialDescriptor(":ContainerRelativeShape") { }
 
         override fun serialize(encoder: Encoder, value: ContainerRelativeShape) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): ContainerRelativeShape =
-            decoder.decodeStructure(descriptor) {
-                ContainerRelativeShape()
-            }
+            decoder.decodeStructure(descriptor) { ContainerRelativeShape() }
     }
 
     @Serializable(with = _Inset.Serializer::class)
@@ -39,7 +35,7 @@ class ContainerRelativeShape : Shape {
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":ContainerRelativeShape._Inset") {
                     element<Float>("amount")
                 }
 

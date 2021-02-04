@@ -12,7 +12,7 @@ data class __DesignTimeSelectionIdentifier(
     //: Codable
     internal object Serializer : KSerializer<__DesignTimeSelectionIdentifier> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("__DesignTimeSelectionIdentifier", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":__DesignTimeSelectionIdentifier", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: __DesignTimeSelectionIdentifier) =
             encoder.encodeString(value.identifier)
@@ -24,7 +24,7 @@ data class __DesignTimeSelectionIdentifier(
     companion object {
         //: Register
         fun register() {
-            PType.register<__DesignTimeSelectionIdentifier>()
+            PType.register<__DesignTimeSelectionIdentifier>(primitiveSerial = true)
         }
     }
 }

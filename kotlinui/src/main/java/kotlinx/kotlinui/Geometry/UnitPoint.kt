@@ -22,7 +22,7 @@ data class UnitPoint(val x: Float, val y: Float) {
     //: Codable
     internal object Serializer : KSerializer<UnitPoint> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("UnitPoint", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":UnitPoint", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: UnitPoint) =
             encoder.encodeString(

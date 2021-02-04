@@ -23,7 +23,7 @@ class _ClipEffectTest {
         Assert.assertEquals(
             """{
     "shape": {
-        "type": "Circle"
+        "type": ":Circle"
     },
     "style": {
     }

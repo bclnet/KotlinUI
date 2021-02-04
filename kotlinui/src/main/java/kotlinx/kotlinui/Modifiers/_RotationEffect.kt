@@ -16,7 +16,7 @@ data class _RotationEffect(
     //: Codable
     internal object Serializer : KSerializer<_RotationEffect> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_RotationEffect") {
+            buildClassSerialDescriptor(":_RotationEffect") {
                 element<Angle>("angle")
                 element<UnitPoint>("anchor")
             }

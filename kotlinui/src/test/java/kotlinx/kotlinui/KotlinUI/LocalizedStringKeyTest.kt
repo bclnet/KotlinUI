@@ -15,10 +15,10 @@ class LocalizedStringKeyTest {
         }
 
         // LocalizedStringKey
-        val orig_s0 = LocalizedStringKey("key")
-        val data_s0 = json.encodeToString(LocalizedStringKey.Serializer, orig_s0)
-        val json_s0 = json.decodeFromString(LocalizedStringKey.Serializer, data_s0)
-        Assert.assertEquals(orig_s0, json_s0)
-        Assert.assertEquals(data_s0, "key")
+        val orig_lsk = LocalizedStringKey("key")
+        val data_lsk = json.encodeToString(LocalizedStringKey.Serializer, orig_lsk)
+        val json_lsk = json.decodeFromString(LocalizedStringKey.Serializer, data_lsk)
+        Assert.assertEquals(orig_lsk, json_lsk)
+        Assert.assertEquals("\"key\"", data_lsk)
     }
 }

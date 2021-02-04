@@ -6,7 +6,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = ForegroundStyle.Serializer::class)
-@SerialName(":ForegroundStyle")
 class ForegroundStyle : ShapeStyle {
     override fun equals(other: Any?): Boolean = other is ForegroundStyle
     override fun hashCode(): Int = javaClass.hashCode()
@@ -14,12 +13,13 @@ class ForegroundStyle : ShapeStyle {
     //: Codable
     internal object Serializer : KSerializer<ForegroundStyle> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("ForegroundStyle", PrimitiveKind.STRING)
+            buildClassSerialDescriptor(":ForegroundStyle") {}
 
-        override fun serialize(encoder: Encoder, value: ForegroundStyle) {}
+        override fun serialize(encoder: Encoder, value: ForegroundStyle) =
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): ForegroundStyle =
-            ForegroundStyle()
+            decoder.decodeStructure(descriptor) { ForegroundStyle() }
     }
 
     companion object {

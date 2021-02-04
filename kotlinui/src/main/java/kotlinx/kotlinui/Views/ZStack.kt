@@ -11,6 +11,9 @@ class ZStack<Content : View>(
     alignment: Alignment = Alignment.center,
     content: ViewBuilder.() -> Content
 ) : View, IAnyView {
+    override fun equals(other: Any?): Boolean = other is ZStack<*> && _tree == other._tree
+    override fun hashCode(): Int = _tree.hashCode()
+
     val _tree: _VariadicView_Tree<_ZStackLayout, Content> =
         _VariadicView_Tree(_ZStackLayout(alignment), content(ViewBuilder))
 
@@ -25,7 +28,7 @@ class ZStack<Content : View>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ZStack") {
+            buildClassSerialDescriptor(":ZStack") {
                 element<_ZStackLayout>("root")
                 element<View>("content")
             }
@@ -43,7 +46,7 @@ class ZStack<Content : View>(
                 var root = _ZStackLayout()
                 lateinit var content: Content
                 while (true) {
-                    when (val index = decodeElementIndex(_ZStackLayout.Serializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> root = decodeSerializableElement(descriptor, 0, _ZStackLayout.Serializer)
                         1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
@@ -69,7 +72,7 @@ data class _ZStackLayout(
     //: Codable
     internal object Serializer : KSerializer<_ZStackLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_ZStackLayout") {
+            buildClassSerialDescriptor(":_ZStackLayout") {
                 element<Alignment>("alignment")
             }
 

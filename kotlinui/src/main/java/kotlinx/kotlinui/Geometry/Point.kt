@@ -9,15 +9,13 @@ data class Point(var x: Int, var y: Int) {
     //: Codable
     internal object Serializer : KSerializer<Point> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Point", PrimitiveKind.STRING)
+            buildClassSerialDescriptor(":Point") {}
 
         override fun serialize(encoder: Encoder, value: Point) =
-            encoder.encodeSerializableValue(serializer<Array<Int>>(), arrayOf(value.x, value.y))
+            encoder.encodeSerializableValue(serializer<IntArray>(), arrayOf(value.x, value.y).toIntArray())
 
         override fun deserialize(decoder: Decoder): Point =
-            decoder.decodeSerializableValue(serializer<Array<Int>>()).let {
-                Point(it[0], it[1])
-            }
+            decoder.decodeSerializableValue(serializer<IntArray>()).let { Point(it[0], it[1]) }
     }
 
     companion object {

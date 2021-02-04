@@ -5,18 +5,13 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = Gradient.Serializer::class)
-@SerialName(":Gradient")
 data class Gradient(
     val stops: Array<Stop>
 ) {
     constructor(colors: Array<Color>) : this(colors.map { Stop(it, 0f) }.toTypedArray())
 
-    override fun equals(other: Any?): Boolean =
-        other is Gradient &&
-                stops contentEquals other.stops
-
-    override fun hashCode(): Int =
-        stops.contentHashCode()
+    override fun equals(other: Any?): Boolean = other is Gradient && stops contentEquals other.stops
+    override fun hashCode(): Int = stops.contentHashCode()
 
     @Serializable(with = Stop.Serializer::class)
     data class Stop(
@@ -26,7 +21,7 @@ data class Gradient(
         //: Codable
         internal object Serializer : KSerializer<Stop> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("Stop") {
+                buildClassSerialDescriptor(":Gradient.Stop") {
                     element<Color>("color")
                     element<Float>("location")
                 }
@@ -57,7 +52,7 @@ data class Gradient(
     //: Codable
     internal object Serializer : KSerializer<Gradient> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Gradient", PrimitiveKind.STRING)
+            buildClassSerialDescriptor(":Gradient") {}
 
         override fun serialize(encoder: Encoder, value: Gradient) =
             encoder.encodeSerializableValue(serializer<Array<Stop>>(), value.stops)

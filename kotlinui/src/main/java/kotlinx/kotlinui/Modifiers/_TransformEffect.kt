@@ -12,17 +12,13 @@ data class _TransformEffect(
     //: Codable
     internal object Serializer : KSerializer<_TransformEffect> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_TransformEffect") {
-            }
+            buildClassSerialDescriptor(":_TransformEffect") { }
 
         override fun serialize(encoder: Encoder, value: _TransformEffect) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): _TransformEffect =
-            decoder.decodeStructure(descriptor) {
-                error("")
-            }
+            decoder.decodeStructure(descriptor) { error("") }
     }
 
     companion object {

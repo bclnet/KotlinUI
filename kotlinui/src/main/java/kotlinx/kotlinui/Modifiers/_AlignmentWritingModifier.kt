@@ -14,7 +14,7 @@ data class _AlignmentWritingModifier(
     //: Codable
     internal object Serializer : KSerializer<_AlignmentWritingModifier> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_AccessibilityIgnoresInvertColorsViewModifier") {
+            buildClassSerialDescriptor(":_AccessibilityIgnoresInvertColorsViewModifier") {
                 element<Boolean>("active")
             }
 

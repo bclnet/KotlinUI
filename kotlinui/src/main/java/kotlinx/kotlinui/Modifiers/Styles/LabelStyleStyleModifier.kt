@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = LabelStyleStyleModifier.Serializer::class)
-@SerialName(":LabelStyleStyleModifier")
 internal data class LabelStyleStyleModifier<Style : LabelStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class LabelStyleStyleModifier<Style : LabelStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("LabelStyleStyleModifier") {
+            buildClassSerialDescriptor(":LabelStyleStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,9 +44,9 @@ internal data class LabelStyleStyleModifier<Style : LabelStyle>(
         //: Register
         fun register() {
             PType.register<LabelStyleStyleModifier<LabelStyle>>()
-            PType.register<DefaultLabelStyle>(actions = hashMapOf("style" to ::DefaultLabelStyle))
-            PType.register<IconOnlyLabelStyle>(actions = hashMapOf("style" to ::IconOnlyLabelStyle))
-            PType.register<TitleOnlyLabelStyle>(actions = hashMapOf("style" to ::TitleOnlyLabelStyle))
+            PType.register<DefaultLabelStyle>()
+            PType.register<IconOnlyLabelStyle>()
+            PType.register<TitleOnlyLabelStyle>()
         }
     }
 }

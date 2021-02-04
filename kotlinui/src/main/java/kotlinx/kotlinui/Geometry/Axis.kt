@@ -12,7 +12,7 @@ enum class Axis {
     //: Codable
     internal object Serializer : KSerializer<Axis> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Axis", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":Axis", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: Axis) =
             encoder.encodeString(

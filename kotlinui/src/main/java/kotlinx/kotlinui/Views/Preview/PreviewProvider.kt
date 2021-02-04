@@ -19,7 +19,7 @@ sealed class PreviewLayout {
     //: Codable
     internal object Serializer : KSerializer<PreviewLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("PreviewLayout") {
+            buildClassSerialDescriptor(":PreviewLayout") {
                 element<String>("provider")
                 element<Float>("width")
                 element<Float>("height")

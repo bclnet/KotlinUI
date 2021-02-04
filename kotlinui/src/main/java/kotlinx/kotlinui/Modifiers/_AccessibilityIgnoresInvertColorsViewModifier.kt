@@ -14,7 +14,7 @@ data class _AccessibilityIgnoresInvertColorsViewModifier(
     //: Codable
     internal object Serializer : KSerializer<_AccessibilityIgnoresInvertColorsViewModifier> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("_AccessibilityIgnoresInvertColorsViewModifier", PrimitiveKind.BOOLEAN)
+            PrimitiveSerialDescriptor(":_AccessibilityIgnoresInvertColorsViewModifier", PrimitiveKind.BOOLEAN)
 
         override fun serialize(encoder: Encoder, value: _AccessibilityIgnoresInvertColorsViewModifier) =
             encoder.encodeBoolean(value.active)
@@ -26,7 +26,7 @@ data class _AccessibilityIgnoresInvertColorsViewModifier(
     companion object {
         //: Register
         fun register() {
-            PType.register<_AccessibilityIgnoresInvertColorsViewModifier>()
+            PType.register<_AccessibilityIgnoresInvertColorsViewModifier>(primitiveSerial = true)
         }
     }
 }

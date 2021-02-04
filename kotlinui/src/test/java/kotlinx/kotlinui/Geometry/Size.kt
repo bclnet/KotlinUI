@@ -12,10 +12,15 @@ class SizeTest {
         }
 
         // Size
-        val orig_s = Size(0, 0)
+        val orig_s = Size(1, 2)
         val data_s = json.encodeToString(Size.Serializer, orig_s)
         val json_s = json.decodeFromString(Size.Serializer, data_s)
         Assert.assertEquals(orig_s, json_s)
-        Assert.assertEquals("", orig_s)
+        Assert.assertEquals(
+            """[
+    1,
+    2
+]""".trimIndent(), data_s
+        )
     }
 }

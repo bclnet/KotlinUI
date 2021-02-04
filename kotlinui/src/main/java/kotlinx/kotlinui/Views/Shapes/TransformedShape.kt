@@ -17,7 +17,7 @@ data class TransformedShape<Content : Shape>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("TransformedShape") {
+            buildClassSerialDescriptor(":TransformedShape") {
                 element("shape", contentSerializer.descriptor)
                 element("transform", MatrixSerializer.descriptor)
             }

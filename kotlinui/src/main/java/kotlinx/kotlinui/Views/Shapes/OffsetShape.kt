@@ -17,7 +17,7 @@ data class OffsetShape<Content : Shape>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("OffsetShape") {
+            buildClassSerialDescriptor(":OffsetShape") {
                 element("shape", contentSerializer.descriptor)
                 element("offset", SizeFSerializer.descriptor)
             }

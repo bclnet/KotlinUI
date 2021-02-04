@@ -15,18 +15,18 @@ data class _TrimmedShape<S : View>(
 ) : ViewModifier {
     //: Codable
     internal class Serializer<S : View> : KSerializer<_TrimmedShape<S>> {
-        val sSerializer = PolymorphicSerializer(Any::class)
+        val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_TrimmedShape") {
-                element("shape", sSerializer.descriptor)
+            buildClassSerialDescriptor(":_TrimmedShape") {
+                element("shape", shapeSerializer.descriptor)
                 element<Float>("startFraction")
                 element<Float>("endFraction")
             }
 
         override fun serialize(encoder: Encoder, value: _TrimmedShape<S>) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, sSerializer, value.shape)
+                encodeSerializableElement(descriptor, 0, shapeSerializer, value.shape)
                 encodeFloatElement(descriptor, 1, value.startFraction)
                 encodeFloatElement(descriptor, 2, value.endFraction)
             }
@@ -38,7 +38,7 @@ data class _TrimmedShape<S : View>(
                 var endFraction = 0f
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> shape = decodeSerializableElement(descriptor, 0, sSerializer) as S
+                        0 -> shape = decodeSerializableElement(descriptor, 0, shapeSerializer) as S
                         1 -> startFraction = decodeFloatElement(descriptor, 1)
                         2 -> endFraction = decodeFloatElement(descriptor, 2)
                         CompositeDecoder.DECODE_DONE -> break

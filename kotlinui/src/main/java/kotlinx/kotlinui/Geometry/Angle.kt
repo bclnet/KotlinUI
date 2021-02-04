@@ -26,7 +26,7 @@ data class Angle(
     //: Codable
     internal object Serializer : KSerializer<Angle> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Angle", PrimitiveKind.DOUBLE)
+            PrimitiveSerialDescriptor(":Angle", PrimitiveKind.DOUBLE)
 
         override fun serialize(encoder: Encoder, value: Angle) =
             encoder.encodeDouble(value.radians)

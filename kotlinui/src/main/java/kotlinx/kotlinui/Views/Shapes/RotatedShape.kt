@@ -18,7 +18,7 @@ data class RotatedShape<Content : Shape>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("OffsetShape") {
+            buildClassSerialDescriptor(":RotatedShape") {
                 element("shape", contentSerializer.descriptor)
                 element<Angle>("angle")
                 element<UnitPoint>("anchor")

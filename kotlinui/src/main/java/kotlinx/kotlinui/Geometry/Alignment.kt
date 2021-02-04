@@ -22,7 +22,7 @@ data class Alignment(var horizontal: HorizontalAlignment, var vertical: Vertical
     //: Codable
     internal object Serializer : KSerializer<Alignment> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Alignment", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":Alignment", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: Alignment) =
             encoder.encodeString(
@@ -64,7 +64,7 @@ enum class HorizontalAlignment {
     @kotlinx.serialization.Serializer(forClass = HorizontalAlignment::class)
     object Serializer : KSerializer<HorizontalAlignment> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("HorizontalAlignment", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":HorizontalAlignment", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: HorizontalAlignment) =
             encoder.encodeString(
@@ -92,7 +92,7 @@ enum class VerticalAlignment {
     //: Codable
     internal object Serializer : KSerializer<VerticalAlignment> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("VerticalAlignment", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":VerticalAlignment", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: VerticalAlignment) =
             encoder.encodeString(

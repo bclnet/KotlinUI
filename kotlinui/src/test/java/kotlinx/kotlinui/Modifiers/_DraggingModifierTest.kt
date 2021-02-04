@@ -13,10 +13,13 @@ class _DraggingModifierTest {
         }
 
         // _DraggingModifier
-        val orig_dtsi = __DesignTimeSelectionIdentifier("id")
-        val data_dtsi = json.encodeToString(__DesignTimeSelectionIdentifier.Serializer, orig_dtsi)
-        val json_dtsi = json.decodeFromString(__DesignTimeSelectionIdentifier.Serializer, data_dtsi)
-        Assert.assertEquals(orig_dtsi, json_dtsi)
-        Assert.assertEquals("\"id\"", data_dtsi)
+//        val orig_dm = _DraggingModifier("id")
+//        val data_dm = json.encodeToString(_DraggingModifier.Serializer, orig_dm)
+//        val json_dm = json.decodeFromString(_DraggingModifier.Serializer, data_dm)
+//        Assert.assertEquals(orig_dm, json_dm)
+//        Assert.assertEquals(
+//            """
+//""".trimIndent(), data_dm
+        //)
     }
 }

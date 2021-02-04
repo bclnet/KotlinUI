@@ -19,17 +19,13 @@ class Rectangle : Shape {
     //: Codable
     internal class Serializer : KSerializer<Rectangle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Rectangle") {
-            }
+            buildClassSerialDescriptor(":Rectangle") { }
 
         override fun serialize(encoder: Encoder, value: Rectangle) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): Rectangle =
-            decoder.decodeStructure(descriptor) {
-                Rectangle()
-            }
+            decoder.decodeStructure(descriptor) { Rectangle() }
     }
 
     @Serializable(with = _Inset.Serializer::class)
@@ -39,7 +35,7 @@ class Rectangle : Shape {
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":Rectangle._Inset") {
                     element<Float>("amount")
                 }
 

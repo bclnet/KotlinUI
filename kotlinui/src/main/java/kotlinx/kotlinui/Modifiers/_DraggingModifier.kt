@@ -14,7 +14,7 @@ data class _DraggingModifier(
     //: Codable
     internal object Serializer : KSerializer<_DraggingModifier> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_DraggingModifier") {
+            buildClassSerialDescriptor(":_DraggingModifier") {
                 element<String>("itemsForDragHandler")
             }
 

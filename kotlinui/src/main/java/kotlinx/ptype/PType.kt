@@ -18,25 +18,7 @@ val typeParseTokens_breaks: CharArray = arrayOf('<', '(', ',', ')', '>').toCharA
 class PTypeNotFoundException(named: String) : Exception(named)
 class PTypeParseErrorException(key: String) : Exception(key)
 class PTypeNameErrorException(actual: String, expected: String) : Exception("actual: $actual, expected: $expected")
-class PTypeNotCodableException(mode: String, key: String) : Exception("mode: $mode, key: $key")
-
-//fun CompositeEncoder.encodeSuper(descriptor: SerialDescriptor, index: Int, value: Pair<KType, Any>) {
-//    val hasNil = false
-//    val ptypeWithNil = PTypeWithNil(PType.typeFor(value.first), hasNil)
-//    this.encodeSerializableElement(descriptor, index, PTypeWithNilSerializer, ptypeWithNil)
-////            if hasNil { return }
-////            let unwrap = Mirror.optional(any: value)!
-////            guard let encodable = unwrap as? Encodable else {
-////                let newValue = try PType.convert(value: unwrap)
-////                guard let encodable2 = newValue as? Encodable else {
-////                    throw PTypeError.typeNotCodable("encodeDynaSuper", key: PType.typeKey(for: unwrap))
-////                }
-////                try encodable2.encode(to: self)
-////                    return
-////                }
-////            try encodable.encode(to: self)
-////            }
-//}
+//class PTypeNotCodableException(mode: String, key: String) : Exception("mode: $mode, key: $key")
 
 interface PConvertible {
     fun init(any: Any)
@@ -125,8 +107,6 @@ sealed class PType {
             val key = typeKeyPlatform(value)
                 .replace(" ", "")
                 .replace("kotlin.Optional", "!")
-                .replace("java.lang.", "#")
-                .replace("java.util.", "#")
                 .replace("kotlinx.kotlinui.", ":")
             if (namespace == null) return key
             val keyIdx = if (!key.startsWith("!<")) 0 else 2
@@ -136,18 +116,29 @@ sealed class PType {
             return key.replace(baseKey, newBaseKey)
         }
 
+        private fun typeName(value: String): String =
+            value.replace("!", "kotlin.Optional")
+//                .replace("#", "#")
+                .replace(":", "koltinx.kotlinui.")
+
         private fun typeKeyPlatform(value: String): String {
             var key = value.replace("(Kotlin reflection is not available)", "")
                 .replace("$", ".")
+                .replace("java.lang.", "#")
+                .replace("java.util.", "#")
+                .replace("kotlinx.system.", "#")
+                .replace("kotlin.collections.", "#")
+                .replace("kotlin.String", "#String")
+
             // transform tuples
             while (true) {
-                val idx = key.indexOf("kotlinx.system.Tuple")
+                val idx = key.indexOf("#Tuple")
                 if (idx == -1)
                     return key
-                val chars = key.removeRange(idx until idx + 21).toCharArray()
+                val chars = key.removeRange(idx until idx + "#Tuple?".length).toCharArray()
                 chars[idx] = '('
                 var depth = 0
-                for (i in idx + 1 until key.length)
+                for (i in idx + 1 until chars.size)
                     when (chars[i]) {
                         '<' -> depth++
                         '>' -> {
@@ -162,13 +153,8 @@ sealed class PType {
             }
         }
 
-        private fun typeName(value: String): String =
-            value.replace("!", "kotlin.Optional")
-                .replace("#", "java.lang.")
-                .replace(":", "koltinx.kotlinui.")
-
         // MARK: - Register
-        val class2Serializer = mapOf<KClass<*>, KSerializer<*>>()
+        val class2Serializer = mutableMapOf<KClass<*>, KSerializer<*>>()
         val polyBase2SerializersAny = mutableMapOf<KClass<*>, KSerializer<*>>()
         val polyBase2NamedSerializersAny = mutableMapOf<String, KSerializer<*>>()
         val polyBase2Serializers = mapOf<KClass<*>, Map<KClass<*>, KSerializer<*>>>(Any::class to polyBase2SerializersAny)
@@ -180,7 +166,7 @@ sealed class PType {
         var convertTypes = hashMapOf<String, PConvertible>()
         var actionTypes = hashMapOf<String, HashMap<String, Any>>()
 
-        inline fun <reified T> register(any: Array<KType?>? = null, namespace: String? = null, actions: HashMap<String, Any>? = null, alias: String? = null) {
+        inline fun <reified T> register(any: Array<KType?>? = null, namespace: String? = null, actions: HashMap<String, Any>? = null, alias: String? = null, primitiveSerial: Boolean = false) {
             val type = typeOf<T>()
             val klass = T::class as KClass<*>
             val key = typeKey(type, namespace)
@@ -189,8 +175,12 @@ sealed class PType {
                 val with = annotation.with as KClass<*>
                 val serializer: KSerializer<*> = if (with === KSerializer::class) serializer(type)
                 else (with.objectInstance ?: with.constructors.first().call()) as KSerializer<*>
-                polyBase2SerializersAny[klass] = serializer
-                polyBase2NamedSerializersAny[key] = serializer
+                if (primitiveSerial)
+                    class2Serializer[klass] = serializer
+                else {
+                    polyBase2SerializersAny[klass] = serializer
+                    polyBase2NamedSerializersAny[key] = serializer
+                }
             }
             if (knownTypes[key] == null) {
                 // register
@@ -286,17 +276,17 @@ sealed class PType {
                 keys.add(token.first.toString()); anys.add(token.first.toString())
                 do {
                     last = stack.removeLast()
-                    when (last.v1) {
+                    when (last.v0) {
                         ',' -> {
                             typs.add(0, typ)
                             keys.add(0, key); keys.add(0, ",")
                             anys.add(0, any); anys.add(0, ",")
                         }
                         't' -> {
-                            key = last.v3; any = last.v4; typ = last.v2 as PType
+                            key = last.v2; any = last.v3; typ = last.v1 as PType
                         }
                         'n' -> {
-                            key = last.v2 as String; any = key; typ = findTypeStandard(key)
+                            key = last.v1 as String; any = key; typ = findTypeStandard(key)
                         }
                         '(' -> {
                             typs.add(0, typ)
@@ -306,7 +296,7 @@ sealed class PType {
                         }
                         '<' -> {
                             val generic = stack.removeLast()
-                            val genericName = generic.v2 as String
+                            val genericName = generic.v1 as String
                             typs.add(0, typ)
                             keys.add(0, key); keys.add(0, "<"); keys.add(0, genericName); key = keys.joinToString("")
                             anys.add(0, any); anys.add(0, "<"); anys.add(0, genericName)
@@ -322,15 +312,15 @@ sealed class PType {
                             any = anys.joinToString("")
                             stack.add(Tuple4('t', findTypeGeneric(key, any, genericName, typs.toTypedArray()), key, any))
                         }
-                        else -> error("$last.v1")
+                        else -> error("$last.v0")
                     }
-                } while (last.v1 != lastOp)
+                } while (last.v0 != lastOp)
             }
             if (stack.size != 1) throw PTypeParseErrorException(key)
             val first = stack.first()
-            if (first.v1 != 't') throw PTypeParseErrorException(key)
+            if (first.v0 != 't') throw PTypeParseErrorException(key)
             if (forKey != key) throw PTypeNameErrorException(forKey, key)
-            typ = first.v2 as PType
+            typ = first.v1 as PType
             knownTypes[forKey] = typ
             return typ
         }
@@ -341,7 +331,7 @@ sealed class PType {
             throw PTypeNotFoundException(key)
         }
 
-        private fun <T> findTypeTuple(key: String, tuple: MutableList<PType>): PType {
+        private inline fun <reified T> findTypeTuple(key: String, tuple: MutableList<PType>): PType {
             val knownType = knownTypes[key]
             if (knownType != null) return knownType
             val type = when (tuple.size) {

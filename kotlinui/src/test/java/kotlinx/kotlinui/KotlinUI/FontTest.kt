@@ -14,11 +14,15 @@ class FontTest {
         }
 
         // Normal
-        val orig_s0 = Font.title
-        val data_s0 = json.encodeToString(Font.Serializer, orig_s0)
-        val json_s0 = json.decodeFromString(Font.Serializer, data_s0)
-        Assert.assertEquals(orig_s0, json_s0)
-        Assert.assertEquals("\"title\"", data_s0)
+        val orig_n = Font.title
+        val data_n = json.encodeToString(Font.Serializer, orig_n)
+        val json_n = json.decodeFromString(Font.Serializer, data_n)
+        Assert.assertEquals(orig_n, json_n)
+        Assert.assertEquals(
+            """{
+    "font": "title"
+}""".trimIndent(), data_n
+        )
 
         // NamedProvider
         val orig_np_a = Font.custom("name", 1f)
@@ -27,7 +31,7 @@ class FontTest {
         Assert.assertEquals(orig_np_a, json_np_a)
         Assert.assertEquals(
             """{
-    "provider": "named",
+    "font": "named",
     "name": "name",
     "size": 1.0
 }""".trimIndent(), data_np_a
@@ -38,7 +42,7 @@ class FontTest {
         Assert.assertEquals(orig_np_b, json_np_b)
         Assert.assertEquals(
             """{
-    "provider": "named",
+    "font": "named",
     "name": "name",
     "size": 1.0
 }""".trimIndent(), data_np_b
@@ -49,7 +53,7 @@ class FontTest {
         Assert.assertEquals(orig_np_c, json_np_c)
         Assert.assertEquals(
             """{
-    "provider": "named",
+    "font": "named",
     "name": "name",
     "size": 1.0,
     "textStyle": "body"
@@ -67,8 +71,8 @@ class FontTest {
         Assert.assertEquals(orig_pfp, json_pfp)
         Assert.assertEquals(
             """{
-    "provider": "platform",
-    "font": "font",
+    "font": "platform",
+    "platform": "font",
     "size": 0.0
 }""".trimIndent(), data_pfp
         )
@@ -80,7 +84,7 @@ class FontTest {
         Assert.assertEquals(orig_sp, json_sp)
         Assert.assertEquals(
             """{
-    "provider": "system",
+    "font": "system",
     "size": 1.0,
     "design": "serif"
 }""".trimIndent(), data_sp
@@ -93,7 +97,7 @@ class FontTest {
         Assert.assertEquals(orig_tsp, json_tsp)
         Assert.assertEquals(
             """{
-    "provider": "textStyle",
+    "font": "textStyle",
     "style": "body",
     "design": "serif"
 }""".trimIndent(), data_tsp
@@ -106,8 +110,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_im, json_mp_im)
         Assert.assertEquals(
             """{
-    "provider": "italic",
-    "base": "body"
+    "font": "italic",
+    "base": {
+        "font": "body"
+    }
 }""".trimIndent(), data_mp_im
         )
 
@@ -118,8 +124,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_lscm, json_mp_lscm)
         Assert.assertEquals(
             """{
-    "provider": "lowercaseSmallCaps",
-    "base": "body"
+    "font": "lowercaseSmallCaps",
+    "base": {
+        "font": "body"
+    }
 }""".trimIndent(), data_mp_lscm
         )
 
@@ -130,8 +138,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_ucsm, json_mp_ucsm)
         Assert.assertEquals(
             """{
-    "provider": "uppercaseSmallCaps",
-    "base": "body"
+    "font": "uppercaseSmallCaps",
+    "base": {
+        "font": "body"
+    }
 }""".trimIndent(), data_mp_ucsm
         )
 
@@ -142,8 +152,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_mdm, json_mp_mdm)
         Assert.assertEquals(
             """{
-    "provider": "monospacedDigit",
-    "base": "body"
+    "font": "monospacedDigit",
+    "base": {
+        "font": "body"
+    }
 }""".trimIndent(), data_mp_mdm
         )
 
@@ -154,8 +166,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_wm, json_mp_wm)
         Assert.assertEquals(
             """{
-    "provider": "weight",
-    "base": "body",
+    "font": "weight",
+    "base": {
+        "font": "body"
+    },
     "modifier": "bold"
 }""".trimIndent(), data_mp_wm
         )
@@ -167,8 +181,10 @@ class FontTest {
         Assert.assertEquals(orig_mp_bm, json_mp_bm)
         Assert.assertEquals(
             """{
-    "provider": "bold",
-    "base": "body"
+    "font": "bold",
+    "base": {
+        "font": "body"
+    }
 }""".trimIndent(), data_mp_bm
         )
 
@@ -179,33 +195,35 @@ class FontTest {
         Assert.assertEquals(orig_mp_lm, json_mp_lm)
         Assert.assertEquals(
             """{
-    "provider": "leading",
-    "base": "body",
+    "font": "leading",
+    "base": {
+        "font": "body"
+    },
     "modifier": "standard"
 }""".trimIndent(), data_mp_lm
         )
 
         // Nested
-        val orig_n = Font.custom("name", 1f)
+        val orig_0 = Font.custom("name", 1f)
             .weight(Font.Weight.bold)
             .leading(Font.Leading.standard)
-        val data_n = json.encodeToString(Font.Serializer, orig_n)
-        val json_n = json.decodeFromString(Font.Serializer, data_n)
-        Assert.assertEquals(orig_n, json_n)
+        val data_0 = json.encodeToString(Font.Serializer, orig_0)
+        val json_0 = json.decodeFromString(Font.Serializer, data_0)
+        Assert.assertEquals(orig_0, json_0)
         Assert.assertEquals(
             """{
-    "provider": "leading",
+    "font": "leading",
     "base": {
-        "provider": "weight",
+        "font": "weight",
         "base": {
-            "provider": "named",
+            "font": "named",
             "name": "name",
             "size": 1.0
         },
         "modifier": "bold"
     },
     "modifier": "standard"
-}""".trimIndent(), data_n
+}""".trimIndent(), data_0
         )
     }
 }

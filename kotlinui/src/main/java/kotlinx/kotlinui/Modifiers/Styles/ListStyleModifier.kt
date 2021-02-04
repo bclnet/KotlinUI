@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = ListStyleModifier.Serializer::class)
-@SerialName(":ListStyleModifier")
 internal data class ListStyleModifier<Style : ListStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class ListStyleModifier<Style : ListStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ListStyleModifier") {
+            buildClassSerialDescriptor(":ListStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,14 +44,14 @@ internal data class ListStyleModifier<Style : ListStyle>(
         //: Register
         fun register() {
             PType.register<ListStyleModifier<ListStyle>>()
-            PType.register<DefaultListStyle>(actions = hashMapOf("style" to ::DefaultListStyle))
-            PType.register<GroupedListStyle>(actions = hashMapOf("style" to ::GroupedListStyle))
-            PType.register<InsetGroupedListStyle>(actions = hashMapOf("style" to ::InsetGroupedListStyle))
-            PType.register<InsetListStyle>(actions = hashMapOf("style" to ::InsetListStyle))
-            PType.register<PlainListStyle>(actions = hashMapOf("style" to ::PlainListStyle))
-            PType.register<SidebarListStyle>(actions = hashMapOf("style" to ::SidebarListStyle))
-            PType.register<CarouselListStyle>(actions = hashMapOf("style" to ::CarouselListStyle))
-            PType.register<EllipticalListStyle>(actions = hashMapOf("style" to ::EllipticalListStyle))
+            PType.register<DefaultListStyle>()
+            PType.register<GroupedListStyle>()
+            PType.register<InsetGroupedListStyle>()
+            PType.register<InsetListStyle>()
+            PType.register<PlainListStyle>()
+            PType.register<SidebarListStyle>()
+            PType.register<CarouselListStyle>()
+            PType.register<EllipticalListStyle>()
         }
     }
 }

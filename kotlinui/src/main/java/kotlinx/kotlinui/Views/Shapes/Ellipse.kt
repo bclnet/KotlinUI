@@ -19,17 +19,13 @@ class Ellipse : Shape {
     //: Codable
     internal class Serializer : KSerializer<Ellipse> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Ellipse") {
-            }
+            buildClassSerialDescriptor(":Ellipse") { }
 
         override fun serialize(encoder: Encoder, value: Ellipse) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): Ellipse =
-            decoder.decodeStructure(descriptor) {
-                Ellipse()
-            }
+            decoder.decodeStructure(descriptor) { Ellipse() }
     }
 
     @Serializable(with = _Inset.Serializer::class)
@@ -39,7 +35,7 @@ class Ellipse : Shape {
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":Ellipse._Inset") {
                     element<Float>("amount")
                 }
 

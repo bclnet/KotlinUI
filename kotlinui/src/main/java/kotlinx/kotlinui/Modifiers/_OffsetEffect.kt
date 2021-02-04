@@ -15,7 +15,7 @@ data class _OffsetEffect(
     //: Codable
     internal object Serializer : KSerializer<_OffsetEffect> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_OffsetEffect") {
+            buildClassSerialDescriptor(":_OffsetEffect") {
                 element("offset", SizeFSerializer.descriptor)
             }
 

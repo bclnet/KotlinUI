@@ -6,8 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
-@Serializable //(with = GroupBoxStyleModifier.Serializer::class)
-@SerialName(":GroupBoxStyleModifier")
+@Serializable(with = GroupBoxStyleModifier.Serializer::class)
 internal data class GroupBoxStyleModifier<Style : GroupBoxStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class GroupBoxStyleModifier<Style : GroupBoxStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("GroupBoxStyleModifier") {
+            buildClassSerialDescriptor(":GroupBoxStyleModifier") {
                 element("style", styleSerializer.descriptor)
             }
 
@@ -45,7 +44,7 @@ internal data class GroupBoxStyleModifier<Style : GroupBoxStyle>(
         //: Register
         fun register() {
             PType.register<GroupBoxStyleModifier<GroupBoxStyle>>()
-            PType.register<DefaultGroupBoxStyle>(actions = hashMapOf("style" to ::DefaultGroupBoxStyle))
+            PType.register<DefaultGroupBoxStyle>()
         }
     }
 }

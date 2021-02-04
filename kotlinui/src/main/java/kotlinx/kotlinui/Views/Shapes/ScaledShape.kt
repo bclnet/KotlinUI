@@ -18,7 +18,7 @@ data class ScaledShape<Content : Shape>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ScaledShape") {
+            buildClassSerialDescriptor(":ScaledShape") {
                 element("shape", contentSerializer.descriptor)
                 element("scale", SizeFSerializer.descriptor)
                 element<UnitPoint>("anchor")

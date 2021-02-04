@@ -18,7 +18,7 @@ data class Capsule(
     //: Codable
     internal class Serializer : KSerializer<Capsule> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Capsule") {
+            buildClassSerialDescriptor(":Capsule") {
                 element("style", RoundedCornerStyle.Serializer.descriptor)
             }
 
@@ -48,7 +48,7 @@ data class Capsule(
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":Capsule._Inset") {
                     element<Float>("amount")
                 }
 

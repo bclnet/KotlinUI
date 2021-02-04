@@ -17,6 +17,9 @@ class ForegroundStyleTest {
         val data_fs = json.encodeToString(ForegroundStyle.Serializer, orig_fs)
         val json_fs = json.decodeFromString(ForegroundStyle.Serializer, data_fs)
         Assert.assertEquals(orig_fs, json_fs)
-        Assert.assertEquals("", data_fs)
+        Assert.assertEquals(
+            """{
+}""".trimIndent(), data_fs
+        )
     }
 }

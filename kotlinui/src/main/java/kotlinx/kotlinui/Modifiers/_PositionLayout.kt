@@ -12,18 +12,13 @@ class _PositionLayout : ViewModifier {
     //: Codable
     internal object Serializer : KSerializer<_PositionLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_PositionLayout") {
-            }
+            buildClassSerialDescriptor(":_PositionLayout") { }
 
         override fun serialize(encoder: Encoder, value: _PositionLayout) =
-            encoder.encodeStructure(descriptor) {
-                error("Not Implemented")
-            }
+            encoder.encodeStructure(descriptor) { error("Not Implemented") }
 
         override fun deserialize(decoder: Decoder): _PositionLayout =
-            decoder.decodeStructure(descriptor) {
-                error("Not Implemented")
-            }
+            decoder.decodeStructure(descriptor) { error("Not Implemented") }
     }
 
     companion object {

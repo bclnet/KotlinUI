@@ -15,7 +15,7 @@ data class _TraitWritingModifier<TraitKey : AnyTraitKey>(
         val traitKeySerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_TraitWritingModifier") {
+            buildClassSerialDescriptor(":_TraitWritingModifier") {
                 element<String>("isDeleteDisabled")
                 element<String>("isMoveDisabled")
                 element<String>("itemProvider")

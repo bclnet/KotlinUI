@@ -19,7 +19,7 @@ data class _PaddingLayout(
     //: Codable
     internal object Serializer : KSerializer<_PaddingLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_PaddingLayout") {
+            buildClassSerialDescriptor(":_PaddingLayout") {
                 element("edges", Edge.SetSerializer.descriptor)
                 element<Float>("length")
                 element<EdgeInsets>("insets")

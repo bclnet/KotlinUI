@@ -15,7 +15,7 @@ data class _OverlayModifier<Overlay : View>(
         val overlaySerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_OverlayModifier") {
+            buildClassSerialDescriptor(":_OverlayModifier") {
                 element("overlay", overlaySerializer.descriptor)
                 element<Alignment>("alignment")
             }

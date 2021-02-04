@@ -16,7 +16,7 @@ data class _TouchBarModifier<Content : View>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_TouchBarModifier") {
+            buildClassSerialDescriptor(":_TouchBarModifier") {
                 element<View>("content")
             }
 

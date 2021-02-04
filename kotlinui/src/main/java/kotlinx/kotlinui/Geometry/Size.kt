@@ -9,15 +9,13 @@ data class Size(var width: Int, var height: Int) {
     //: Codable
     internal object Serializer : KSerializer<Size> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Size", PrimitiveKind.STRING)
+            buildClassSerialDescriptor(":Size") {}
 
         override fun serialize(encoder: Encoder, value: Size) =
-            encoder.encodeSerializableValue(serializer<Array<Int>>(), arrayOf(value.width, value.height))
+            encoder.encodeSerializableValue(serializer<IntArray>(), arrayOf(value.width, value.height).toIntArray())
 
         override fun deserialize(decoder: Decoder): Size =
-            decoder.decodeSerializableValue(serializer<Array<Int>>()).let {
-                Size(it[0], it[1])
-            }
+            decoder.decodeSerializableValue(serializer<IntArray>()).let { Size(it[0], it[1]) }
     }
 
     companion object {

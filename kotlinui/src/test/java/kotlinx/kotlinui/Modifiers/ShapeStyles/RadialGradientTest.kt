@@ -26,7 +26,9 @@ class RadialGradientTest {
             """{
     "gradient": [
         {
-            "color": "red"
+            "color": {
+                "color": "red"
+            }
         }
     ],
     "center": "center",

@@ -9,6 +9,9 @@ import kotlinx.serialization.encoding.*
 class VSplitView<Content : View>(
     content: ViewBuilder.() -> Content
 ) : View {
+    override fun equals(other: Any?): Boolean = other is VSplitView<*> && content == other.content
+    override fun hashCode(): Int = content.hashCode()
+
     val content: Content = content(ViewBuilder)
 
     override val body: View
@@ -18,7 +21,7 @@ class VSplitView<Content : View>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("VSplitView") {
+            buildClassSerialDescriptor(":VSplitView") {
                 element<View>("content")
             }
 
@@ -31,7 +34,7 @@ class VSplitView<Content : View>(
             decoder.decodeStructure(descriptor) {
                 lateinit var content: Content
                 while (true) {
-                    when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> content = decodeSerializableElement(descriptor, 0, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")

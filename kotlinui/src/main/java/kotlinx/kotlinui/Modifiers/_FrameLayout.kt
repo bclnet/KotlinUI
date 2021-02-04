@@ -14,7 +14,7 @@ data class _FrameLayout(
     //: Codable
     internal object Serializer : KSerializer<_FrameLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_FrameLayout") {
+            buildClassSerialDescriptor(":_FrameLayout") {
                 element<Float>("width")
                 element<Float>("height")
                 element<Alignment>("alignment")

@@ -2,6 +2,7 @@ package kotlinx.kotlinui
 
 import android.graphics.Color
 import android.graphics.ColorSpace
+import android.icu.util.DateInterval
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.Json
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
+import java.util.*
 import android.graphics.Color as CGColor
 
 fun _Plane.register() {
@@ -47,6 +49,18 @@ fun _Plane.makeCGColor(r: Float, g: Float, b: Float): CGColor {
     every { color.colorSpace } returns colorSpaces[0]!!
     every { color.components } returns arrayOf(r, g, b).toFloatArray()
     return color
+}
+
+fun _Plane.makeDateInterval(): DateInterval {
+    val dateInterval = mockk<DateInterval>(relaxed = true)
+    every { dateInterval == any() } returns true
+    return dateInterval
+}
+
+fun _Plane.makeDate(): Date {
+    val date = mockk<Date>(relaxed = true)
+    every { date == any() } returns true
+    return date
 }
 
 //    every { ColorSpace.Named.valueOf(any()) } returns ColorSpace.Named.SRGB

@@ -1,6 +1,7 @@
 package kotlinx.kotlinui
 
 import kotlinx.kotlinuijson.*
+import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.junit.Assert
@@ -11,12 +12,44 @@ class ZStackTest {
     @Test
     fun serialize() {
         val json = Json {
+            serializersModule = PType.module
             prettyPrint = true
         }
+        _Plane.register()
 
-        val orig_s0 = ZStack { Text("Text") }
-        val data_s0 = json.encodeToString(serializer(), orig_s0)
-        val json_s0 = json.decodeFromString(serializer<ZStack<Text>>(), data_s0)
-        Assert.assertEquals(orig_s0, json_s0)
+        // ZStack
+        val orig_zs = ZStack { Text("Text") }
+        val data_zs = json.encodeToString(ZStack.Serializer(), orig_zs)
+        val json_zs = json.decodeFromString(ZStack.Serializer<View>(), data_zs)
+        Assert.assertEquals(orig_zs, json_zs)
+        Assert.assertEquals(
+            """{
+    "content": {
+        "type": ":Text",
+        "text": "Text"
+    }
+}""".trimIndent(), data_zs
+        )
+
+        // ZStack:Tuple
+        val orig_zs_t = ZStack { get(Text("Text"), Text("Second")) }
+        val data_zs_t = json.encodeToString(ZStack.Serializer(), orig_zs_t)
+        val json_zs_t = json.decodeFromString(ZStack.Serializer<View>(), data_zs_t)
+        Assert.assertEquals(orig_zs_t, json_zs_t)
+        Assert.assertEquals(
+            """{
+    "content": {
+        "type": ":TupleView",
+        "0": {
+            "type": ":Text",
+            "text": "Text"
+        },
+        "1": {
+            "type": ":Text",
+            "text": "Second"
+        }
+    }
+}""".trimIndent(), data_zs_t
+        )
     }
 }

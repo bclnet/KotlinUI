@@ -25,10 +25,14 @@ class GradientTest {
         Assert.assertEquals(
             """[
     {
-        "color": "red"
+        "color": {
+            "color": "red"
+        }
     },
     {
-        "color": "blue"
+        "color": {
+            "color": "blue"
+        }
     }
 ]""".trimIndent(), data_g
         )

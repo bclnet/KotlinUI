@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = PickerStyleWriter.Serializer::class)
-@SerialName(":PickerStyleWriter")
 internal data class PickerStyleWriter<Style : PickerStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class PickerStyleWriter<Style : PickerStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("PickerStyleWriter") {
+            buildClassSerialDescriptor(":PickerStyleWriter") {
                 element<String>("style")
             }
 
@@ -45,14 +44,14 @@ internal data class PickerStyleWriter<Style : PickerStyle>(
         //: Register
         fun register() {
             PType.register<PickerStyleWriter<PickerStyle>>()
-            PType.register<CircularProgressViewStyle>(actions = hashMapOf("style" to ::CircularProgressViewStyle))
-            PType.register<DefaultPickerStyle>(actions = hashMapOf("style" to ::DefaultPickerStyle))
-            PType.register<InlinePickerStyle>(actions = hashMapOf("style" to ::InlinePickerStyle))
-            PType.register<MenuPickerStyle>(actions = hashMapOf("style" to ::MenuPickerStyle))
-            PType.register<SegmentedPickerStyle>(actions = hashMapOf("style" to ::SegmentedPickerStyle))
-            PType.register<WheelPickerStyle>(actions = hashMapOf("style" to ::WheelPickerStyle))
-            PType.register<PopUpButtonPickerStyle>(actions = hashMapOf("style" to ::PopUpButtonPickerStyle))
-            PType.register<RadioGroupPickerStyle>(actions = hashMapOf("style" to ::RadioGroupPickerStyle))
+            PType.register<CircularProgressViewStyle>()
+            PType.register<DefaultPickerStyle>()
+            PType.register<InlinePickerStyle>()
+            PType.register<MenuPickerStyle>()
+            PType.register<SegmentedPickerStyle>()
+            PType.register<WheelPickerStyle>()
+            PType.register<PopUpButtonPickerStyle>()
+            PType.register<RadioGroupPickerStyle>()
         }
     }
 }

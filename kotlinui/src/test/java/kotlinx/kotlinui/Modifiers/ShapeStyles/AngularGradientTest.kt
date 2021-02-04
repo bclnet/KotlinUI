@@ -27,7 +27,9 @@ class AngularGradientTest {
             """{
     "gradient": [
         {
-            "color": "red"
+            "color": {
+                "color": "red"
+            }
         }
     ],
     "center": "center",

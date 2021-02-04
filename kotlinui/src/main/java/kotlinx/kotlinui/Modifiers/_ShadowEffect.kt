@@ -15,7 +15,7 @@ data class _ShadowEffect(
     //: Codable
     internal object Serializer : KSerializer<_ShadowEffect> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_ShadowEffect") {
+            buildClassSerialDescriptor(":_ShadowEffect") {
                 element("color", Color.Serializer.descriptor)
                 element<Float>("radius")
                 element("offset", SizeFSerializer.descriptor)

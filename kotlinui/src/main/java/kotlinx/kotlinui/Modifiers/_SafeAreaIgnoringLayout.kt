@@ -13,7 +13,7 @@ data class _SafeAreaIgnoringLayout(
     //: Codable
     internal object Serializer : KSerializer<_SafeAreaIgnoringLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_SafeAreaIgnoringLayout") {
+            buildClassSerialDescriptor(":_SafeAreaIgnoringLayout") {
                 element("edges", Edge.SetSerializer.descriptor)
             }
 
@@ -55,17 +55,12 @@ class _SafeAreaRegionsIgnoringLayout : ViewModifier {
     //: Codable
     internal object Serializer : KSerializer<_SafeAreaRegionsIgnoringLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_SafeAreaRegionsIgnoringLayout") {
-            }
+            buildClassSerialDescriptor("_SafeAreaRegionsIgnoringLayout") { }
 
         override fun serialize(encoder: Encoder, value: _SafeAreaRegionsIgnoringLayout) =
-            encoder.encodeStructure(descriptor) {
-                error("Not Implemented")
-            }
+            encoder.encodeStructure(descriptor) { error("Not Implemented") }
 
         override fun deserialize(decoder: Decoder): _SafeAreaRegionsIgnoringLayout =
-            decoder.decodeStructure(descriptor) {
-                error("Not Implemented")
-            }
+            decoder.decodeStructure(descriptor) { error("Not Implemented") }
     }
 }

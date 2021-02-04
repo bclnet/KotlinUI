@@ -23,6 +23,7 @@ class SelectionShapeStyleTest {
         Assert.assertEquals(orig_sss, json_sss)
         Assert.assertEquals(
             """{
+    "selected": true
 }""".trimIndent(), data_sss
         )
     }

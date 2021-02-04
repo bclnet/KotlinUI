@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = _TabViewStyleWriter.Serializer::class)
-@SerialName(":_TabViewStyleWriter")
 internal data class _TabViewStyleWriter<Style : TabViewStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class _TabViewStyleWriter<Style : TabViewStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ButtonStyleModifier") {
+            buildClassSerialDescriptor(":_TabViewStyleWriter") {
                 element("style", styleSerializer.descriptor)
             }
 

@@ -1,9 +1,11 @@
 package kotlinx.kotlinui
 
+import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
+import kotlinx.system.WritableKeyPath
 import kotlin.reflect.*
 import android.graphics.Typeface as UXFont
 
@@ -20,7 +22,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable - JsonContentPolymorphicSerializer
         internal object Serializer : KSerializer<AnyFontBox> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("AnyFontBox")
+                buildClassSerialDescriptor(":Font")
 
             override fun serialize(encoder: Encoder, value: AnyFontBox) {
                 val actualSerializer = findPolymorphicSerializer(value)
@@ -54,7 +56,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
                 }) as KSerializer<AnyFontBox>
 
             fun findPolymorphicSerializer(tree: JsonElement) =
-                (when (val provider = tree.jsonObject["provider"]?.jsonPrimitive?.content) {
+                (when (val provider = tree.jsonObject["font"]?.jsonPrimitive?.content) {
                     "system" -> SystemProvider.Serializer
                     "textStyle" -> TextStyleProvider.Serializer
                     "named" -> NamedProvider.Serializer
@@ -84,8 +86,8 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<NamedProvider> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("NamedProvider") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Font") {
+                    element<String>("font")
                     element<String>("name")
                     element<Float>("size")
                     element<TextStyle>("textStyle")
@@ -128,9 +130,9 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<PlatformFontProvider> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("PlatformFontProvider") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Font") {
                     element<String>("font")
+                    element<String>("platform")
                     element<Float>("size")
                 }
 
@@ -170,8 +172,8 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<SystemProvider> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("SystemProvider") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Font") {
+                    element<String>("font")
                     element<Float>("size")
                     element("weight", Weight.Serializer.descriptor)
                     element<Design>("design")
@@ -218,8 +220,8 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<TextStyleProvider> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("TextStyleProvider") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Font") {
+                    element<String>("font")
                     element<TextStyle>("style")
                     element<Design>("design")
                     element("weight", Weight.Serializer.descriptor)
@@ -266,8 +268,8 @@ data class Font internal constructor(val provider: AnyFontBox) {
             private val modifierSerializer: KSerializer<Modifier>? = null
         ) : KSerializer<ModifierProvider<Modifier>> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("ModifierProvider") {
-                    element<String>("provider")
+                buildClassSerialDescriptor(":Font") {
+                    element<String>("font")
                     element<Font>("base")
                     element<AnyModifier>("modifier")
                 }
@@ -339,7 +341,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<WeightModifier> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("WeightModifier", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Font", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: WeightModifier) =
                 encoder.encodeSerializableValue(Weight.Serializer, value.weight)
@@ -364,7 +366,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<LeadingModifier> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("LeadingModifier", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Font", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: LeadingModifier) =
                 encoder.encodeSerializableValue(Leading.Serializer, value.leading)
@@ -406,36 +408,47 @@ data class Font internal constructor(val provider: AnyFontBox) {
 
         fun custom(name: String, size: Float, relativeTo: TextStyle): Font =
             Font(NamedProvider(name, size, relativeTo))
+
+        //: Register
+        fun register() {
+            PType.register<Font>()
+        }
     }
 
     //: Codable
     internal object Serializer : KSerializer<Font> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Font") {
-                element<String>("provider")
+            buildClassSerialDescriptor(":Font") {
+                element<String>("font")
             }
 
-        override fun serialize(encoder: Encoder, value: Font) =
-            when (value) {
-                largeTitle -> encoder.encodeString("largeTitle")
-                title -> encoder.encodeString("title")
-                headline -> encoder.encodeString("headline")
-                subheadline -> encoder.encodeString("subheadline")
-                body -> encoder.encodeString("body")
-                callout -> encoder.encodeString("callout")
-                footnote -> encoder.encodeString("footnote")
-                caption -> encoder.encodeString("caption")
-                title2 -> encoder.encodeString("title2")
-                title3 -> encoder.encodeString("title3")
-                caption2 -> encoder.encodeString("caption2")
-                else -> encoder.encodeSerializableValue(AnyFontBox.Serializer, value.provider)
+        override fun serialize(encoder: Encoder, value: Font) {
+            val font = when (value) {
+                largeTitle -> "largeTitle"
+                title -> "title"
+                headline -> "headline"
+                subheadline -> "subheadline"
+                body -> "body"
+                callout -> "callout"
+                footnote -> "footnote"
+                caption -> "caption"
+                title2 -> "title2"
+                title3 -> "title3"
+                caption2 -> "caption2"
+                else -> {
+                    encoder.encodeSerializableValue(AnyFontBox.Serializer, value.provider)
+                    return
+                }
             }
+            encoder.encodeStructure(descriptor) {
+                encodeStringElement(descriptor, 0, font)
+            }
+        }
 
         override fun deserialize(decoder: Decoder): Font {
             val input = decoder as JsonDecoder
             val tree = input.decodeJsonElement()
-            return if (tree is JsonObject) Font(input.json.decodeFromJsonElement(AnyFontBox.Serializer, tree))
-            else when (val provider = tree.jsonPrimitive?.content) {
+            return when (val font = tree.jsonObject["font"]?.jsonPrimitive?.content) {
                 "largeTitle" -> largeTitle
                 "title" -> title
                 "headline" -> headline
@@ -447,7 +460,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
                 "title2" -> title2
                 "title3" -> title3
                 "caption2" -> caption2
-                else -> error(provider)
+                else -> Font(input.json.decodeFromJsonElement(AnyFontBox.Serializer, tree))
             }
         }
     }
@@ -461,7 +474,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<ContentSizeCategory> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("ContentSizeCategory", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":ContentSizeCategory", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: ContentSizeCategory) =
                 encoder.encodeString(
@@ -506,7 +519,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<Leading> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Leading", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Leading", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: Leading) =
                 encoder.encodeString(
@@ -543,7 +556,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<Weight> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Weight", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Weight", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: Weight) =
                 encoder.encodeString(
@@ -583,7 +596,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<TextStyle> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("TextStyle", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":TextStyle", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: TextStyle) =
                 encoder.encodeString(
@@ -626,7 +639,7 @@ data class Font internal constructor(val provider: AnyFontBox) {
         //: Codable
         internal object Serializer : KSerializer<Design> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Design", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Design", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: Design) =
                 encoder.encodeString(
@@ -679,10 +692,8 @@ fun Font.weight(weight: Font.Weight): Font =
 private fun <Modifier : Font.AnyModifier> Font.fontWithModifier(modifier: Modifier): Font =
     Font(Font.ModifierProvider(this, modifier))
 
-//func View.font(font: Font?) : View = environment(\.font, font)
-
+// FontEnvironmentKey
 object FontEnvironmentKey : EnvironmentKey {
-    override var key: String = "font"
     override var defaultValue: Any? = null
 }
 
@@ -691,3 +702,8 @@ var EnvironmentValues.font: Font?
     set(newValue) {
         this[FontEnvironmentKey] = newValue
     }
+
+fun View.font(font: Font?): View {
+    EnvironmentValues.font = font
+    return this
+}

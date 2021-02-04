@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = DatePickerStyleModifier.Serializer::class)
-@SerialName(":DatePickerStyleModifier")
 internal data class DatePickerStyleModifier<Style : DatePickerStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class DatePickerStyleModifier<Style : DatePickerStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("DatePickerStyleModifier") {
+            buildClassSerialDescriptor(":DatePickerStyleModifier") {
                 element("style", styleSerializer.descriptor)
             }
 
@@ -45,12 +44,12 @@ internal data class DatePickerStyleModifier<Style : DatePickerStyle>(
         //: Register
         fun register() {
             PType.register<DatePickerStyleModifier<DatePickerStyle>>()
-            PType.register<CompactDatePickerStyle>(actions = hashMapOf("style" to ::CompactDatePickerStyle))
-            PType.register<DefaultDatePickerStyle>(actions = hashMapOf("style" to ::DefaultDatePickerStyle))
-            PType.register<GraphicalDatePickerStyle>(actions = hashMapOf("style" to ::GraphicalDatePickerStyle))
-            PType.register<WheelDatePickerStyle>(actions = hashMapOf("style" to ::WheelDatePickerStyle))
-            PType.register<FieldDatePickerStyle>(actions = hashMapOf("style" to ::FieldDatePickerStyle))
-            PType.register<StepperFieldDatePickerStyle>(actions = hashMapOf("style" to ::StepperFieldDatePickerStyle))
+            PType.register<CompactDatePickerStyle>()
+            PType.register<DefaultDatePickerStyle>()
+            PType.register<GraphicalDatePickerStyle>()
+            PType.register<WheelDatePickerStyle>()
+            PType.register<FieldDatePickerStyle>()
+            PType.register<StepperFieldDatePickerStyle>()
         }
     }
 }

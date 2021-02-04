@@ -17,7 +17,7 @@ enum class CGLineCap {
     //: Codable
     internal object Serializer : KSerializer<CGLineCap> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("CGLineCap", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":CGLineCap", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: CGLineCap) =
             encoder.encodeString(
@@ -46,7 +46,7 @@ enum class CGLineJoin {
     //: Codable
     internal object Serializer : KSerializer<CGLineJoin> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("CGLineJoin", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":CGLineJoin", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: CGLineJoin) =
             encoder.encodeString(
@@ -76,7 +76,7 @@ data class FillStyle(
     //: Codable
     internal object Serializer : KSerializer<FillStyle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("FillStyle") {
+            buildClassSerialDescriptor(":FillStyle") {
                 element<Boolean>("isEOFilled")
                 element<Boolean>("isAntialiased")
             }
@@ -89,8 +89,8 @@ data class FillStyle(
 
         override fun deserialize(decoder: Decoder): FillStyle =
             decoder.decodeStructure(descriptor) {
-                var isEOFilled: Boolean = false
-                var isAntialiased: Boolean = false
+                var isEOFilled: Boolean = true
+                var isAntialiased: Boolean = true
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
                         0 -> isEOFilled = decodeBooleanElement(descriptor, 0)
@@ -117,7 +117,7 @@ enum class RoundedCornerStyle {
     //: Codable
     internal object Serializer : KSerializer<RoundedCornerStyle> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("RoundedCornerStyle", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":RoundedCornerStyle", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: RoundedCornerStyle) =
             encoder.encodeString(
@@ -169,7 +169,7 @@ data class StrokeStyle(
     //: Codable
     internal object Serializer : KSerializer<StrokeStyle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("StrokeStyle") {
+            buildClassSerialDescriptor(":StrokeStyle") {
                 element<Float>("lineWidth")
                 element("lineCap", CGLineCap.Serializer.descriptor)
                 element("lineJoin", CGLineJoin.Serializer.descriptor)

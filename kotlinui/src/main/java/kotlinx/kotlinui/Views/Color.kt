@@ -455,10 +455,8 @@ data class Color internal constructor(
 fun Color.opacity(opacity: Double): Color =
     Color(Color.OpacityColor(this, opacity))
 
-//fun foregroundColor(color: Color?): View = environment(\.foregroundColor, color)
-
+// ForegroundColorEnvironmentKey
 object ForegroundColorEnvironmentKey : EnvironmentKey {
-    override var key: String = "foregroundColor"
     override var defaultValue: Any? = null
 }
 
@@ -468,12 +466,15 @@ var EnvironmentValues.foregroundColor: Color?
         this[ForegroundColorEnvironmentKey] = newValue
     }
 
-//fun View.colorScheme(colorScheme: ColorScheme): View = environment(\.colorScheme, colorScheme)
+fun View.foregroundColor(color: Color?): View {
+    EnvironmentValues.foregroundColor = color
+    return this
+}
 
+// ColorSchemeEnvironmentKey
 enum class ColorScheme { light, dark }
 
 object ColorSchemeEnvironmentKey : EnvironmentKey {
-    override var key: String = "colorScheme"
     override var defaultValue: Any? = ColorScheme.dark
 }
 
@@ -482,3 +483,8 @@ var EnvironmentValues.colorScheme: ColorScheme
     set(newValue) {
         this[ColorSchemeEnvironmentKey] = newValue
     }
+
+fun View.colorScheme(colorScheme: ColorScheme): View {
+    EnvironmentValues.colorScheme = colorScheme
+    return this
+}

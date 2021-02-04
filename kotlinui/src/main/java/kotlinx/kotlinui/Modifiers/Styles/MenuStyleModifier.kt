@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = MenuStyleModifier.Serializer::class)
-@SerialName(":MenuStyleModifier")
 internal data class MenuStyleModifier<Style : MenuStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class MenuStyleModifier<Style : MenuStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("MenuStyleModifier") {
+            buildClassSerialDescriptor(":MenuStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,9 +44,9 @@ internal data class MenuStyleModifier<Style : MenuStyle>(
         //: Register
         fun register() {
             PType.register<MenuStyleModifier<MenuStyle>>()
-            PType.register<BorderlessButtonMenuStyle>(actions = hashMapOf("style" to ::BorderlessButtonMenuStyle))
-            PType.register<DefaultMenuStyle>(actions = hashMapOf("style" to ::DefaultMenuStyle))
-            PType.register<BorderedButtonMenuStyle>(actions = hashMapOf("style" to ::BorderedButtonMenuStyle))
+            PType.register<BorderlessButtonMenuStyle>()
+            PType.register<DefaultMenuStyle>()
+            PType.register<BorderedButtonMenuStyle>()
         }
     }
 }

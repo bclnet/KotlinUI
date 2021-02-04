@@ -15,7 +15,7 @@ data class _BackgroundModifier<Background : View>(
         val backgroundSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_BackgroundModifier") {
+            buildClassSerialDescriptor(":_BackgroundModifier") {
                 element("background", backgroundSerializer.descriptor)
                 element<Alignment>("alignment")
             }

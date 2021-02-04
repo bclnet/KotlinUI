@@ -16,7 +16,7 @@ data class _IdentifiedModifier<Identifier>(
         val identifierSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_IdentifiedModifier") {
+            buildClassSerialDescriptor(":_IdentifiedModifier") {
                 element("identifier", identifierSerializer.descriptor)
             }
 

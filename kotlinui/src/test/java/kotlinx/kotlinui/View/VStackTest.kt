@@ -1,6 +1,7 @@
 package kotlinx.kotlinui
 
 import kotlinx.kotlinuijson.*
+import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.junit.Assert
@@ -11,12 +12,23 @@ class VStackTest {
     @Test
     fun serialize() {
         val json = Json {
+            serializersModule = PType.module
             prettyPrint = true
         }
+        _Plane.register()
 
-        val orig_s0 = VStack { Text("Text") }
-        val data_s0 = json.encodeToString(serializer(), orig_s0)
-        val json_s0 = json.decodeFromString(serializer<VStack<Text>>(), data_s0)
-        Assert.assertEquals(orig_s0, json_s0)
+        // VStack
+        val orig_vs = VStack { Text("Text") }
+        val data_vs = json.encodeToString(VStack.Serializer(), orig_vs)
+        val json_vs = json.decodeFromString(VStack.Serializer<View>(), data_vs)
+        Assert.assertEquals(orig_vs, json_vs)
+        Assert.assertEquals(
+            """{
+    "content": {
+        "type": ":Text",
+        "text": "Text"
+    }
+}""".trimIndent(), data_vs
+        )
     }
 }

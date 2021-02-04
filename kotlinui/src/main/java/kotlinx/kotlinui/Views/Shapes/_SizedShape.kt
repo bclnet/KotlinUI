@@ -14,17 +14,17 @@ data class _SizedShape<S : View>(
 ) : ViewModifier {
     //: Codable
     internal class Serializer<S : View> : KSerializer<_SizedShape<S>> {
-        val sSerializer = PolymorphicSerializer(Any::class)
+        val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_SizedShape") {
-                element("shape", sSerializer.descriptor)
+            buildClassSerialDescriptor(":_SizedShape") {
+                element("shape", shapeSerializer.descriptor)
                 element("size", SizeFSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: _SizedShape<S>) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, sSerializer, value.shape)
+                encodeSerializableElement(descriptor, 0, shapeSerializer, value.shape)
                 encodeSerializableElement(descriptor, 1, SizeFSerializer, value.size)
             }
 
@@ -34,7 +34,7 @@ data class _SizedShape<S : View>(
                 lateinit var size: SizeF
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> shape = decodeSerializableElement(descriptor, 0, sSerializer) as S
+                        0 -> shape = decodeSerializableElement(descriptor, 0, shapeSerializer) as S
                         1 -> size = decodeSerializableElement(descriptor, 1, SizeFSerializer)
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")

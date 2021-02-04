@@ -15,7 +15,7 @@ enum class Edge(val rawValue: Byte) {
     //: Codable
     internal object Serializer : KSerializer<Edge> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Edge", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":Edge", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: Edge) =
             encoder.encodeString(
@@ -63,7 +63,7 @@ enum class Edge(val rawValue: Byte) {
     //: Codable
     internal object SetSerializer : KSerializer<EnumSet<Edge>> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Edge.Set", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":Edge.Set", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: EnumSet<Edge>) =
             encoder.encodeSerializableValue(serializer(), if (value != Set.all) value.map {
@@ -106,7 +106,7 @@ data class EdgeInsets(
 
     internal object Serializer : KSerializer<EdgeInsets> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("EdgeInsets") {
+            buildClassSerialDescriptor(":EdgeInsets") {
                 element<Float>("top")
                 element<Float>("leading")
                 element<Float>("bottom")

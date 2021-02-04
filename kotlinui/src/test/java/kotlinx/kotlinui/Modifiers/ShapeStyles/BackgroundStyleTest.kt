@@ -17,6 +17,9 @@ class BackgroundStyleTest {
         val data_bs = json.encodeToString(BackgroundStyle.Serializer, orig_bs)
         val json_bs = json.decodeFromString(BackgroundStyle.Serializer, data_bs)
         Assert.assertEquals(orig_bs, json_bs)
-        Assert.assertEquals("", data_bs)
+        Assert.assertEquals(
+            """{
+}""".trimIndent(), data_bs
+        )
     }
 }

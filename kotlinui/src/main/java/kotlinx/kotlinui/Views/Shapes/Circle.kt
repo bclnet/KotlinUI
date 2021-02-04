@@ -19,17 +19,13 @@ class Circle : Shape {
     //: Codable
     internal class Serializer : KSerializer<Circle> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Circle") {
-            }
+            buildClassSerialDescriptor(":Circle") { }
 
         override fun serialize(encoder: Encoder, value: Circle) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): Circle =
-            decoder.decodeStructure(descriptor) {
-                Circle()
-            }
+            decoder.decodeStructure(descriptor) { Circle() }
     }
 
     @Serializable(with = _Inset.Serializer::class)
@@ -39,7 +35,7 @@ class Circle : Shape {
         //: Codable
         internal class Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("_Inset") {
+                buildClassSerialDescriptor(":Circle._Inset") {
                     element<Float>("amount")
                 }
 

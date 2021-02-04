@@ -12,17 +12,13 @@ class ContextMenu<MenuItems : View> {
         val menuItemsSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ContextMenu") {
-            }
+            buildClassSerialDescriptor(":ContextMenu") { }
 
         override fun serialize(encoder: Encoder, value: ContextMenu<MenuItems>) =
-            encoder.encodeStructure(descriptor) {
-            }
+            encoder.encodeStructure(descriptor) { }
 
         override fun deserialize(decoder: Decoder): ContextMenu<MenuItems> =
-            decoder.decodeStructure(descriptor) {
-                ContextMenu<MenuItems>()
-            }
+            decoder.decodeStructure(descriptor) { ContextMenu() }
     }
 }
 
@@ -37,7 +33,7 @@ data class _ContextMenuContainer(
     //: Codable
     internal object Serializer : KSerializer<_ContextMenuContainer> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_ContextMenuContainer") {
+            buildClassSerialDescriptor(":_ContextMenuContainer") {
                 element<String>("contextMenu")
             }
 
@@ -62,7 +58,7 @@ data class _ContextMenuContainer(
             val contentSerializer = PolymorphicSerializer(Any::class)
 
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("Container") {
+                buildClassSerialDescriptor(":Container") {
                     element<String>("contextMenu")
                     element<String>("content")
                 }
@@ -107,7 +103,7 @@ class StyleContextWriter<Context> : ViewModifier {
     //: Codable
     internal class Serializer<Context> : KSerializer<StyleContextWriter<Context>> {
         val contextSerializer = PolymorphicSerializer(Any::class)
-        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("StyleContextWriter") {}
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor(":StyleContextWriter") {}
         override fun serialize(encoder: Encoder, value: StyleContextWriter<Context>) {}
         override fun deserialize(decoder: Decoder): StyleContextWriter<Context> = StyleContextWriter()
     }
@@ -117,7 +113,7 @@ class StyleContextWriter<Context> : ViewModifier {
 class MenuContext {
     //: Codable
     internal object Serializer : KSerializer<MenuContext> {
-        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("MenuContext") {}
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor(":MenuContext") {}
         override fun serialize(encoder: Encoder, value: MenuContext) {}
         override fun deserialize(decoder: Decoder): MenuContext = MenuContext()
     }

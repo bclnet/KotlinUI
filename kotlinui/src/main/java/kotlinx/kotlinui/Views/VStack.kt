@@ -12,6 +12,9 @@ class VStack<Content : View>(
     spacing: Float? = null,
     content: ViewBuilder.() -> Content
 ) : View, IAnyView {
+    override fun equals(other: Any?): Boolean = other is VStack<*> && _tree == other._tree
+    override fun hashCode(): Int = _tree.hashCode()
+
     val _tree: _VariadicView_Tree<_VStackLayout, Content> =
         _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder))
 
@@ -26,7 +29,7 @@ class VStack<Content : View>(
         val contentSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("VStack") {
+            buildClassSerialDescriptor(":VStack") {
                 element<_VStackLayout>("root")
                 element("content", contentSerializer.descriptor)
             }
@@ -44,7 +47,7 @@ class VStack<Content : View>(
                 var root = _VStackLayout()
                 lateinit var content: Content
                 while (true) {
-                    when (val index = decodeElementIndex(_ZStackLayout.Serializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> root = decodeSerializableElement(descriptor, 0, _VStackLayout.Serializer)
                         1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break
@@ -71,7 +74,7 @@ data class _VStackLayout(
     //: Codable
     internal object Serializer : KSerializer<_VStackLayout> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_VStackLayout") {
+            buildClassSerialDescriptor(":_VStackLayout") {
                 element<HorizontalAlignment>("alignment")
                 element<Float?>("spacing")
             }

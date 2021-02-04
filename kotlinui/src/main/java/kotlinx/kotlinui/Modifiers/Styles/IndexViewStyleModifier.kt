@@ -6,8 +6,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
-@Serializable //(with = IndexViewStyleModifier.Serializer::class)
-@SerialName(":IndexViewStyleModifier")
+@Serializable(with = IndexViewStyleModifier.Serializer::class)
 internal data class IndexViewStyleModifier<Style : IndexViewStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class IndexViewStyleModifier<Style : IndexViewStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("IndexViewStyleModifier") {
+            buildClassSerialDescriptor(":IndexViewStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,7 +44,7 @@ internal data class IndexViewStyleModifier<Style : IndexViewStyle>(
         //: Register
         fun register() {
             PType.register<IndexViewStyleModifier<IndexViewStyle>>()
-            PType.register<PageIndexViewStyle>(actions = hashMapOf("style" to ::PageIndexViewStyle))
+            PType.register<PageIndexViewStyle>()
         }
     }
 }

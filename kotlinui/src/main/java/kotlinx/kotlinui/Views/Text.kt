@@ -15,11 +15,7 @@ data class Text internal constructor(
     val _storage: Storage,
     val _modifiers: Array<Modifier>
 ) : View, IAnyView {
-    override fun equals(other: Any?): Boolean {
-        if (other !is Text) return false
-        return _storage == other._storage && _modifiers contentEquals other._modifiers
-    }
-
+    override fun equals(other: Any?): Boolean = other is Text && _storage == other._storage && _modifiers contentEquals other._modifiers
     override fun hashCode(): Int {
         var result = _storage.hashCode()
         result = 31 * result + _modifiers.contentHashCode()
@@ -65,7 +61,7 @@ data class Text internal constructor(
         //: Codable
         object Serializer : KSerializer<AttachmentTextStorage> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("AttachmentTextStorage") {
+                buildClassSerialDescriptor(":Text.AttachmentTextStorage") {
                     element<Image>("image")
                 }
 
@@ -100,7 +96,7 @@ data class Text internal constructor(
         //: Codable
         object Serializer : KSerializer<LocalizedTextStorage> {
             override val descriptor: SerialDescriptor =
-                buildClassSerialDescriptor("LocalizedTextStorage") {
+                buildClassSerialDescriptor(":Text.LocalizedTextStorage") {
                     element<LocalizedStringKey>("text")
                     element<String?>("table")
                     element("bundle", ResourceBundleSerializer.descriptor)
@@ -172,7 +168,7 @@ data class Text internal constructor(
             //: Codable
             object Serializer : KSerializer<Storage> {
                 override val descriptor: SerialDescriptor =
-                    buildClassSerialDescriptor("Storage") {
+                    buildClassSerialDescriptor(":Text.Storage") {
                         element<String>("value")
                         element("date", DateSerializer.descriptor)
                         element<DateStyle>("style")
@@ -439,10 +435,12 @@ data class Text internal constructor(
 
     enum class Init { string, verbatim }
 
-    constructor(init: Init, string: String) : this(when (init) {
-        Init.string -> Storage.text(string)
-        Init.verbatim -> Storage.verbatim(string)
-    }, arrayOf())
+    constructor(init: Init, string: String) : this(
+        when (init) {
+            Init.string -> Storage.text(string)
+            Init.verbatim -> Storage.verbatim(string)
+        }, arrayOf()
+    )
 
     constructor(
         key: LocalizedStringKey,
@@ -466,7 +464,7 @@ data class Text internal constructor(
     //: Codable
     internal object Serializer : KSerializer<Text> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("Text") {
+            buildClassSerialDescriptor(":Text") {
                 element<String>("text")
                 element<String>("verbatim")
                 element<AnyTextStorage>("local")
@@ -519,7 +517,7 @@ data class Text internal constructor(
         //: Register
         fun register() {
             PType.register<Text>()
-            PType.register<TruncationMode>()
+            PType.register<TruncationMode>(primitiveSerial = true)
         }
     }
 
@@ -537,7 +535,7 @@ data class Text internal constructor(
 
         internal object Serializer : KSerializer<DateStyle> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("DateStyle", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Text.DateStyle", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: DateStyle) {
                 when (value) {
@@ -569,7 +567,7 @@ data class Text internal constructor(
 
         internal object Serializer : KSerializer<TruncationMode> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("TruncationMode", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Text.TruncationMode", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: TruncationMode) {
                 when (value) {
@@ -595,7 +593,7 @@ data class Text internal constructor(
 
         internal object Serializer : KSerializer<Case> {
             override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Case", PrimitiveKind.STRING)
+                PrimitiveSerialDescriptor(":Text.Case", PrimitiveKind.STRING)
 
             override fun serialize(encoder: Encoder, value: Case) {
                 when (value) {
@@ -622,7 +620,7 @@ enum class TextAlignment {
 
     internal object Serializer : KSerializer<TextAlignment> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("Axis", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor(":TextAlignment", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: TextAlignment) {
             when (value) {

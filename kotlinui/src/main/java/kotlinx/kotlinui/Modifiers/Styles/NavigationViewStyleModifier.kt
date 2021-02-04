@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = NavigationViewStyleModifier.Serializer::class)
-@SerialName(":NavigationViewStyleModifier")
 internal data class NavigationViewStyleModifier<Style : NavigationViewStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class NavigationViewStyleModifier<Style : NavigationViewStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("NavigationViewStyleModifier") {
+            buildClassSerialDescriptor(":NavigationViewStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,9 +44,9 @@ internal data class NavigationViewStyleModifier<Style : NavigationViewStyle>(
         //: Register
         fun register() {
             PType.register<NavigationViewStyleModifier<NavigationViewStyle>>()
-            PType.register<DefaultNavigationViewStyle>(actions = hashMapOf("style" to ::DefaultNavigationViewStyle))
-            PType.register<DoubleColumnNavigationViewStyle>(actions = hashMapOf("style" to ::DoubleColumnNavigationViewStyle))
-            PType.register<StackNavigationViewStyle>(actions = hashMapOf("style" to ::StackNavigationViewStyle))
+            PType.register<DefaultNavigationViewStyle>()
+            PType.register<DoubleColumnNavigationViewStyle>()
+            PType.register<StackNavigationViewStyle>()
         }
     }
 }

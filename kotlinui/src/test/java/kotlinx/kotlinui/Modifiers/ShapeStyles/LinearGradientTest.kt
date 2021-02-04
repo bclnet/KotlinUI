@@ -26,7 +26,9 @@ class LinearGradientTest {
             """{
     "gradient": [
         {
-            "color": "red"
+            "color": {
+                "color": "red"
+            }
         }
     ],
     "startPoint": "center",

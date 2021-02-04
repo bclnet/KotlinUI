@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = ProgressViewStyleModifier.Serializer::class)
-@SerialName(":ProgressViewStyleModifier")
 internal data class ProgressViewStyleModifier<Style : ProgressViewStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class ProgressViewStyleModifier<Style : ProgressViewStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ProgressViewStyleModifier") {
+            buildClassSerialDescriptor(":ProgressViewStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,9 +44,9 @@ internal data class ProgressViewStyleModifier<Style : ProgressViewStyle>(
         //: Register
         fun register() {
             PType.register<ProgressViewStyleModifier<ProgressViewStyle>>()
-            PType.register<CircularProgressViewStyle>(actions = hashMapOf("style" to ::CircularProgressViewStyle))
-            PType.register<DefaultProgressViewStyle>(actions = hashMapOf("style" to ::DefaultProgressViewStyle))
-            PType.register<LinearProgressViewStyle>(actions = hashMapOf("style" to ::LinearProgressViewStyle))
+            PType.register<CircularProgressViewStyle>()
+            PType.register<DefaultProgressViewStyle>()
+            PType.register<LinearProgressViewStyle>()
         }
     }
 }

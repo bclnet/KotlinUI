@@ -14,17 +14,17 @@ data class _StrokedShape<S : View>(
 ) : ViewModifier {
     //: Codable
     internal class Serializer<S : View> : KSerializer<_StrokedShape<S>> {
-        val sSerializer = PolymorphicSerializer(Any::class)
+        val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_StrokeShape") {
-                element("shape", sSerializer.descriptor)
+            buildClassSerialDescriptor(":_StrokeShape") {
+                element("shape", shapeSerializer.descriptor)
                 element<StrokeStyle>("style")
             }
 
         override fun serialize(encoder: Encoder, value: _StrokedShape<S>) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, sSerializer, value.shape)
+                encodeSerializableElement(descriptor, 0, shapeSerializer, value.shape)
                 encodeSerializableElement(descriptor, 1, StrokeStyle.Serializer, value.style)
             }
 
@@ -34,7 +34,7 @@ data class _StrokedShape<S : View>(
                 lateinit var style: StrokeStyle
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
-                        0 -> shape = decodeSerializableElement(descriptor, 0, sSerializer) as S
+                        0 -> shape = decodeSerializableElement(descriptor, 0, shapeSerializer) as S
                         1 -> style = decodeSerializableElement(descriptor, 1, StrokeStyle.Serializer)
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")

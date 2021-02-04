@@ -6,7 +6,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = ButtonStyleModifier.Serializer::class)
-@SerialName(":ButtonStyleModifier")
 internal data class ButtonStyleModifier<Style : ButtonStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -17,7 +16,7 @@ internal data class ButtonStyleModifier<Style : ButtonStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ButtonStyleModifier") {
+            buildClassSerialDescriptor(":ButtonStyleModifier") {
                 element("style", styleSerializer.descriptor)
             }
 
@@ -44,12 +43,12 @@ internal data class ButtonStyleModifier<Style : ButtonStyle>(
         //: Register
         fun register() {
             PType.register<ButtonStyleModifier<ButtonStyle>>()
-            PType.register<BorderlessButtonStyle>(actions = hashMapOf("style" to ::BorderlessButtonStyle))
-            PType.register<DefaultButtonStyle>(actions = hashMapOf("style" to ::DefaultButtonStyle))
-            PType.register<PlainButtonStyle>(actions = hashMapOf("style" to ::PlainButtonStyle))
-            PType.register<BorderedButtonStyle>(actions = hashMapOf("style" to ::BorderedButtonStyle))
-            PType.register<LinkButtonStyle>(actions = hashMapOf("style" to ::LinkButtonStyle))
-            PType.register<CardButtonStyle>(actions = hashMapOf("style" to ::CardButtonStyle))
+            PType.register<BorderlessButtonStyle>()
+            PType.register<DefaultButtonStyle>()
+            PType.register<PlainButtonStyle>()
+            PType.register<BorderedButtonStyle>()
+            PType.register<LinkButtonStyle>()
+            PType.register<CardButtonStyle>()
         }
     }
 }

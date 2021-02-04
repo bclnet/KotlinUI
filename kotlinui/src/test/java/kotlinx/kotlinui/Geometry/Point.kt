@@ -12,10 +12,15 @@ class PointTest {
         }
 
         // Point
-        val orig_p = Point(0, 0)
+        val orig_p = Point(1, 2)
         val data_p = json.encodeToString(Point.Serializer, orig_p)
         val json_p = json.decodeFromString(Point.Serializer, data_p)
         Assert.assertEquals(orig_p, json_p)
-        Assert.assertEquals("", data_p)
+        Assert.assertEquals(
+            """[
+    1,
+    2
+]""".trimIndent(), data_p
+        )
     }
 }

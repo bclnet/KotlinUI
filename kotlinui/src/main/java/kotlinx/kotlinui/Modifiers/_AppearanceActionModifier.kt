@@ -15,7 +15,7 @@ data class _AppearanceActionModifier(
     //: Codable
     internal object Serializer : KSerializer<_AppearanceActionModifier> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_AppearanceActionModifier") {
+            buildClassSerialDescriptor(":_AppearanceActionModifier") {
                 element<() -> Unit>("appear")
                 element<() -> Unit>("disappear")
             }

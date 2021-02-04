@@ -26,7 +26,9 @@ class ImagePaintTest {
             """{
     "gradient": [
         {
-            "color": "red"
+            "color": {
+                "color": "red"
+            }
         }
     ],
     "center": "center",

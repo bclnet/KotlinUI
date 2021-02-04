@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = TextFieldStyleStyleModifier.Serializer::class)
-@SerialName(":TextFieldStyleStyleModifier")
 internal data class TextFieldStyleStyleModifier<Style : TextFieldStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class TextFieldStyleStyleModifier<Style : TextFieldStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("TextFieldStyleStyleModifier") {
+            buildClassSerialDescriptor(":TextFieldStyleStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,10 +44,10 @@ internal data class TextFieldStyleStyleModifier<Style : TextFieldStyle>(
         //: Register
         fun register() {
             PType.register<TextFieldStyleStyleModifier<TextFieldStyle>>()
-            PType.register<DefaultTextFieldStyle>(actions = hashMapOf("style" to ::DefaultTextFieldStyle))
-            PType.register<PlainTextFieldStyle>(actions = hashMapOf("style" to ::PlainTextFieldStyle))
-            PType.register<RoundedBorderTextFieldStyle>(actions = hashMapOf("style" to ::RoundedBorderTextFieldStyle))
-            PType.register<SquareBorderTextFieldStyle>(actions = hashMapOf("style" to ::SquareBorderTextFieldStyle))
+            PType.register<DefaultTextFieldStyle>()
+            PType.register<PlainTextFieldStyle>()
+            PType.register<RoundedBorderTextFieldStyle>()
+            PType.register<SquareBorderTextFieldStyle>()
         }
     }
 }

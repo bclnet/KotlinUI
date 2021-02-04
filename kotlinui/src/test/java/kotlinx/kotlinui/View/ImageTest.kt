@@ -44,11 +44,11 @@ class ImageTest {
 //        Assert.assertEquals(orig_s3, json_s3)
 
         // CGImageProvider
-        val cgImage = mockk<CGImage>(relaxed = true)
-        val orig_s4 = Image(cgImage, 0f, Image.Orientation.up)
-        val data_s4 = json.encodeToString(serializer(), orig_s4)
-        val json_s4 = json.decodeFromString(serializer<Image>(), data_s4)
-        Assert.assertEquals(orig_s4, json_s4)
+//        val cgImage = mockk<CGImage>(relaxed = true)
+//        val orig_s4 = Image(cgImage, 0f, Image.Orientation.up)
+//        val data_s4 = json.encodeToString(serializer(), orig_s4)
+//        val json_s4 = json.decodeFromString(serializer<Image>(), data_s4)
+//        Assert.assertEquals(orig_s4, json_s4)
 //
 //        // PlatformProvider
 //        val uxImage = mockk<UXImage>()

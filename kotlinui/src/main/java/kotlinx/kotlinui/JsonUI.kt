@@ -33,6 +33,7 @@ class JsonUI(val type: KType, view: View) {
 
             // KotlinUI
             EnvironmentValues.register()
+            Font.register()
 //            ModifierGesture.register()
 
             // Modifiers:ShapeStyles

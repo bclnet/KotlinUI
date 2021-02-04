@@ -7,7 +7,6 @@ import kotlinx.serialization.encoding.*
 import kotlin.reflect.KType
 
 @Serializable(with = ToggleStyleModifier.Serializer::class)
-@SerialName(":ToggleStyleModifier")
 internal data class ToggleStyleModifier<Style : ToggleStyle>(
     @Polymorphic val style: Style
 ) : ViewModifier {
@@ -18,7 +17,7 @@ internal data class ToggleStyleModifier<Style : ToggleStyle>(
         val styleSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("ToggleStyleModifier") {
+            buildClassSerialDescriptor(":ToggleStyleModifier") {
                 element<String>("style")
             }
 
@@ -45,9 +44,9 @@ internal data class ToggleStyleModifier<Style : ToggleStyle>(
         //: Register
         fun register() {
             PType.register<ToggleStyleModifier<ToggleStyle>>()
-            PType.register<DefaultToggleStyle>(actions = hashMapOf("style" to ::DefaultToggleStyle))
-            PType.register<SwitchToggleStyle>(actions = hashMapOf("style" to ::SwitchToggleStyle))
-            PType.register<CheckboxToggleStyle>(actions = hashMapOf("style" to ::CheckboxToggleStyle))
+            PType.register<DefaultToggleStyle>()
+            PType.register<SwitchToggleStyle>()
+            PType.register<CheckboxToggleStyle>()
         }
     }
 }

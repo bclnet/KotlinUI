@@ -14,7 +14,7 @@ data class _AllowsHitTestingModifier(
     //: Codable
     internal object Serializer : KSerializer<_AllowsHitTestingModifier> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("_AllowsHitTestingModifier") {
+            buildClassSerialDescriptor(":_AllowsHitTestingModifier") {
                 element<Boolean>("active")
             }
 

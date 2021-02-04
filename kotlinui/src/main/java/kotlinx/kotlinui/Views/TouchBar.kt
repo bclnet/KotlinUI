@@ -11,6 +11,9 @@ class TouchBar<Content : View>(
     id: String?,
     content: ViewBuilder.() -> Content
 ) : View {
+    override fun equals(other: Any?): Boolean = other is TouchBar<*> && container == other.container && content == other.content
+    override fun hashCode(): Int = content.hashCode()
+
     internal val container: TouchBarContainer = TouchBarContainer(id)
     internal val content: Content = content(ViewBuilder)
 
@@ -38,7 +41,7 @@ class TouchBar<Content : View>(
                 var id: String? = null
                 lateinit var content: Content
                 while (true) {
-                    when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
+                    when (val index = decodeElementIndex(descriptor)) {
                         0 -> id = decodeStringElement(descriptor, 0)
                         1 -> content = decodeSerializableElement(descriptor, 1, contentSerializer) as Content
                         CompositeDecoder.DECODE_DONE -> break

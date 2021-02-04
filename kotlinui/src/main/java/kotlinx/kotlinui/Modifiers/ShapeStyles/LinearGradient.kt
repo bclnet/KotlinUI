@@ -6,7 +6,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = LinearGradient.Serializer::class)
-@SerialName(":LinearGradient")
 data class LinearGradient(
     val gradient: Gradient,
     val startPoint: UnitPoint,
@@ -21,7 +20,7 @@ data class LinearGradient(
     //: Codable
     internal object Serializer : KSerializer<LinearGradient> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor("LinearGradient") {
+            buildClassSerialDescriptor(":LinearGradient") {
                 element<Gradient>("gradient")
                 element<UnitPoint>("startPoint")
                 element<UnitPoint>("endPoint")
