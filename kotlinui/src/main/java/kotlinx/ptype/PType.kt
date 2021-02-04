@@ -178,8 +178,9 @@ sealed class PType {
                 if (primitiveSerial)
                     class2Serializer[klass] = serializer
                 else {
+                    val klassKey = typeKey(klass.qualifiedName.toString(), namespace)
                     polyBase2SerializersAny[klass] = serializer
-                    polyBase2NamedSerializersAny[key] = serializer
+                    polyBase2NamedSerializersAny[klassKey] = serializer
                 }
             }
             if (knownTypes[key] == null) {
