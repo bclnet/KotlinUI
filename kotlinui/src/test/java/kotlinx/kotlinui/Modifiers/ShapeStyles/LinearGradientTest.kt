@@ -15,7 +15,7 @@ class LinearGradientTest {
         val json = Json {
             prettyPrint = true
         }
-        _Plane.mockColors()
+        _Plane.mockColor()
 
         // LinearGradient
         val orig_lg = LinearGradient(Gradient(arrayOf(Color.red)), UnitPoint.center, UnitPoint.bottom)

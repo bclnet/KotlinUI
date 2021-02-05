@@ -8,15 +8,16 @@ import kotlinx.serialization.encoding.*
 
 @Serializable(with = Capsule.Serializer::class)
 data class Capsule(
-    val style: RoundedCornerStyle
-) : Shape {
+    val style: RoundedCornerStyle = RoundedCornerStyle.circular
+) : InsettableShape {
     override fun path(rect: Rect): Path = error("Never")
+    override fun inset(by: Float): View = modifier(_Inset(by))
 
     override val body: View
         get() = error("Never")
 
     //: Codable
-    internal class Serializer : KSerializer<Capsule> {
+    internal object Serializer : KSerializer<Capsule> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor(":Capsule") {
                 element("style", RoundedCornerStyle.Serializer.descriptor)
@@ -24,12 +25,12 @@ data class Capsule(
 
         override fun serialize(encoder: Encoder, value: Capsule) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, RoundedCornerStyle.Serializer, value.style)
+                if (value.style != RoundedCornerStyle.circular) encodeSerializableElement(descriptor, 0, RoundedCornerStyle.Serializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): Capsule =
             decoder.decodeStructure(descriptor) {
-                lateinit var style: RoundedCornerStyle
+                var style: RoundedCornerStyle = RoundedCornerStyle.circular
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
                         0 -> style = decodeSerializableElement(descriptor, 0, RoundedCornerStyle.Serializer)
@@ -46,7 +47,7 @@ data class Capsule(
         val amount: Float
     ) : ViewModifier {
         //: Codable
-        internal class Serializer : KSerializer<_Inset> {
+        internal object Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor(":Capsule._Inset") {
                     element<Float>("amount")

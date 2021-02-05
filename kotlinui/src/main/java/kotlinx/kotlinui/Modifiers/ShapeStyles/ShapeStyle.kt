@@ -1,6 +1,8 @@
 package kotlinx.kotlinui
 
-interface ShapeStyle
+interface ShapeStyle {
+
+}
 
 // val ShapeStyle.body: Never
 // get() = error("Never)

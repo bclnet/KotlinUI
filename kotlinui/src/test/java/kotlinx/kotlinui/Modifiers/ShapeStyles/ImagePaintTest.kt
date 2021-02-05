@@ -15,7 +15,7 @@ class ImagePaintTest {
         val json = Json {
             prettyPrint = true
         }
-        _Plane.mockColors()
+        _Plane.mockColor()
 
         // AngularGradient
         val orig_ag = AngularGradient(Gradient(arrayOf(Color.red)), UnitPoint.center, Angle(1.0), Angle(2.0))

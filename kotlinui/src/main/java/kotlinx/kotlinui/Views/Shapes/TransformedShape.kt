@@ -52,5 +52,5 @@ data class TransformedShape<Content : Shape>(
     }
 }
 
-fun <S : Shape> Shape.transform(matrix: Matrix): View =
+fun Shape.transform(matrix: Matrix): View =
     modifier(TransformedShape(this, matrix))

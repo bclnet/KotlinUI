@@ -17,7 +17,7 @@ class ColorTest {
         val json = Json {
             prettyPrint = true
         }
-        _Plane.mockColors()
+        _Plane.mockColor()
 
         // __NSCFType
         val orig_s_a = Color.red

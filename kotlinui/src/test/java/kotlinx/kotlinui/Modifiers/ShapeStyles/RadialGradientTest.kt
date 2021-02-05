@@ -15,7 +15,7 @@ class RadialGradientTest {
         val json = Json {
             prettyPrint = true
         }
-        _Plane.mockColors()
+        _Plane.mockColor()
 
         // RadialGradient
         val orig_rg = RadialGradient(Gradient(arrayOf(Color.red)), UnitPoint.center, 1f, 2f)

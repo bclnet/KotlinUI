@@ -11,9 +11,12 @@ import kotlinx.serialization.encoding.*
 @Serializable(with = RoundedRectangle.Serializer::class)
 data class RoundedRectangle(
     val cornerSize: SizeF,
-    val style: RoundedCornerStyle
-) : Shape {
+    val style: RoundedCornerStyle = RoundedCornerStyle.circular
+) : InsettableShape {
+    constructor(cornerRadius: Float, style: RoundedCornerStyle = RoundedCornerStyle.circular) : this(SizeF(cornerRadius, cornerRadius), style)
+
     override fun path(rect: Rect): Path = error("Never")
+    override fun inset(by: Float): View = modifier(_Inset(this, by))
 
     override val body: View
         get() = error("Never")
@@ -31,13 +34,13 @@ data class RoundedRectangle(
             encoder.encodeStructure(descriptor) {
                 if (value.cornerSize.width != value.cornerSize.height) encodeSerializableElement(descriptor, 0, SizeFSerializer, value.cornerSize)
                 else encodeFloatElement(descriptor, 1, value.cornerSize.width)
-                encodeSerializableElement(descriptor, 2, RoundedCornerStyle.Serializer, value.style)
+                if (value.style != RoundedCornerStyle.circular) encodeSerializableElement(descriptor, 2, RoundedCornerStyle.Serializer, value.style)
             }
 
         override fun deserialize(decoder: Decoder): RoundedRectangle =
             decoder.decodeStructure(descriptor) {
                 lateinit var cornerSize: SizeF
-                lateinit var style: RoundedCornerStyle
+                var style: RoundedCornerStyle = RoundedCornerStyle.circular
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
                         0 -> cornerSize = decodeSerializableElement(descriptor, 0, SizeFSerializer)

@@ -3,8 +3,10 @@ package kotlinx.kotlinui
 import android.graphics.Color
 import android.graphics.ColorSpace
 import android.icu.util.DateInterval
+import android.util.SizeF
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import kotlinx.kotlinuijson.JsonUI
 import kotlinx.ptype.ActionManager
@@ -16,7 +18,7 @@ import java.util.*
 import android.graphics.Color as CGColor
 
 fun _Plane.register() {
-    mockColors()
+    mockColor()
     JsonUI.registered
 }
 
@@ -24,7 +26,25 @@ fun _Plane.mockActionManager() {
     ActionManager.mocked = true
 }
 
-fun _Plane.mockColors() {
+fun _Plane.mockDate(date: Long, fromDate: Long, toDate: Long) {
+    mockkConstructor(Date::class)
+    every { anyConstructed<Date>().time } returns date
+    every { anyConstructed<Date>() == any() } returns true
+
+    mockkConstructor(DateInterval::class)
+    every { anyConstructed<DateInterval>().fromDate } returns fromDate
+    every { anyConstructed<DateInterval>().toDate } returns toDate
+    every { anyConstructed<DateInterval>() == any() } returns true
+}
+
+fun _Plane.mockSize(width: Float, height: Float) {
+    mockkConstructor(SizeF::class)
+    every { anyConstructed<SizeF>().width } returns width
+    every { anyConstructed<SizeF>().height } returns height
+    every { anyConstructed<SizeF>() == any() } returns true
+}
+
+fun _Plane.mockColor() {
     colorSpaces = Array(1) {
         val colorSpace = mockk<ColorSpace>(relaxed = true)
         every { colorSpace.name } returns when (it) {
@@ -50,22 +70,3 @@ fun _Plane.makeCGColor(r: Float, g: Float, b: Float): CGColor {
     every { color.components } returns arrayOf(r, g, b).toFloatArray()
     return color
 }
-
-fun _Plane.makeDateInterval(): DateInterval {
-    val dateInterval = mockk<DateInterval>(relaxed = true)
-    every { dateInterval == any() } returns true
-    return dateInterval
-}
-
-fun _Plane.makeDate(): Date {
-    val date = mockk<Date>(relaxed = true)
-    every { date == any() } returns true
-    return date
-}
-
-//    every { ColorSpace.Named.valueOf(any()) } returns ColorSpace.Named.SRGB
-//    val cgColor = mockk<CGColor>(relaxed = true)
-//    every { cgColor.colorSpace.name } returns "SRGB"
-//    every { Color.valueOf(any()) } returns cgColor
-//    every { Color.valueOf(any(), any(), any()) } returns cgColor
-//    every { Color.valueOf(any(), any()) } returns cgColor

@@ -15,7 +15,7 @@ class GradientTest {
         val json = Json {
             prettyPrint = true
         }
-        _Plane.mockColors()
+        _Plane.mockColor()
 
         // Gradient
         val orig_g = Gradient(arrayOf(Color.red, Color.blue))

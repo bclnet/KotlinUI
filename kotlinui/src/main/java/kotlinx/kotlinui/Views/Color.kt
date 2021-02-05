@@ -13,7 +13,7 @@ import android.graphics.Color as CGColor
 @Serializable(with = Color.Serializer::class)
 data class Color internal constructor(
     val provider: AnyColorBox
-) : View {
+) : ShapeStyle, View {
     // region ANYCOLORBOX
 
     @Serializable

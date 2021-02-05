@@ -57,5 +57,5 @@ data class _TrimmedShape<S : View>(
     }
 }
 
-fun <S : Shape> Shape.trim(startFraction: Float = 0f, endFraction: Float = 1f): View =
+fun Shape.trim(startFraction: Float = 0f, endFraction: Float = 1f): View =
     modifier(_TrimmedShape(this, startFraction, endFraction))

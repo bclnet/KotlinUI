@@ -17,7 +17,7 @@ data class _StrokedShape<S : View>(
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor(":_StrokeShape") {
+            buildClassSerialDescriptor(":_StrokedShape") {
                 element("shape", shapeSerializer.descriptor)
                 element<StrokeStyle>("style")
             }
@@ -52,14 +52,26 @@ data class _StrokedShape<S : View>(
     }
 }
 
-fun <S : Shape> Shape.stroke(content: S, lineWidth: Float = 1f): View =
-    modifier(_StrokedShape(content, StrokeStyle(lineWidth = lineWidth)))
+fun <S : ShapeStyle> Shape.stroke(content: S, lineWidth: Float = 1f): View =
+    modifier(_StrokedShape(content as Shape, StrokeStyle(lineWidth = lineWidth)))
 
-fun <S : Shape> Shape.stroke(content: S, style: StrokeStyle): View =
-    modifier(_StrokedShape(content, style))
+fun <S : ShapeStyle> Shape.stroke(content: S, style: StrokeStyle): View =
+    modifier(_StrokedShape(content as Shape, style))
 
-fun <S : Shape> Shape.stroke(lineWidth: Float = 1f): View =
+fun Shape.stroke(lineWidth: Float = 1f): View =
     modifier(_StrokedShape(this, StrokeStyle(lineWidth = lineWidth)))
 
-fun <S : Shape> Shape.stroke(style: StrokeStyle): View =
+fun Shape.stroke(style: StrokeStyle): View =
+    modifier(_StrokedShape(this, style))
+
+fun <S : ShapeStyle> InsettableShape.strokeBorder(content: S, lineWidth: Float = 1f, antialiased: Boolean = true): View =
+    modifier(_StrokedShape(content as Shape, StrokeStyle(lineWidth = lineWidth / 2)))
+
+fun <S : ShapeStyle> InsettableShape.strokeBorder(content: S, style: StrokeStyle, antialiased: Boolean = true): View =
+    modifier(_StrokedShape(content as Shape, style))
+
+fun InsettableShape.strokeBorder(lineWidth: Float = 1f, antialiased: Boolean = true): View =
+    modifier(_StrokedShape(this, StrokeStyle(lineWidth = lineWidth)))
+
+fun InsettableShape.strokeBorder(style: StrokeStyle, antialiased: Boolean = true): View =
     modifier(_StrokedShape(this, style))

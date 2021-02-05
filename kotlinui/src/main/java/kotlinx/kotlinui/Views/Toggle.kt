@@ -31,33 +31,34 @@ class Toggle<Label : View>(
         get() = _label
 
     internal class Serializer<Label : View> : KSerializer<Toggle<Label>> {
+        val bindingSerializer = Binding.Serializer<Boolean>()
         val labelSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("Toggle") {
-                element<Binding<Boolean>>("isOn")
-                element<View>("label")
+                element("isOn", bindingSerializer.descriptor)
+                element("label", labelSerializer.descriptor)
             }
 
         override fun serialize(encoder: Encoder, value: Toggle<Label>) =
             encoder.encodeStructure(descriptor) {
-                encodeSerializableElement(descriptor, 0, serializer(), value.__isOn)
+                encodeSerializableElement(descriptor, 0, bindingSerializer, value.__isOn)
                 encodeSerializableElement(descriptor, 1, labelSerializer, value._label)
             }
 
         override fun deserialize(decoder: Decoder): Toggle<Label> =
             decoder.decodeStructure(descriptor) {
                 lateinit var isOn: Binding<Boolean>
-                lateinit var label: Label
+                lateinit var label: Any
                 while (true) {
-                    when (val index = decodeElementIndex(_VStackLayout.Serializer.descriptor)) {
-                        0 -> isOn = decodeSerializableElement(descriptor, 0, serializer())
-                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer) as Label
+                    when (val index = decodeElementIndex(descriptor)) {
+                        0 -> isOn = decodeSerializableElement(descriptor, 0, bindingSerializer)
+                        1 -> label = decodeSerializableElement(descriptor, 1, labelSerializer)
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                Toggle(isOn) { label }
+                Toggle(isOn) { label as Label }
             }
     }
 

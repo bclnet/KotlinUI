@@ -57,8 +57,8 @@ data class ScaledShape<Content : Shape>(
     }
 }
 
-fun <S : Shape> Shape.scale(size: Float, anchor: UnitPoint = UnitPoint.center): View =
+fun Shape.scale(size: Float, anchor: UnitPoint = UnitPoint.center): View =
     modifier(ScaledShape(this, SizeF(size, size), anchor))
 
-fun <S : Shape> Shape.scale(x: Float = 1f, y: Float = 1f, anchor: UnitPoint = UnitPoint.center): View =
+fun Shape.scale(x: Float = 1f, y: Float = 1f, anchor: UnitPoint = UnitPoint.center): View =
     modifier(ScaledShape(this, SizeF(x, y), anchor))

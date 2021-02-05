@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = BindingSerializer::class)
+@Serializable(with = Binding.Serializer::class)
 class Binding<Value> private constructor(
     get: () -> Value
 ) {
@@ -28,7 +28,27 @@ class Binding<Value> private constructor(
 //    error("Not Implemented")
 //}
 
+    internal class Serializer<Value>() : KSerializer<Binding<Value>> {
+        val valueSerializer = PolymorphicSerializer(Any::class)
+
+        override val descriptor: SerialDescriptor =
+            buildClassSerialDescriptor("Binding") {
+            }
+
+        override fun serialize(encoder: Encoder, value: Binding<Value>) =
+            encoder.encodeStructure(descriptor) {
+            }
+
+        @ExperimentalSerializationApi
+        override fun deserialize(decoder: Decoder): Binding<Value> =
+            decoder.decodeStructure(descriptor) {
+                error("Not Implemented")
+            }
+    }
+
     companion object {
+        fun <Value> constant(value: Value): Binding<Value> =
+            Binding { value }
     }
 
     var wrappedValue: Value
@@ -45,24 +65,6 @@ class Binding<Value> private constructor(
     //    error("Not Implemented")
     //}
 }
-
-class BindingSerializer<Value>(private val valueSerializer: KSerializer<Value>) : KSerializer<Binding<Value>> {
-    override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("Binding") {
-        }
-
-    override fun serialize(encoder: Encoder, value: Binding<Value>) =
-        encoder.encodeStructure(descriptor) {
-        }
-
-    @ExperimentalSerializationApi
-    override fun deserialize(decoder: Decoder): Binding<Value> =
-        decoder.decodeStructure(descriptor) {
-            error("Not Implemented")
-        }
-}
-
-fun <Value> Binding.Companion.constant(value: Value): Binding<Value> = error("Not Implemented")
 
 //fun <Value, V> Binding<Value>._makeProperty<V>(buffer: _DynamicPropertyBuffer, container: _GraphValue<V>, fieldOffset: Int, inputs: _GraphInputs) = error("Not Implemented")
 

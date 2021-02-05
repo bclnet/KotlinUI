@@ -20,6 +20,7 @@ class TextTest {
             prettyPrint = true
         }
         _Plane.register()
+        _Plane.mockDate(0, 0, 1)
 
         // String
         val orig_s = Text(Text.Init.string, "Text")
@@ -86,7 +87,7 @@ class TextTest {
         )
 
         // DateTextStorage.Interval
-        val orig_dts_i = Text(_Plane.makeDateInterval())
+        val orig_dts_i = Text(DateInterval(0, 1))
         val data_dts_i = json.encodeToString(Text.Serializer, orig_dts_i)
         val json_dts_i = json.decodeFromString(Text.Serializer, data_dts_i)
         Assert.assertEquals(orig_dts_i, json_dts_i)
@@ -103,7 +104,7 @@ class TextTest {
         )
 
         // DateTextStorage.Absolute
-        val orig_dts_a = Text(_Plane.makeDate(), Text.DateStyle.date)
+        val orig_dts_a = Text(Date(), Text.DateStyle.date)
         val data_dts_a = json.encodeToString(Text.Serializer, orig_dts_a)
         val json_dts_a = json.decodeFromString(Text.Serializer, data_dts_a)
         Assert.assertEquals(orig_dts_a, json_dts_a)

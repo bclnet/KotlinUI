@@ -52,8 +52,8 @@ data class _SizedShape<S : View>(
     }
 }
 
-fun <S : Shape> Shape.size(size: SizeF): View =
+fun Shape.size(size: SizeF): View =
     modifier(_SizedShape(this, size))
 
-fun <S : Shape> Shape.size(width: Float, height: Float): View =
+fun Shape.size(width: Float, height: Float): View =
     modifier(_SizedShape(this, SizeF(width, height)))

@@ -7,17 +7,18 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = Circle.Serializer::class)
-class Circle : Shape {
+class Circle : InsettableShape {
     override fun equals(other: Any?): Boolean = other is Circle
     override fun hashCode(): Int = javaClass.hashCode()
 
     override fun path(rect: Rect): Path = error("Never")
+    override fun inset(by: Float): View = modifier(_Inset(by))
 
     override val body: View
         get() = error("Never")
 
     //: Codable
-    internal class Serializer : KSerializer<Circle> {
+    internal object Serializer : KSerializer<Circle> {
         override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor(":Circle") { }
 
@@ -33,7 +34,7 @@ class Circle : Shape {
         val amount: Float
     ) : ViewModifier {
         //: Codable
-        internal class Serializer : KSerializer<_Inset> {
+        internal object Serializer : KSerializer<_Inset> {
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor(":Circle._Inset") {
                     element<Float>("amount")

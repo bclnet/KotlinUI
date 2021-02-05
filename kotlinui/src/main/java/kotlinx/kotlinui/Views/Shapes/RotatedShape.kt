@@ -12,7 +12,13 @@ data class RotatedShape<Content : Shape>(
     val shape: Content,
     val angle: Angle,
     val anchor: UnitPoint
-) : ViewModifier {
+) : ViewModifier, InsettableShape {
+    override fun path(rect: Rect): Path = error("Never")
+    override fun inset(by: Float): View = error("Check") //modifier(_Inset(by))
+
+    override val body: View
+        get() = error("Never")
+
     //: Codable
     internal class Serializer<Content : Shape> : KSerializer<RotatedShape<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
@@ -57,5 +63,5 @@ data class RotatedShape<Content : Shape>(
     }
 }
 
-fun <S : Shape> Shape.rotation(angle: Angle, anchor: UnitPoint = UnitPoint.center): View =
+fun Shape.rotation(angle: Angle, anchor: UnitPoint = UnitPoint.center): View =
     modifier(RotatedShape(this, angle, anchor))

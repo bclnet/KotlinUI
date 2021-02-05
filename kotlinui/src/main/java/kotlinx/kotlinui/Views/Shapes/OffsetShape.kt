@@ -1,6 +1,7 @@
 package kotlinx.kotlinui
 
 import android.graphics.PointF
+import android.graphics.Rect
 import android.util.SizeF
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
@@ -11,7 +12,13 @@ import kotlinx.serialization.encoding.*
 data class OffsetShape<Content : Shape>(
     val shape: Content,
     val offset: SizeF
-) : ViewModifier {
+) : ViewModifier, InsettableShape {
+    override fun path(rect: Rect): Path = error("Never")
+    override fun inset(by: Float): View = error("TEST") //modifier(_Inset(by))
+
+    override val body: View
+        get() = error("Never")
+
     //: Codable
     internal class Serializer<Content : Shape> : KSerializer<OffsetShape<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
@@ -52,11 +59,11 @@ data class OffsetShape<Content : Shape>(
     }
 }
 
-fun <S : Shape> Shape.offset(offset: SizeF): View =
+fun Shape.offset(offset: SizeF): View =
     modifier(OffsetShape(this, offset))
 
-fun <S : Shape> Shape.offset(offset: PointF): View =
+fun Shape.offset(offset: PointF): View =
     modifier(OffsetShape(this, SizeF(offset.x, offset.y)))
 
-fun <S : Shape> Shape.offset(x: Float = 0f, y: Float = 0f): View =
+fun Shape.offset(x: Float = 0f, y: Float = 0f): View =
     modifier(OffsetShape(this, SizeF(x, y)))

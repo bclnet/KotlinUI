@@ -52,8 +52,8 @@ data class _FilledShape<S : View>(
     }
 }
 
-fun <S : Shape> Shape.fill(content: S, style: FillStyle = FillStyle()): View =
-    modifier(_FilledShape(content, style))
+fun <S : ShapeStyle> Shape.fill(content: S, style: FillStyle = FillStyle()): View =
+    modifier(_FilledShape(content as Shape, style))
 
-fun <S : Shape> Shape.fill(style: FillStyle = FillStyle()): View =
+fun Shape.fill(style: FillStyle = FillStyle()): View =
     modifier(_FilledShape(this, style))

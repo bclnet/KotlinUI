@@ -10,6 +10,10 @@ interface Shape : Animatable, View {
     fun path(rect: Rect): Path
 }
 
+interface InsettableShape: Shape  {
+    fun inset(by: Float): View
+}
+
 @Serializable(with = CGLineCap.Serializer::class)
 enum class CGLineCap {
     butt, round, square;

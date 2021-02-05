@@ -1,21 +1,35 @@
 package kotlinx.kotlinui
 
 import kotlinx.kotlinuijson.*
+import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
 
 class ToggleTest {
-//    @Test
-//    fun serialize() {
-//        val json = Json {
-//            prettyPrint = true
-//        }
-//
-//        val orig_s0 = Toggle(Text("Text"))
-//        val data_s0 = json.encodeToString(Toggle.serializer(), orig_s0)
-//        val json_s0 = json.decodeFromString(Toggle.serializer(), data_s0)
-//        Assert.assertEquals(orig_s0, json_s0)
-//    }
+    @Test
+    fun serialize() {
+        val json = Json {
+            serializersModule = PType.module
+            prettyPrint = true
+        }
+        _Plane.register()
+
+        // Toggle
+        val _isOn_ = Binding.constant(true)
+        val orig_t = Toggle(_isOn_) { Text("Text") }
+        val data_t = json.encodeToString(Toggle.Serializer(), orig_t)
+        val json_t = json.decodeFromString(Toggle.Serializer<View>(), data_t)
+        Assert.assertEquals(orig_t, json_t)
+        Assert.assertEquals(
+            """{
+    "id": "id",
+    "content": {
+        "type": ":Text",
+        "text": "Text"
+    }
+}""".trimIndent(), data_t
+        )
+    }
 }
