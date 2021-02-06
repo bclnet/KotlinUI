@@ -5,9 +5,9 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 import java.lang.Exception
 
-class JsonPreview<Content : View>(content: ViewBuilder.() -> Unit) : View {
+class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
     // The json preview's content.
-    val content: Content = ViewBuilder().apply(content).build()
+    val content: Content = content(ViewBuilder())
 
     // The json preview's content.
     lateinit var content2: AnyView

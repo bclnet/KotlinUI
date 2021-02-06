@@ -15,7 +15,7 @@ class ZStack<Content : View>(
     override fun hashCode(): Int = _tree.hashCode()
 
     val _tree: _VariadicView_Tree<_ZStackLayout, Content> =
-        _VariadicView_Tree(_ZStackLayout(alignment), content(ViewBuilder))
+        _VariadicView_Tree(_ZStackLayout(alignment), content(ViewBuilder()))
 
     override val body: View
         get() = error("Not Implemented")

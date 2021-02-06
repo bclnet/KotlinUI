@@ -16,26 +16,27 @@ class ViewBuilderTest {
         _Plane.register()
 
         // ViewBuilder
-//        val orig_vb_a =
-//            VStack {
-//                Text("Hello World")
-//            }
-//        val data_vb_a = json.encodeToString(VStack.Serializer(), orig_vb_a)
-//        val json_vb_a = json.decodeFromString(VStack.Serializer<View>(), data_vb_a)
-//        Assert.assertEquals(orig_vb_a, json_vb_a)
-//        Assert.assertEquals(
-//            """{
-//    "content": {
-//        "type": ":Text",
-//        "text": "Hello World"
-//    }
-//}""".trimIndent(), data_vb_a
-//        )
+        val orig_vb_a =
+            VStack {
+                Text("Hello World")
+            }
+        val data_vb_a = json.encodeToString(VStack.Serializer(), orig_vb_a)
+        val json_vb_a = json.decodeFromString(VStack.Serializer<View>(), data_vb_a)
+        Assert.assertEquals(orig_vb_a, json_vb_a)
+        Assert.assertEquals(
+            """{
+    "content": {
+        "type": ":Text",
+        "text": "Hello World"
+    }
+}""".trimIndent(), data_vb_a
+        )
         //
         val orig_vb_b =
             VStack {
                 +Text("First")
-                +Text("Second")
+                +Circle()
+                get()
             }
         val data_vb_b = json.encodeToString(VStack.Serializer(), orig_vb_b)
         val json_vb_b = json.decodeFromString(VStack.Serializer<View>(), data_vb_b)
@@ -49,8 +50,7 @@ class ViewBuilderTest {
             "text": "First"
         },
         "1": {
-            "type": ":Text",
-            "text": "Second"
+            "type": ":Circle"
         }
     }
 }""".trimIndent(), data_vb_b

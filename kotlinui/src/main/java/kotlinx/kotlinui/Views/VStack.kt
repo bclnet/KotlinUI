@@ -16,7 +16,7 @@ class VStack<Content : View>(
     override fun hashCode(): Int = _tree.hashCode()
 
     val _tree: _VariadicView_Tree<_VStackLayout, Content> =
-        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder))
+        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder()))
 
     override val body: View
         get() = error("Not Implemented")

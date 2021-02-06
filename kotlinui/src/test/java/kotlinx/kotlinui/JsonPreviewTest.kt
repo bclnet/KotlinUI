@@ -10,10 +10,9 @@ class JsonPreviewTest {
     fun test_complex() {
         val preview = JsonPreview {
             VStack {
-                get(
-                    Text("Verbatim"),
-                    Text("Verbatim")
-                )
+                +Text("Verbatim")
+                +Text("Verbatim")
+                get()
             }
         }
         assertEquals(4, 2 + 2)

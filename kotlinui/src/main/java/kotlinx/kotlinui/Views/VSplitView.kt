@@ -12,7 +12,7 @@ class VSplitView<Content : View>(
     override fun equals(other: Any?): Boolean = other is VSplitView<*> && content == other.content
     override fun hashCode(): Int = content.hashCode()
 
-    val content: Content = content(ViewBuilder)
+    val content: Content = content(ViewBuilder())
 
     override val body: View
         get() = error("Not Implemented")

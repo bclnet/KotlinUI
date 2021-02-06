@@ -15,7 +15,7 @@ class TouchBar<Content : View>(
     override fun hashCode(): Int = content.hashCode()
 
     internal val container: TouchBarContainer = TouchBarContainer(id)
-    internal val content: Content = content(ViewBuilder)
+    internal val content: Content = content(ViewBuilder())
 
     override val body: View
         get() = error("Not Implemented")

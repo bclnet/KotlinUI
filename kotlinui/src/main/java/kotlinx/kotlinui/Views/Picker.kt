@@ -5,7 +5,7 @@ class Picker<Label : View, SelectionValue, Content : View>(
     val label: Label,
     content: ViewBuilder.() -> Content
 ) : View {
-    val content: Content = content(ViewBuilder)
+    val content: Content = content(ViewBuilder())
 
     //where Label == Text {
 //    constructor(
@@ -24,7 +24,7 @@ class Picker<Label : View, SelectionValue, Content : View>(
 
     override val body: View
         get() = HStack {
-            get(
+            make(
                 label,
                 this@Picker.content
             )

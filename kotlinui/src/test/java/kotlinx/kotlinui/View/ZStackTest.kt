@@ -32,7 +32,11 @@ class ZStackTest {
         )
 
         // ZStack:Tuple
-        val orig_zs_t = ZStack { get(Text("Text"), Text("Second")) }
+        val orig_zs_t = ZStack {
+            +Text("Text")
+            +Text("Second")
+            get()
+        }
         val data_zs_t = json.encodeToString(ZStack.Serializer(), orig_zs_t)
         val json_zs_t = json.decodeFromString(ZStack.Serializer<View>(), data_zs_t)
         Assert.assertEquals(orig_zs_t, json_zs_t)
