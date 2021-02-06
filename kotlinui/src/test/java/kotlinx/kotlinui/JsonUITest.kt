@@ -8,6 +8,23 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
 
+class SampleView : View {
+    override val body: View
+        get() =
+            VStack {
+                Text("Hello World")
+            }
+                .padding()
+}
+
+object SampleView_Previews : PreviewProvider {
+    override val previews: View
+        get() =
+            JsonPreview {
+                SampleView()
+            }
+}
+
 class JsonUITest {
     @Test
     fun serialize_jsonui() {
