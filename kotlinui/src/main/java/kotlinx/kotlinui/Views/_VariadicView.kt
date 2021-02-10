@@ -6,7 +6,7 @@ data class _VariadicView_Tree<Root : _VariadicView_Root, Content : View>(
     val root: Root,
     val content: Content
 ) : View {
-    constructor(root: Root, content: ViewBuilder.() -> Content) : this(root, content(ViewBuilder()))
+    constructor(root: Root, content: ViewBuilder.() -> Content) : this(root, content(ViewBuilder))
 
     override val body: View
         get() = error("Never")

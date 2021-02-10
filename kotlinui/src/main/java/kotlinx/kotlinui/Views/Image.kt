@@ -1,5 +1,8 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.widget.ImageView
+import android.view.View as XView
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -10,7 +13,7 @@ import android.media.Image as CGImage
 @Serializable(with = Image.Serializer::class)
 data class Image internal constructor(
     val _provider: AnyImageBox
-) : View, IAnyView {
+) : View, IAnyView, ViewBuildable {
 
     // region STORAGE
 
@@ -394,6 +397,30 @@ data class Image internal constructor(
                 Image(provider)
             }
     }
+
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        when (_provider) {
+            is NamedImageProvider -> {
+            }
+            is RenderingModeProvider -> {
+            }
+            is InterpolationProvider -> {
+            }
+            is AntialiasedProvider -> {
+            }
+            is CGImageProvider -> {
+            }
+            is PlatformProvider -> {
+            }
+            is ResizableProvider -> {
+            }
+            else -> error("")
+        }
+        val view = ImageView(context)
+        return view
+    }
+
 
 // region ADDITIONAL TYPES
 

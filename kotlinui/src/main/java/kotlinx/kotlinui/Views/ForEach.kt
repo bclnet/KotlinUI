@@ -1,5 +1,7 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
+
 data class ForEach<Data : List<Any?>, ID, Content : View>(
     val data: Data,
     val content: ViewBuilder.(Any?) -> Content

@@ -6,9 +6,10 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = SeparatorShapeStyle.Serializer::class)
-class SeparatorShapeStyle {
+class SeparatorShapeStyle : ShapeStyle {
     override fun equals(other: Any?): Boolean = other is SeparatorShapeStyle
     override fun hashCode(): Int = javaClass.hashCode()
+    override fun makeView(): Shape = error("Not Implemented")
 
     //: Codable
     internal object Serializer : KSerializer<SeparatorShapeStyle> {

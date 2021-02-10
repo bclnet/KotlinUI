@@ -15,6 +15,7 @@ data class ImagePaint(
     override val anyView: AnyView
         get() = AnyView(this)
 
+    override fun makeView(): Shape = error("Not Implemented")
     override val body: Never
         get() = error("Never")
 

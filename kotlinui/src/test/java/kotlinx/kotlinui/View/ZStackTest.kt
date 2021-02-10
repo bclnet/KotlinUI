@@ -1,9 +1,7 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.*
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*
@@ -33,9 +31,8 @@ class ZStackTest {
 
         // ZStack:Tuple
         val orig_zs_t = ZStack {
-            +Text("Text")
-            +Text("Second")
-            get()
+            Text("Text") +
+            Text("Second")
         }
         val data_zs_t = json.encodeToString(ZStack.Serializer(), orig_zs_t)
         val json_zs_t = json.decodeFromString(ZStack.Serializer<View>(), data_zs_t)

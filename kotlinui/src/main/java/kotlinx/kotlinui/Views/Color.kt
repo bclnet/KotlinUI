@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -22,7 +23,7 @@ data class Color internal constructor(
     ) {
         abstract fun apply(): Color
 
-        //: Codable - JsonContentPolymorphicSerializer
+        //: Codable
         object Serializer : KSerializer<AnyColorBox> {
             override val descriptor: SerialDescriptor =
                 buildClassSerialDescriptor(":Color")
@@ -347,6 +348,7 @@ data class Color internal constructor(
     constructor(cgColor: CGColor) : this(__NSCFType(cgColor))
 //    constructor(color: UXColor) : this(PlatformColor(color))
 
+    override fun makeView(): Shape = error("Not Implemented")
     override val body: View
         get() = error("Never")
 

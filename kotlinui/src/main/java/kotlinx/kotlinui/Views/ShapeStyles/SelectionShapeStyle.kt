@@ -9,6 +9,8 @@ import kotlinx.serialization.encoding.*
 data class SelectionShapeStyle(
     val isSelected: Boolean
 ) : ShapeStyle {
+    override fun makeView(): Shape = error("Not Implemented")
+
     //: Codable
     internal object Serializer : KSerializer<SelectionShapeStyle> {
         override val descriptor: SerialDescriptor =

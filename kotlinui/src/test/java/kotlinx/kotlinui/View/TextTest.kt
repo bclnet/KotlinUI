@@ -3,7 +3,6 @@ package kotlinx.kotlinui
 import android.icu.util.DateInterval
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.kotlinuijson.*
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer

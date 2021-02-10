@@ -9,6 +9,7 @@ import kotlinx.serialization.encoding.*
 class BackgroundStyle : ShapeStyle {
     override fun equals(other: Any?): Boolean = other is BackgroundStyle
     override fun hashCode(): Int = javaClass.hashCode()
+    override fun makeView(): Shape = error("Not Implemented")
 
     //: Codable
     internal object Serializer : KSerializer<BackgroundStyle> {

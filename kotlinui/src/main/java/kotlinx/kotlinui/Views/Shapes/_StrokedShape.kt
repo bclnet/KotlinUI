@@ -8,12 +8,16 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _StrokedShape.Serializer::class)
-data class _StrokedShape<S : View>(
+data class _StrokedShape<S : Shape>(
     val shape: S,
     val style: StrokeStyle
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
-    internal class Serializer<S : View> : KSerializer<_StrokedShape<S>> {
+    internal class Serializer<S : Shape> : KSerializer<_StrokedShape<S>> {
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
@@ -47,31 +51,31 @@ data class _StrokedShape<S : View>(
     companion object {
         //: Register
         fun register() {
-            PType.register<_StrokedShape<View>>()
+            PType.register<_StrokedShape<Shape>>()
         }
     }
 }
 
 fun <S : ShapeStyle> Shape.stroke(content: S, lineWidth: Float = 1f): View =
-    modifier(_StrokedShape(content as Shape, StrokeStyle(lineWidth = lineWidth)))
+    _StrokedShape(content.makeView(), StrokeStyle(lineWidth = lineWidth))
 
 fun <S : ShapeStyle> Shape.stroke(content: S, style: StrokeStyle): View =
-    modifier(_StrokedShape(content as Shape, style))
+    _StrokedShape(content.makeView(), style)
 
-fun Shape.stroke(lineWidth: Float = 1f): View =
-    modifier(_StrokedShape(this, StrokeStyle(lineWidth = lineWidth)))
+fun Shape.stroke(lineWidth: Float = 1f): Shape =
+    _StrokedShape(this, StrokeStyle(lineWidth = lineWidth))
 
-fun Shape.stroke(style: StrokeStyle): View =
-    modifier(_StrokedShape(this, style))
+fun Shape.stroke(style: StrokeStyle): Shape =
+    _StrokedShape(this, style)
 
 fun <S : ShapeStyle> InsettableShape.strokeBorder(content: S, lineWidth: Float = 1f, antialiased: Boolean = true): View =
-    modifier(_StrokedShape(content as Shape, StrokeStyle(lineWidth = lineWidth / 2)))
+    _StrokedShape(content.makeView(), StrokeStyle(lineWidth = lineWidth / 2))
 
 fun <S : ShapeStyle> InsettableShape.strokeBorder(content: S, style: StrokeStyle, antialiased: Boolean = true): View =
-    modifier(_StrokedShape(content as Shape, style))
+    _StrokedShape(content.makeView(), style)
 
 fun InsettableShape.strokeBorder(lineWidth: Float = 1f, antialiased: Boolean = true): View =
-    modifier(_StrokedShape(this, StrokeStyle(lineWidth = lineWidth)))
+    _StrokedShape(this, StrokeStyle(lineWidth = lineWidth))
 
 fun InsettableShape.strokeBorder(style: StrokeStyle, antialiased: Boolean = true): View =
-    modifier(_StrokedShape(this, style))
+    _StrokedShape(this, style)

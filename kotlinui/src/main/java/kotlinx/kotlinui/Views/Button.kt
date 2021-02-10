@@ -1,12 +1,13 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 
 data class Button<Label : View> private constructor(
     val action: () -> Unit,
     val _label: Label
 ) : View {
-    constructor(action: () -> Unit, label: ViewBuilder.() -> Label) : this(action, label(ViewBuilder()))
+    constructor(action: () -> Unit, label: ViewBuilder.() -> Label) : this(action, label(ViewBuilder))
 
     //where Label == Text
     //constructor(title: String, action: () -> Unit) : this(action, Text(title))

@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -12,11 +13,12 @@ class VSplitView<Content : View>(
     override fun equals(other: Any?): Boolean = other is VSplitView<*> && content == other.content
     override fun hashCode(): Int = content.hashCode()
 
-    val content: Content = content(ViewBuilder())
+    val content: Content = content(ViewBuilder)
 
     override val body: View
-        get() = error("Not Implemented")
+        get() = error("Never")
 
+    //: Codable
     internal class Serializer<Content : View> : KSerializer<VSplitView<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
 

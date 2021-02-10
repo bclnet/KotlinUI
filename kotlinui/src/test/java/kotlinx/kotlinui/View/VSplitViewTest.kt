@@ -1,9 +1,7 @@
 package kotlinx.kotlinui
 
-import kotlinx.kotlinuijson.*
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Assert.*

@@ -12,10 +12,9 @@ data class RotatedShape<Content : Shape>(
     val shape: Content,
     val angle: Angle,
     val anchor: UnitPoint
-) : ViewModifier, InsettableShape {
+) : InsettableShape {
     override fun path(rect: Rect): Path = error("Never")
     override fun inset(by: Float): View = error("Check") //modifier(_Inset(by))
-
     override val body: View
         get() = error("Never")
 
@@ -63,5 +62,5 @@ data class RotatedShape<Content : Shape>(
     }
 }
 
-fun Shape.rotation(angle: Angle, anchor: UnitPoint = UnitPoint.center): View =
-    modifier(RotatedShape(this, angle, anchor))
+fun Shape.rotation(angle: Angle, anchor: UnitPoint = UnitPoint.center): RotatedShape<Shape> =
+    RotatedShape(this, angle, anchor)

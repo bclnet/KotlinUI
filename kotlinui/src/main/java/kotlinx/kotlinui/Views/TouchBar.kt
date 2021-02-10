@@ -1,8 +1,8 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
@@ -15,11 +15,12 @@ class TouchBar<Content : View>(
     override fun hashCode(): Int = content.hashCode()
 
     internal val container: TouchBarContainer = TouchBarContainer(id)
-    internal val content: Content = content(ViewBuilder())
+    internal val content: Content = content(ViewBuilder)
 
     override val body: View
-        get() = error("Not Implemented")
+        get() = error("Never")
 
+    //: Codable
     internal class Serializer<Content : View> : KSerializer<TouchBar<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
 

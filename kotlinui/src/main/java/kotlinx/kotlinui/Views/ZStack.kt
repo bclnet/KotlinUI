@@ -1,6 +1,8 @@
 package kotlinx.kotlinui
 
-import android.icu.util.DateInterval
+import android.content.Context
+import android.widget.FrameLayout
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -10,15 +12,15 @@ import kotlinx.serialization.encoding.*
 class ZStack<Content : View>(
     alignment: Alignment = Alignment.center,
     content: ViewBuilder.() -> Content
-) : View, IAnyView {
+) : View, IAnyView, ViewBuildable {
     override fun equals(other: Any?): Boolean = other is ZStack<*> && _tree == other._tree
     override fun hashCode(): Int = _tree.hashCode()
 
     val _tree: _VariadicView_Tree<_ZStackLayout, Content> =
-        _VariadicView_Tree(_ZStackLayout(alignment), content(ViewBuilder()))
+        _VariadicView_Tree(_ZStackLayout(alignment), content(ViewBuilder))
 
     override val body: View
-        get() = error("Not Implemented")
+        get() = error("Never")
 
     override val anyView: AnyView
         get() = AnyView(this)
@@ -55,6 +57,16 @@ class ZStack<Content : View>(
                 }
                 ZStack(root.alignment) { content }
             }
+    }
+
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        val root = _tree.root
+        val view = FrameLayout(context!!)
+        _tree.content.buildViews(context).forEach {
+            view.addView(it)
+        }
+        return view
     }
 
     companion object {

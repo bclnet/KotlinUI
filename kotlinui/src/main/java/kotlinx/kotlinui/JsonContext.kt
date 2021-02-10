@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlinx.kotlinuijson
+package kotlinx.kotlinui
 
-import kotlinx.kotlinui.EdgeInsets
 import kotlinx.ptype.PType
 import kotlinx.ptype.PTypeSerializer
 import kotlinx.serialization.*

@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -11,7 +12,7 @@ class Toggle<Label : View>(
     label: ViewBuilder.() -> Label
 ) : View {
     var __isOn: Binding<Boolean> = isOn
-    var _label: Label = label(ViewBuilder())
+    var _label: Label = label(ViewBuilder)
 
     // where Label == ToggleStyleConfiguration.Label
     //public Constructor(configuration: ToggleStyleConfiguration) : this() {
@@ -30,6 +31,7 @@ class Toggle<Label : View>(
     override val body: Label
         get() = _label
 
+    //: Codable
     internal class Serializer<Label : View> : KSerializer<Toggle<Label>> {
         val bindingSerializer = Binding.Serializer<Boolean>()
         val labelSerializer = PolymorphicSerializer(Any::class)

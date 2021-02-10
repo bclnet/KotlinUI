@@ -1,10 +1,13 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.view.View as XView
 import android.icu.util.DateInterval
-import android.util.Range
-import kotlinx.kotlinuijson.JsonContext
+import android.text.format.DateUtils
+import android.widget.TextView
 import kotlinx.ptype.PType
-import kotlinx.ptype.PTypeSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
@@ -14,7 +17,7 @@ import java.util.*
 data class Text internal constructor(
     val _storage: Storage,
     val _modifiers: Array<Modifier>
-) : View, IAnyView {
+) : View, IAnyView, ViewBuildable {
     override fun equals(other: Any?): Boolean = other is Text && _storage == other._storage && _modifiers contentEquals other._modifiers
     override fun hashCode(): Int {
         var result = _storage.hashCode()
@@ -29,22 +32,6 @@ data class Text internal constructor(
         data class text(val string: String) : Storage()
         data class verbatim(val verbatim: String) : Storage()
         data class anyTextStorage(val anyTextStorage: AnyTextStorage) : Storage()
-
-//        override fun equals(other: Any?): Boolean {
-//            if (other !is Storage) return false
-//            return when (this) {
-//                is text -> other is text && string == other.string
-//                is verbatim -> other is verbatim && verbatim == other.verbatim
-//                is anyTextStorage -> other is anyTextStorage && anyTextStorage == other.anyTextStorage
-//            }
-//        }
-//
-//        override fun hashCode(): Int =
-//            when (this) {
-//                is text -> string.hashCode()
-//                is verbatim -> verbatim.hashCode()
-//                is anyTextStorage -> anyTextStorage.hashCode()
-//            }
     }
 
     @Serializable
@@ -513,6 +500,58 @@ data class Text internal constructor(
             }
     }
 
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        val view = TextView(context)
+        var font = EnvironmentValues.font
+        when (_storage) {
+            is Storage.text -> view.text = _storage.string
+            is Storage.verbatim -> view.text = _storage.verbatim
+            is Storage.anyTextStorage -> {
+                when (val anyStorage = _storage.anyTextStorage) {
+                    is AttachmentTextStorage -> error("Not Implemented")
+                    is LocalizedTextStorage -> error("Not Implemented")
+                    is FormatterTextStorage -> error("Not Implemented")
+                    is DateTextStorage -> {
+                        when (val storage = anyStorage.storage) {
+                            is DateTextStorage.Storage.absolute -> when (storage.style) {
+                                DateStyle.date -> DateUtils.formatDateTime(context, storage.date.time, 0)
+                                DateStyle.offset -> DateUtils.getRelativeTimeSpanString(System.currentTimeMillis(), storage.date.time, 0L, DateUtils.FORMAT_ABBREV_ALL)
+                                DateStyle.relative -> DateUtils.getRelativeTimeSpanString(storage.date.time, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL)
+                                DateStyle.time -> DateUtils.formatDateTime(context, storage.date.time, DateUtils.FORMAT_SHOW_TIME)
+                                DateStyle.timer -> DateUtils.formatElapsedTime(storage.date.time)
+                            }
+                            is DateTextStorage.Storage.interval -> DateUtils.formatDateRange(context, storage.interval.fromDate, storage.interval.toDate, DateUtils.FORMAT_ABBREV_TIME)
+                        }
+                    }
+                    else -> error("")
+                }
+            }
+        }
+        var typefaceWeight = 0f
+        var typefaceStyle = 0
+        _modifiers.forEach {
+            when (it) {
+                is Modifier.color -> view.setTextColor(0)
+                is Modifier.font -> if (it.font != null) font = it.font
+                is Modifier.italic -> typefaceStyle += Typeface.ITALIC
+                is Modifier.weight -> if (it.weight != null) typefaceWeight = it.weight.value
+                is Modifier.kerning -> ""
+                is Modifier.tracking -> ""
+                is Modifier.baseline -> ""
+                is Modifier.anyTextModifier ->
+                    when (val anyModifier = it.anyTextModifier) {
+                        is BoldTextModifier -> typefaceStyle += Typeface.BOLD
+                        is StrikethroughTextModifier -> view.paintFlags += Paint.STRIKE_THRU_TEXT_FLAG
+                        is UnderlineTextModifier -> view.paintFlags += Paint.UNDERLINE_TEXT_FLAG
+                    }
+            }
+        }
+        view.setTypeface(view.typeface, typefaceStyle)
+        return view
+    }
+
+
     companion object {
         //: Register
         fun register() {
@@ -537,16 +576,17 @@ data class Text internal constructor(
             override val descriptor: SerialDescriptor =
                 PrimitiveSerialDescriptor(":Text.DateStyle", PrimitiveKind.STRING)
 
-            override fun serialize(encoder: Encoder, value: DateStyle) {
-                when (value) {
-                    date -> encoder.encodeString("date")
-                    offset -> encoder.encodeString("offset")
-                    relative -> encoder.encodeString("relative")
-                    time -> encoder.encodeString("time")
-                    timer -> encoder.encodeString("timer")
-                    else -> error("$value")
-                }
-            }
+            override fun serialize(encoder: Encoder, value: DateStyle) =
+                encoder.encodeString(
+                    when (value) {
+                        date -> "date"
+                        offset -> "offset"
+                        relative -> "relative"
+                        time -> "time"
+                        timer -> "timer"
+                        else -> error("$value")
+                    }
+                )
 
             override fun deserialize(decoder: Decoder): DateStyle =
                 when (val value = decoder.decodeString()) {
@@ -569,13 +609,14 @@ data class Text internal constructor(
             override val descriptor: SerialDescriptor =
                 PrimitiveSerialDescriptor(":Text.TruncationMode", PrimitiveKind.STRING)
 
-            override fun serialize(encoder: Encoder, value: TruncationMode) {
-                when (value) {
-                    head -> encoder.encodeString("head")
-                    tail -> encoder.encodeString("tail")
-                    middle -> encoder.encodeString("middle")
-                }
-            }
+            override fun serialize(encoder: Encoder, value: TruncationMode) =
+                encoder.encodeString(
+                    when (value) {
+                        head -> "head"
+                        tail -> "tail"
+                        middle -> "middle"
+                    }
+                )
 
             override fun deserialize(decoder: Decoder): TruncationMode =
                 when (val value = decoder.decodeString()) {
@@ -595,12 +636,13 @@ data class Text internal constructor(
             override val descriptor: SerialDescriptor =
                 PrimitiveSerialDescriptor(":Text.Case", PrimitiveKind.STRING)
 
-            override fun serialize(encoder: Encoder, value: Case) {
-                when (value) {
-                    uppercase -> encoder.encodeString("uppercase")
-                    lowercase -> encoder.encodeString("lowercase")
-                }
-            }
+            override fun serialize(encoder: Encoder, value: Case) =
+                encoder.encodeString(
+                    when (value) {
+                        uppercase -> "uppercase"
+                        lowercase -> "lowercase"
+                    }
+                )
 
             override fun deserialize(decoder: Decoder): Case =
                 when (val value = decoder.decodeString()) {
@@ -622,19 +664,20 @@ enum class TextAlignment {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor(":TextAlignment", PrimitiveKind.STRING)
 
-        override fun serialize(encoder: Encoder, value: TextAlignment) {
-            when (value) {
-                leading -> encoder.encodeString("leading")
-                center -> encoder.encodeString("center")
-                trailing -> encoder.encodeString("trailing")
-            }
-        }
+        override fun serialize(encoder: Encoder, value: TextAlignment) =
+            encoder.encodeString(
+                when (value) {
+                    leading -> "leading"
+                    center -> "center"
+                    trailing -> "trailing"
+                }
+            )
 
         override fun deserialize(decoder: Decoder): TextAlignment =
             when (val value = decoder.decodeString()) {
-                "leading" -> TextAlignment.leading
-                "center" -> TextAlignment.center
-                "trailing" -> TextAlignment.trailing
+                "leading" -> leading
+                "center" -> center
+                "trailing" -> trailing
                 else -> error(value)
             }
     }

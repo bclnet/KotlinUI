@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.PType
 
 data class Stepper<Label : View> private constructor(

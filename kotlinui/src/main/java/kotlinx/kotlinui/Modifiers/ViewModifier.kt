@@ -1,7 +1,8 @@
 package kotlinx.kotlinui
 
 interface ViewModifier {
-    fun body(content: _ViewModifier_Content<ViewModifier>): View = error("Never")
+    fun body(content: _ViewModifier_Content<ViewModifier>): View =
+        error("Never")
 
     fun <T : ViewModifier> concat(modifier: T): ModifiedContent<ViewModifier, T> =
         ModifiedContent(this, modifier)

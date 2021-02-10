@@ -51,4 +51,4 @@ data class _OverlayModifier<Overlay : View>(
 }
 
 fun <Overlay : View> View.overlay(overlay: Overlay, alignment: Alignment = Alignment.center): View =
-    modifier(_OverlayModifier<Overlay>(overlay, alignment))
+    modifier(_OverlayModifier(overlay, alignment))

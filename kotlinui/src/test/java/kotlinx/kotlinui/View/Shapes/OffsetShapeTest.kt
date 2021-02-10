@@ -1,7 +1,6 @@
 package kotlinx.kotlinui
 
 import android.util.SizeF
-import kotlinx.kotlinuijson.*
 import kotlinx.ptype.PType
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer

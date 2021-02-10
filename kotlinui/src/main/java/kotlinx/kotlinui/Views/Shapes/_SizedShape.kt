@@ -8,12 +8,16 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _SizedShape.Serializer::class)
-data class _SizedShape<S : View>(
+data class _SizedShape<S : Shape>(
     val shape: S,
     val size: SizeF
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
-    internal class Serializer<S : View> : KSerializer<_SizedShape<S>> {
+    internal class Serializer<S : Shape> : KSerializer<_SizedShape<S>> {
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
@@ -47,13 +51,13 @@ data class _SizedShape<S : View>(
     companion object {
         //: Register
         fun register() {
-            PType.register<_SizedShape<View>>()
+            PType.register<_SizedShape<Shape>>()
         }
     }
 }
 
-fun Shape.size(size: SizeF): View =
-    modifier(_SizedShape(this, size))
+fun Shape.size(size: SizeF): Shape =
+    _SizedShape(this, size)
 
-fun Shape.size(width: Float, height: Float): View =
-    modifier(_SizedShape(this, SizeF(width, height)))
+fun Shape.size(width: Float, height: Float): Shape =
+    _SizedShape(this, SizeF(width, height))

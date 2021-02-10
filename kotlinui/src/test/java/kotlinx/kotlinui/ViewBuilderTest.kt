@@ -34,9 +34,8 @@ class ViewBuilderTest {
         //
         val orig_vb_b =
             VStack {
-                +Text("First")
-                +Circle()
-                get()
+                Text("First") +
+                        Circle()
             }
         val data_vb_b = json.encodeToString(VStack.Serializer(), orig_vb_b)
         val json_vb_b = json.decodeFromString(VStack.Serializer<View>(), data_vb_b)

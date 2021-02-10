@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlinx.kotlinuijson
+package kotlinx.kotlinui
 
-import kotlinx.kotlinui.*
 import kotlinx.ptype.KSerializerUserInfo
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -122,7 +121,7 @@ class JsonUI(val type: KType, view: View) {
             //EquatableView.register()
 //            ForEach.register()
 //            Form.register()
-//            GeometryReader.register()
+            GeometryReader.register()
             //Group.register()
 //            GroupBox.register()
 //            HSplitView.register()
@@ -137,7 +136,7 @@ class JsonUI(val type: KType, view: View) {
 //            NavigationView.register()
 //            PasteButton.register()
 //            Picker.register()
-//            ScrollView.register()
+            ScrollView.register()
 //            Section.register()
 //            SecureField.register()
 //            Slider.register()

@@ -1,5 +1,6 @@
 package kotlinx.kotlinui
 
+import android.view.View as XView
 import kotlinx.ptype.*
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -18,6 +19,7 @@ data class TextField<Label : Text> internal constructor(
     override val body: Text
         get() = label
 
+    //: Codable
     internal class Serializer<Label : Text> : KSerializer<TextField<Label>> {
         val labelSerializer = PolymorphicSerializer(Any::class)
 

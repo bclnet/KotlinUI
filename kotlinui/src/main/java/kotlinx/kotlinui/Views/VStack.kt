@@ -1,5 +1,8 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.widget.LinearLayout
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.serializer
@@ -11,15 +14,15 @@ class VStack<Content : View>(
     alignment: HorizontalAlignment = HorizontalAlignment.center,
     spacing: Float? = null,
     content: ViewBuilder.() -> Content
-) : View, IAnyView {
+) : View, IAnyView, ViewBuildable {
     override fun equals(other: Any?): Boolean = other is VStack<*> && _tree == other._tree
     override fun hashCode(): Int = _tree.hashCode()
 
     val _tree: _VariadicView_Tree<_VStackLayout, Content> =
-        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder()))
+        _VariadicView_Tree(_VStackLayout(alignment, spacing), content(ViewBuilder))
 
     override val body: View
-        get() = error("Not Implemented")
+        get() = error("Never")
 
     override val anyView: AnyView
         get() = AnyView(this)
@@ -56,6 +59,17 @@ class VStack<Content : View>(
                 }
                 VStack(root.alignment, root.spacing) { content }
             }
+    }
+
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        val root = _tree.root
+        val view = LinearLayout(context)
+        view.orientation = LinearLayout.VERTICAL
+        _tree.content.buildViews(context).forEach {
+            view.addView(it)
+        }
+        return view
     }
 
     companion object {

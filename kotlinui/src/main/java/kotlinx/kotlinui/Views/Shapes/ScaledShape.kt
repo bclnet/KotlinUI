@@ -12,7 +12,11 @@ data class ScaledShape<Content : Shape>(
     val shape: Content,
     val scale: SizeF,
     val anchor: UnitPoint
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
     internal class Serializer<Content : Shape> : KSerializer<ScaledShape<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
@@ -57,8 +61,8 @@ data class ScaledShape<Content : Shape>(
     }
 }
 
-fun Shape.scale(size: Float, anchor: UnitPoint = UnitPoint.center): View =
-    modifier(ScaledShape(this, SizeF(size, size), anchor))
+fun Shape.scale(size: Float, anchor: UnitPoint = UnitPoint.center): ScaledShape<Shape> =
+    ScaledShape(this, SizeF(size, size), anchor)
 
-fun Shape.scale(x: Float = 1f, y: Float = 1f, anchor: UnitPoint = UnitPoint.center): View =
-    modifier(ScaledShape(this, SizeF(x, y), anchor))
+fun Shape.scale(x: Float = 1f, y: Float = 1f, anchor: UnitPoint = UnitPoint.center): ScaledShape<Shape> =
+    ScaledShape(this, SizeF(x, y), anchor)

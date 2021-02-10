@@ -8,13 +8,17 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _TrimmedShape.Serializer::class)
-data class _TrimmedShape<S : View>(
+data class _TrimmedShape<S : Shape>(
     val shape: S,
     val startFraction: Float,
     val endFraction: Float
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
-    internal class Serializer<S : View> : KSerializer<_TrimmedShape<S>> {
+    internal class Serializer<S : Shape> : KSerializer<_TrimmedShape<S>> {
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
@@ -52,10 +56,10 @@ data class _TrimmedShape<S : View>(
     companion object {
         //: Register
         fun register() {
-            PType.register<_TrimmedShape<View>>()
+            PType.register<_TrimmedShape<Shape>>()
         }
     }
 }
 
 fun Shape.trim(startFraction: Float = 0f, endFraction: Float = 1f): View =
-    modifier(_TrimmedShape(this, startFraction, endFraction))
+    _TrimmedShape(this, startFraction, endFraction)

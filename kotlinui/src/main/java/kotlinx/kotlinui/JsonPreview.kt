@@ -1,13 +1,12 @@
-package kotlinx.kotlinuijson
+package kotlinx.kotlinui
 
-import kotlinx.kotlinui.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 import java.lang.Exception
 
 class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
     // The json preview's content.
-    val content: Content = content(ViewBuilder())
+    val content: Content = content(ViewBuilder)
 
     // The json preview's content.
     lateinit var content2: AnyView
@@ -50,63 +49,52 @@ class JsonPreview<Content : View>(content: ViewBuilder.() -> Content) : View {
     }
 
     override val body: View
-        get() = Text("Body")
-//        get() = GeometryReader { geometry ->
-//            VStack {
-//                HStack {
-//                    content
-//                        .frame(width: geometry.size.width / 2, height: geometry.size.height * 0.7)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 16)
-//                                .stroke(Color.black, lineWidth: 4)
-//                        )
-//                    content2
-//                        .frame(width: geometry.size.width / 2, height: geometry.size.height * 0.7)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 16)
-//                                .stroke(Color.black, lineWidth: 4)
-//                        )
-//                }
-//                Spacer()
-//                ZStack {
-//                    ScrollView {
-//                        HStack {
-//                            Text(String(data: data, encoding: .utf8)!)
-//                            Spacer()
-//                        }
-//                        .padding()
-//                    }
-//                    VStack {
-//                        HStack(alignment: .top) {
-//                            Spacer()
-//                            Button(action: {
-//                                #if os(macOS)
-//                                NSPasteboard.general.setString(String(data: data, encoding: .utf8)!, forType: .string)
-//                                #else
-//                                UIPasteboard.general.string = String(data: data, encoding: .utf8)!
-//                                #endif
-//                                print("copied to clipboard")
-//                            }, label: {
-//                                if #available(macOS 11.0, *) {
-//                                    Image(systemName: "doc.text")
-//                                        .font(Font.system(.title))
-//                                } else {
-//                                    Image("")
-//                                        .font(Font.system(.title))
-//                                }
-//                            })
-//                        }
-//                        .padding()
-//                        Spacer()
-//                    }
-//                }
-//                .frame(width: geometry.size.width, height: geometry.size.height * 0.3 - 10)
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 16)
-//                        .stroke(Color.black, lineWidth: 4)
-//                )
-//            }
-//        }
-//        .padding()
+        get() = GeometryReader { geometry ->
+            VStack {
+                HStack {
+                    content
+                        .frame(geometry.size.width / 2f, geometry.size.height * 0.7f)
+                        .overlay(
+                            RoundedRectangle(16f)
+                                .stroke(Color.black, 4f)
+                        ) +
+                    content2
+                        .frame(geometry.size.width / 2f, geometry.size.height * 0.7f)
+                        .overlay(
+                            RoundedRectangle(16f)
+                                .stroke(Color.black, 4f)
+                        )
+                }
+                Spacer() +
+                ZStack {
+                    ScrollView {
+                        HStack {
+                            Text(data) +
+                            Spacer()
+                        }
+                            .padding()
+                    } +
+                    VStack {
+                        HStack(VerticalAlignment.top) {
+                            Spacer() +
+                            Button({
+                                print("copied to clipboard")
+                            }, label = {
+                                Image("")
+                                    .font(Font.system(Font.TextStyle.title))
+                            })
+                        }
+                            .padding() +
+                        Spacer()
+                    }
+                }
+                    .frame(geometry.size.width, geometry.size.height * 0.3f - 10f)
+                    .overlay(
+                        RoundedRectangle(16f)
+                            .stroke(Color.black, 4f)
+                    )
+            }
+        }
+            .padding()
 }
 

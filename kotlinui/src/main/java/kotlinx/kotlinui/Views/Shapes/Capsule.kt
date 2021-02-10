@@ -1,6 +1,11 @@
 package kotlinx.kotlinui
 
+import android.content.Context
 import android.graphics.Rect
+import android.graphics.drawable.GradientDrawable
+import android.graphics.Color as XColor
+import android.view.View as XView
+
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -9,10 +14,9 @@ import kotlinx.serialization.encoding.*
 @Serializable(with = Capsule.Serializer::class)
 data class Capsule(
     val style: RoundedCornerStyle = RoundedCornerStyle.circular
-) : InsettableShape {
+) : InsettableShape, ViewBuildable {
     override fun path(rect: Rect): Path = error("Never")
     override fun inset(by: Float): View = modifier(_Inset(by))
-
     override val body: View
         get() = error("Never")
 
@@ -40,6 +44,17 @@ data class Capsule(
                 }
                 Capsule(style)
             }
+    }
+
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        val view = XView(context)
+        val drawable = GradientDrawable()
+        drawable.setColor(XColor.parseColor("#ff0000"))
+        drawable.shape = GradientDrawable.OVAL
+        drawable.setStroke(5, XColor.parseColor("#03dc13"))
+        view.background = drawable
+        return view
     }
 
     @Serializable(with = _Inset.Serializer::class)

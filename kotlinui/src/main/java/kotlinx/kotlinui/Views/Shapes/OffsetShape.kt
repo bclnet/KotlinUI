@@ -12,10 +12,9 @@ import kotlinx.serialization.encoding.*
 data class OffsetShape<Content : Shape>(
     val shape: Content,
     val offset: SizeF
-) : ViewModifier, InsettableShape {
-    override fun path(rect: Rect): Path = error("Never")
+) : InsettableShape {
+    override fun path(rect: Rect): Path = shape.path(rect)
     override fun inset(by: Float): View = error("TEST") //modifier(_Inset(by))
-
     override val body: View
         get() = error("Never")
 
@@ -59,11 +58,11 @@ data class OffsetShape<Content : Shape>(
     }
 }
 
-fun Shape.offset(offset: SizeF): View =
-    modifier(OffsetShape(this, offset))
+fun Shape.offset(offset: SizeF): OffsetShape<Shape> =
+    OffsetShape(this, offset)
 
-fun Shape.offset(offset: PointF): View =
-    modifier(OffsetShape(this, SizeF(offset.x, offset.y)))
+fun Shape.offset(offset: PointF): OffsetShape<Shape> =
+    OffsetShape(this, SizeF(offset.x, offset.y))
 
-fun Shape.offset(x: Float = 0f, y: Float = 0f): View =
-    modifier(OffsetShape(this, SizeF(x, y)))
+fun Shape.offset(x: Float = 0f, y: Float = 0f): OffsetShape<Shape> =
+    OffsetShape(this, SizeF(x, y))

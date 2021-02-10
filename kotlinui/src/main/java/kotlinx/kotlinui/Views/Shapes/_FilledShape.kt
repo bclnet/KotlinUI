@@ -8,12 +8,16 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = _FilledShape.Serializer::class)
-data class _FilledShape<S : View>(
+data class _FilledShape<S : Shape>(
     val shape: S,
     val style: FillStyle
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
-    internal class Serializer<S : View> : KSerializer<_FilledShape<S>> {
+    internal class Serializer<S : Shape> : KSerializer<_FilledShape<S>> {
         val shapeSerializer = PolymorphicSerializer(Any::class)
 
         override val descriptor: SerialDescriptor =
@@ -47,13 +51,13 @@ data class _FilledShape<S : View>(
     companion object {
         //: Register
         fun register() {
-            PType.register<_FilledShape<View>>()
+            PType.register<_FilledShape<Shape>>()
         }
     }
 }
 
 fun <S : ShapeStyle> Shape.fill(content: S, style: FillStyle = FillStyle()): View =
-    modifier(_FilledShape(content as Shape, style))
+    _FilledShape(content.makeView(), style)
 
 fun Shape.fill(style: FillStyle = FillStyle()): View =
-    modifier(_FilledShape(this, style))
+    _FilledShape(this, style)

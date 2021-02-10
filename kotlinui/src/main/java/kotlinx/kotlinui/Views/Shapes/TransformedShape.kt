@@ -11,7 +11,11 @@ import kotlinx.serialization.encoding.*
 data class TransformedShape<Content : Shape>(
     val shape: Content,
     val transform: Matrix
-) : ViewModifier {
+) : Shape {
+    override fun path(rect: Rect): Path = shape.path(rect)
+    override val body: View
+        get() = error("Never")
+
     //: Codable
     internal class Serializer<Content : Shape> : KSerializer<TransformedShape<Content>> {
         val contentSerializer = PolymorphicSerializer(Any::class)
@@ -52,5 +56,5 @@ data class TransformedShape<Content : Shape>(
     }
 }
 
-fun Shape.transform(matrix: Matrix): View =
-    modifier(TransformedShape(this, matrix))
+fun Shape.transform(matrix: Matrix): TransformedShape<Shape> =
+    TransformedShape(this, matrix)

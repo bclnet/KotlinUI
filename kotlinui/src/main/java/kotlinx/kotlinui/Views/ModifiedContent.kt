@@ -1,5 +1,7 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.view.View as XView
 import kotlinx.ptype.PType
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -9,7 +11,7 @@ import kotlinx.serialization.encoding.*
 data class ModifiedContent<Content, Modifier : ViewModifier>(
     val content: Content,
     val modifier: Modifier
-) : View {
+) : View, ViewBuildable {
     override val body: Never
         get() = error("Never")
 
@@ -46,6 +48,18 @@ data class ModifiedContent<Content, Modifier : ViewModifier>(
             }
     }
 
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView {
+        when (content) {
+            is View -> {
+                val view = content.builder.buildView(context)
+                return view
+            }
+            is ViewModifier -> error("Not Implemented")
+            else -> error("$content: Wrong type")
+        }
+    }
+
     companion object {
         //: Register
         fun register() {
@@ -55,7 +69,7 @@ data class ModifiedContent<Content, Modifier : ViewModifier>(
 }
 
 fun <T : ViewModifier> View.modifier(modifier: T): ModifiedContent<View, T> =
-    ModifiedContent<View, T>(this, modifier)
+    ModifiedContent(this, modifier)
 
 //internal fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeView(view: _GraphValue<ModifiedContent<Content, Modifier>>, inputs: _ViewInputs): _ViewOutputs = error("Not Implemented")
 //internal fun <Content, Modifier : ViewModifier> ModifiedContent<Content, Modifier>._makeViewList(view: _GraphValue<ModifiedContent<Content, Modifier>>, inputs: _ViewListInputs): _ViewListOutputs = error("Not Implemented")

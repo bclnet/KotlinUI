@@ -5,61 +5,62 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
-@Serializable(with = AngularGradient.Serializer::class)
-data class AngularGradient(
+@Serializable(with = RadialGradient.Serializer::class)
+data class RadialGradient(
     val gradient: Gradient,
     val center: UnitPoint,
-    val startAngle: Angle,
-    val endAngle: Angle
+    val startRadius: Float,
+    val endRadius: Float,
 ) : ShapeStyle, View, IAnyView {
     override val anyView: AnyView
         get() = AnyView(this)
 
+    override fun makeView(): Shape = error("Not Implemented")
     override val body: Never
         get() = error("Never")
 
     //: Codable
-    internal object Serializer : KSerializer<AngularGradient> {
+    internal object Serializer : KSerializer<RadialGradient> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor(":AngularGradient") {
+            buildClassSerialDescriptor(":RadialGradient") {
                 element<Gradient>("gradient")
                 element<UnitPoint>("center")
-                element<Angle>("startAngle")
-                element<Angle>("endAngle")
+                element<Float>("startRadius")
+                element<Float>("endRadius")
             }
 
-        override fun serialize(encoder: Encoder, value: AngularGradient) =
+        override fun serialize(encoder: Encoder, value: RadialGradient) =
             encoder.encodeStructure(descriptor) {
                 encodeSerializableElement(descriptor, 0, Gradient.Serializer, value.gradient)
                 encodeSerializableElement(descriptor, 1, UnitPoint.Serializer, value.center)
-                if (value.startAngle != Angle.zero) encodeSerializableElement(descriptor, 2, Angle.Serializer, value.startAngle)
-                if (value.endAngle != Angle.zero) encodeSerializableElement(descriptor, 3, Angle.Serializer, value.endAngle)
+                encodeFloatElement(descriptor, 2, value.startRadius)
+                encodeFloatElement(descriptor, 3, value.endRadius)
             }
 
-        override fun deserialize(decoder: Decoder): AngularGradient =
+        override fun deserialize(decoder: Decoder): RadialGradient =
             decoder.decodeStructure(descriptor) {
                 lateinit var gradient: Gradient
                 lateinit var center: UnitPoint
-                var startAngle: Angle = Angle.zero
-                var endAngle: Angle = Angle.zero
+                var startRadius: Float = 0f
+                var endRadius: Float = 0f
                 while (true) {
                     when (val index = decodeElementIndex(descriptor)) {
                         0 -> gradient = decodeSerializableElement(descriptor, 0, Gradient.Serializer)
                         1 -> center = decodeSerializableElement(descriptor, 1, UnitPoint.Serializer)
-                        2 -> startAngle = decodeSerializableElement(descriptor, 2, Angle.Serializer)
-                        3 -> endAngle = decodeSerializableElement(descriptor, 3, Angle.Serializer)
+                        2 -> startRadius = decodeFloatElement(descriptor, 2)
+                        3 -> endRadius = decodeFloatElement(descriptor, 3)
                         CompositeDecoder.DECODE_DONE -> break
                         else -> error("Unexpected index: $index")
                     }
                 }
-                AngularGradient(gradient, center, startAngle, endAngle)
+                RadialGradient(gradient, center, startRadius, endRadius)
             }
     }
 
     companion object {
         //: Register
         fun register() {
-            PType.register<AngularGradient>()
+            PType.register<RadialGradient>()
         }
     }
 }

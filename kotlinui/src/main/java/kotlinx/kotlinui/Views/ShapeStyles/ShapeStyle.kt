@@ -1,7 +1,7 @@
 package kotlinx.kotlinui
 
 interface ShapeStyle {
-
+    fun makeView(): Shape
 }
 
 // val ShapeStyle.body: Never

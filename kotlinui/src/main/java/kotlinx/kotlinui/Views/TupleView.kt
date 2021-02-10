@@ -1,12 +1,11 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.widget.LinearLayout
+import android.view.View as XView
 import kotlinx.ptype.PType
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.system.*
 import kotlin.math.max
@@ -18,6 +17,7 @@ data class TupleView<T>(
     override val body: View
         get() = error("Never")
 
+    //: Codable
     internal class Serializer<T> : KSerializer<TupleView<T>> {
         val t0Serializer = PolymorphicSerializer(Any::class)
         val t1Serializer = PolymorphicSerializer(Any::class)
@@ -166,7 +166,6 @@ data class TupleView<T>(
                 }
             }
     }
-
 
     companion object {
         //: Register

@@ -13,7 +13,6 @@ class Rectangle : InsettableShape {
 
     override fun path(rect: Rect): Path = error("Never")
     override fun inset(by: Float): View = modifier(_Inset(by))
-
     override val body: View
         get() = error("Never")
 

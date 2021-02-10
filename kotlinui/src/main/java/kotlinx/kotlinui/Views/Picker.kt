@@ -1,11 +1,15 @@
 package kotlinx.kotlinui
 
+import android.content.Context
+import android.view.View as XView
+import kotlinx.system.Tuple2
+
 class Picker<Label : View, SelectionValue, Content : View>(
     val selection: Binding<SelectionValue>,
     val label: Label,
     content: ViewBuilder.() -> Content
-) : View {
-    val content: Content = content(ViewBuilder())
+) : View, ViewBuildable {
+    val content: Content = content(ViewBuilder)
 
     //where Label == Text {
 //    constructor(
@@ -22,13 +26,12 @@ class Picker<Label : View, SelectionValue, Content : View>(
 //    ) {
 //    }
 
+    //: ViewBuildable
+    override fun buildView(context: Context?): XView =
+        error("Not Implemented")
+
     override val body: View
-        get() = HStack {
-            make(
-                label,
-                this@Picker.content
-            )
-        }
+        get() = HStack { TupleView(Tuple2(label, content)) }
 }
 
 fun <S : PickerStyle> View.pickerStyle(style: S): View =

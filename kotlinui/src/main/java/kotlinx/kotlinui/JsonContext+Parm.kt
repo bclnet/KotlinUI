@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlinx.kotlinuijson
+package kotlinx.kotlinui
 
 import kotlin.reflect.typeOf
 
