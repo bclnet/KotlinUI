@@ -8,12 +8,14 @@
     <em>most HTML tags may be used</em>
     ]]></description>
 
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <defaultProjectTypeProvider type="Android"/>
+        <projectConfigurable instance="settings.JiraSettings"/>
+        <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="windows.MyToolWindowFactory"/>
     </extensions>
 
     <application-components>
@@ -21,6 +23,14 @@
             <implementation-class>components.MyComponent</implementation-class>
         </component>
     </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>
+                components.JiraComponent
+            </implementation-class>
+        </component>
+    </project-components>
 
     <actions>
         <group id="MyPlugin.TopMenu"
@@ -31,6 +41,18 @@
                     class="actions.MyAction"
                     text="_MyAction"
                     description="MyAction"/>
+        </group>
+
+        <group id="MediumMenu" text="_Medium" description="Medium" popup="true">
+            <group id="MediumInsideMenu" text="_Medium" description="Medium">
+                <action id="JiraMoveIssue"
+                        class="actions.jiraAction.JiraMoveAction"
+                        text="Move Issue"
+                        description="Move Issue in Jira">
+                    <keyboard-shortcut first-keystroke="control alt k" keymap="$default"/>
+                </action>
+            </group>
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="RefactoringMenu" anchor="before"/>
         </group>
     </actions>
 </idea-plugin>

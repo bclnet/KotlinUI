@@ -20,7 +20,7 @@ class MyComponent : ApplicationComponent, PersistentStateComponent<MyComponent> 
 
         version = PluginManager.getPlugin(PluginId.getId("kotlinx.KotlinUIPlugin"))!!.version
 
-        if (true || isANewVersion()) {
+        if (isANewVersion()) {
             updateLocalVersion()
             Utils.createNotification(
                 Utils.message("plugin.updated"),
