@@ -1,4 +1,4 @@
-package actions.jiraAction.network
+package kotlinuiplugin.actions.jiraAction.network
 
 import io.reactivex.Completable
 import io.reactivex.Single

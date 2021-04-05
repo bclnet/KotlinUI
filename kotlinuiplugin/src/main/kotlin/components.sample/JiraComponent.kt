@@ -1,4 +1,4 @@
-package components
+package kotlinuiplugin.components
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project

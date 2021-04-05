@@ -1,9 +1,9 @@
-package actions
+package kotlinuiplugin.actions
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import utils.Utils
+import kotlinuiplugin.utils.Utils
 
 class MyAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) =

@@ -1,8 +1,8 @@
-package actions.jiraAction
+package kotlinuiplugin.actions.jiraAction
 
-import actions.jiraAction.network.Transition
+import kotlinuiplugin.actions.jiraAction.network.Transition
 import com.intellij.openapi.ui.ComboBox
-import utils.Utils
+import kotlinuiplugin.utils.Utils
 import java.awt.Dimension
 import javax.swing.JLabel
 import javax.swing.JPanel

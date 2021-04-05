@@ -9,50 +9,65 @@
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultProjectTypeProvider type="Android"/>
-        <projectConfigurable instance="settings.JiraSettings"/>
-        <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"
-                    factoryClass="windows.MyToolWindowFactory"/>
+        <configurationType implementation="kotlinuiplugin.configuration.PreviewRunConfigurationType"/>
+        <projectConfigurable instance="kotlinuiplugin.components.ProjectSettings"/>
+        <!--        <projectConfigurable instance="kotlinuiplugin.components.JiraSettings"/>-->
+        <toolWindow id="KotlinUI Preview" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="kotlinuiplugin.windows.PreviewToolWindowFactory"/>
+<!--        <toolWindow id="Sample Calendar" secondary="true" icon="AllIcons.General.Modified" anchor="right"-->
+<!--                    factoryClass="kotlinuiplugin.windows.MyToolWindowFactory"/>-->
+
+        <moduleService serviceImplementation="kotlinuiplugin.services.PreviewModuleService" />
     </extensions>
 
     <application-components>
         <component>
-            <implementation-class>components.MyComponent</implementation-class>
+            <implementation-class>kotlinuiplugin.components.AppComponent</implementation-class>
+<!--            <implementation-class>kotlinuiplugin.components.MyComponent</implementation-class>-->
         </component>
     </application-components>
 
     <project-components>
         <component>
-            <implementation-class>
-                components.JiraComponent
-            </implementation-class>
+            <implementation-class>kotlinuiplugin.components.ProjectComponent</implementation-class>
+<!--            <implementation-class>kotlinuiplugin.components.JiraComponent</implementation-class>-->
         </component>
     </project-components>
 
     <actions>
-        <group id="MyPlugin.TopMenu"
-               text="_MyPlugin"
-               description="MyPlugin Toolbar Menu">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="MyAction"
-                    class="actions.MyAction"
-                    text="_MyAction"
-                    description="MyAction"/>
-        </group>
+<!--        <group id="MyPlugin.TopMenu"-->
+<!--               text="_MyPlugin"-->
+<!--               description="MyPlugin Toolbar Menu">-->
+<!--            <add-to-group group-id="MainMenu" anchor="last"/>-->
+<!--            <action id="MyAction"-->
+<!--                    class="kotlinuiplugin.actions.MyAction"-->
+<!--                    text="_MyAction"-->
+<!--                    description="MyAction"/>-->
+<!--        </group>-->
 
-        <group id="MediumMenu" text="_Medium" description="Medium" popup="true">
-            <group id="MediumInsideMenu" text="_Medium" description="Medium">
-                <action id="JiraMoveIssue"
-                        class="actions.jiraAction.JiraMoveAction"
-                        text="Move Issue"
-                        description="Move Issue in Jira">
-                    <keyboard-shortcut first-keystroke="control alt k" keymap="$default"/>
-                </action>
-            </group>
+<!--        <group id="MediumMenu" text="_Medium" description="Medium" popup="true">-->
+<!--            <group id="MediumInsideMenu" text="_Medium" description="Medium">-->
+<!--                <action id="JiraMoveIssue"-->
+<!--                        class="kotlinuiplugin.actions.jiraAction.JiraMoveAction"-->
+<!--                        text="Move Issue"-->
+<!--                        description="Move Issue in Jira">-->
+<!--                    <keyboard-shortcut first-keystroke="control alt k" keymap="$default"/>-->
+<!--                </action>-->
+<!--            </group>-->
+<!--            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="RefactoringMenu" anchor="before"/>-->
+<!--        </group>-->
+
+        <action id="KotlinUIPreview"
+                class="kotlinuiplugin.actions.PreviewAction"
+                text="KotlinUI Preview"
+                description="Preview KotlinUI">
+            <keyboard-shortcut first-keystroke="control shift z" keymap="$default"/>
             <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="RefactoringMenu" anchor="before"/>
-        </group>
+        </action>
     </actions>
 </idea-plugin>

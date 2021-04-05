@@ -1,9 +1,9 @@
-package actions.jiraAction.di
+package kotlinuiplugin.actions.jiraAction.di
 
-import actions.jiraAction.JiraMoveDialog
-import actions.jiraAction.network.JiraService
+import kotlinuiplugin.actions.jiraAction.JiraMoveDialog
+import kotlinuiplugin.actions.jiraAction.network.JiraService
 import com.intellij.openapi.project.Project
-import components.JiraComponent
+import kotlinuiplugin.components.JiraComponent
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

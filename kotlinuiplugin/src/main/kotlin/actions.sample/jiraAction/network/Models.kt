@@ -1,4 +1,4 @@
-package actions.jiraAction.network
+package kotlinuiplugin.actions.jiraAction.network
 
 data class Transition(val id: String, val name: String = "") {
     override fun toString(): String = name

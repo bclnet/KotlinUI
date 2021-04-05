@@ -1,6 +1,6 @@
-package actions.jiraAction.di
+package kotlinuiplugin.actions.jiraAction.di
 
-import actions.jiraAction.JiraMoveDialog
+import kotlinuiplugin.actions.jiraAction.JiraMoveDialog
 import dagger.Component
 
 @Component(modules = [JiraModule::class])

@@ -1,4 +1,4 @@
-package utils
+package kotlinuiplugin.utils
 
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup

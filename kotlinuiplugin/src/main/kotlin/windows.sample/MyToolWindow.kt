@@ -1,4 +1,4 @@
-package windows
+package kotlinuiplugin.windows
 
 import com.intellij.openapi.wm.ToolWindow
 import javax.swing.JButton

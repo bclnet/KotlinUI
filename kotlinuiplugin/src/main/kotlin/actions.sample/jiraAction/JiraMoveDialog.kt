@@ -1,12 +1,12 @@
-package actions.jiraAction
+package kotlinuiplugin.actions.jiraAction
 
-import actions.jiraAction.di.JiraModule
-import actions.jiraAction.di.DaggerJiraDIComponent
-import actions.jiraAction.network.Transition
+import kotlinuiplugin.actions.jiraAction.di.JiraModule
+import kotlinuiplugin.actions.jiraAction.di.DaggerJiraDIComponent
+import kotlinuiplugin.actions.jiraAction.network.Transition
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import utils.Utils
+import kotlinuiplugin.utils.Utils
 import javax.inject.Inject
 import javax.swing.JComponent
 

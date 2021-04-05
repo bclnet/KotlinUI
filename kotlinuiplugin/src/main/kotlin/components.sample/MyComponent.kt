@@ -1,12 +1,12 @@
-package components
+package kotlinuiplugin.components
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.*
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
-import utils.Utils
+import kotlinuiplugin.utils.Utils
 
 @State(name = "MyConfiguration", storages = [Storage(value = "myConfiguration.xml")])
 class MyComponent : ApplicationComponent, PersistentStateComponent<MyComponent> {
@@ -18,7 +18,7 @@ class MyComponent : ApplicationComponent, PersistentStateComponent<MyComponent> 
     override fun initComponent() {
         super.initComponent()
 
-        version = PluginManager.getPlugin(PluginId.getId("kotlinx.KotlinUIPlugin"))!!.version
+        version = PluginManagerCore.getPlugin(PluginId.getId("kotlinx.KotlinUIPlugin"))!!.version
 
         if (isANewVersion()) {
             updateLocalVersion()

@@ -1,12 +1,12 @@
-package actions.jiraAction
+package kotlinuiplugin.actions.jiraAction
 
-import actions.jiraAction.network.JiraService
-import actions.jiraAction.network.Transition
-import actions.jiraAction.network.TransitionData
+import kotlinuiplugin.actions.jiraAction.network.JiraService
+import kotlinuiplugin.actions.jiraAction.network.Transition
+import kotlinuiplugin.actions.jiraAction.network.TransitionData
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.project.Project
 import com.intellij.util.Base64
-import components.JiraComponent
+import kotlinuiplugin.components.JiraComponent
 import git4idea.repo.GitRepositoryManager
 import hu.akarnokd.rxjava2.swing.SwingSchedulers
 import io.reactivex.disposables.Disposable

@@ -1,16 +1,15 @@
-package settings
+package kotlinuiplugin.components
 
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
-import components.JiraComponent
-import utils.Utils
+import kotlinuiplugin.utils.Utils
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.JTextField
 import javax.swing.JPasswordField
 
-class JiraSettings(private val project: Project) : Configurable, DocumentListener {
+class ProjectSettings(private val project: Project) : Configurable, DocumentListener {
     private val tokenField: JPasswordField = JPasswordField()
     private val txtUsername: JTextField = JTextField()
     private val txtUrl: JTextField = JTextField()
@@ -23,7 +22,7 @@ class JiraSettings(private val project: Project) : Configurable, DocumentListene
     override fun getDisplayName(): String = Utils.message("plugin.name")
 
     override fun apply() {
-        val config = JiraComponent.getInstance(project)
+        val config = ProjectComponent.getInstance(project)
         config.username = txtUsername.text
         config.token = String(tokenField.password)
         config.url = txtUrl.text
@@ -81,7 +80,7 @@ class JiraSettings(private val project: Project) : Configurable, DocumentListene
         txtRegEx.columns = 10
         mainPanel.add(txtRegEx)
 
-        val config = JiraComponent.getInstance(project)
+        val config = ProjectComponent.getInstance(project)
         txtUsername.text = config.username
         tokenField.text = config.token
         txtUrl.text = config.url

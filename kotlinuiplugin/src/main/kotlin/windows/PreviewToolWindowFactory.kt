@@ -1,16 +1,17 @@
-package windows
+package kotlinuiplugin.windows
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
+import kotlinuiplugin.components.ProjectComponent
 
-// https://plugins.jetbrains.com/docs/intellij/tool-windows.html#sample-plugin
-class MyToolWindowFactory : ToolWindowFactory {
+class PreviewToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val myToolWindow = MyToolWindow(toolWindow)
+        val window = PreviewToolWindow(toolWindow)
         val contentFactory = ContentFactory.SERVICE.getInstance()
-        val content = contentFactory.createContent(myToolWindow.content, "", false)
+        val content = contentFactory.createContent(window.content, "", false)
         toolWindow.contentManager.addContent(content)
+        PreviewToolWindow.instance = window
     }
 }
